@@ -1,0 +1,48 @@
+.report-modal-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.report-modal {
+  background: #1e293b;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  text-align: center;
+}
+
+.report-modal h2 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+.report-modal ul {
+  list-style: none;
+  padding: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.report-modal li {
+  color: #f87171;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+@media (max-width: 1024px) {
+  .report-modal {
+    width: 90%;
+    max-width: 400px;
+  }
+}

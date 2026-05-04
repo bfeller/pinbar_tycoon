@@ -1,0 +1,139 @@
+.topbar {
+  width: 100%;
+  background: var(--panel-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topbar-brand h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+.topbar-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-pill {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+}
+
+.placement-indicator {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto; /* Push to right if placement-indicator isn't there */
+}
+
+.placement-indicator + .topbar-actions {
+  margin-left: 0; /* Reset if placement indicator is taking the auto margin */
+}
+
+.start-day-btn {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  width: 50px;
+  height: 50px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-day-btn:hover {
+  transform: translateY(-2px);
+}
+
+.start-day-btn:disabled {
+  background: #475569;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.computer-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+  transition: transform 0.2s;
+}
+
+.computer-btn:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .topbar-stats {
+    flex-wrap: wrap;
+  }
+  .placement-indicator {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+  }
+  .topbar-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+}

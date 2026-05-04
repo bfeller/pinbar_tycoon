@@ -1,0 +1,123 @@
+.play-area.grid-mode {
+  flex: 1;
+  position: relative;
+  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  overflow: auto;
+}
+
+.bar-grid {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--glass-border);
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  border-radius: 4px;
+}
+
+.grid-cell {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
+  transition: background 0.2s;
+}
+
+.grid-cell:hover {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.grid-cell.door {
+  background: rgba(16, 185, 129, 0.2);
+  border-bottom: 2px solid #10b981;
+}
+
+.machine-placed {
+  position: absolute;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: 2px solid var(--accent-color);
+  box-sizing: border-box;
+  border-radius: 8px;
+  cursor: grab;
+  box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2);
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+
+.machine-placed:hover {
+  transform: scale(1.05);
+}
+
+.machine-placed.placing {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.machine-placed.broken {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border-color: #f87171;
+}
+
+.durability-mini-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0.5;
+  transition: height 0.3s;
+}
+
+.customer-entity {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #fcd34d;
+  border-radius: 50%;
+  margin: 10px; /* center in 50x50 cell */
+  transition: left 0.2s linear, top 0.2s linear, transform 0.2s linear; /* smooth walking between grid cells */
+  z-index: 20;
+  box-shadow: 0 0 10px rgba(252, 211, 77, 0.5), inset 0 -4px 6px rgba(0,0,0,0.3);
+}
+
+.bartender-entity {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #ec4899;
+  border-radius: 50%;
+  margin: 15px;
+  transition: left 0.2s linear, top 0.2s linear, transform 0.2s linear;
+  z-index: 25;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+}
+
+.customer-entity.drinking {
+  background: #60a5fa;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.5), inset 0 -4px 6px rgba(0,0,0,0.3);
+}
+
+.customer-entity.waiting {
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5), inset 0 -4px 6px rgba(0,0,0,0.3);
+  animation: pulse-wait 1s ease-in-out infinite;
+}
+
+.customer-entity.impatient {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5), inset 0 -4px 6px rgba(0,0,0,0.3);
+  animation: pulse-wait 0.4s ease-in-out infinite;
+}
+
+@keyframes pulse-wait {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@media (max-width: 1024px) {
+  .play-area.grid-mode {
+    padding: 1rem;
+  }
+}
