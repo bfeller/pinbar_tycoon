@@ -44,7 +44,7 @@ export default function GameGrid({
       {placementMachine && hoveredCell && hoveredCell.gridId === gridId && (() => {
         const type = placementMachineType;
         const mCells = getMachineCells(type, hoveredCell.x, hoveredCell.y, placementRotation);
-        
+
         const isOOB = mCells.some(c => c.x < 0 || c.x >= cols || c.y < 0 || c.y >= rows);
         const isOccupied = !isOOB && mCells.some(c => placedMachines.some(pm => {
           const pmCells = getMachineCells(pm.type, pm.x, pm.y, pm.orientation);
@@ -53,12 +53,14 @@ export default function GameGrid({
 
         if (isOOB) return null;
 
-        const minX = Math.min(mCells[0].x, mCells[1]?.x ?? mCells[0].x);
-        const minY = Math.min(mCells[0].y, mCells[1]?.y ?? mCells[0].y);
+        const allX = mCells.map(c => c.x);
+        const allY = mCells.map(c => c.y);
+        const minX = Math.min(...allX);
+        const minY = Math.min(...allY);
+        const wCells = Math.max(...allX) - minX + 1;
+        const hCells = Math.max(...allY) - minY + 1;
         const isVertical = placementRotation === 'N' || placementRotation === 'S';
-        const wCells = mCells.length === 2 && !isVertical ? 2 : 1;
-        const hCells = mCells.length === 2 && isVertical ? 2 : 1;
-        
+
         const frontSideStyle = {
           position: 'absolute',
           [placementRotation === 'N' ? 'bottom' : placementRotation === 'S' ? 'top' : placementRotation === 'E' ? 'left' : 'right']: 0,
@@ -73,12 +75,12 @@ export default function GameGrid({
         };
 
         return (
-          <div 
-            style={{ 
+          <div
+            style={{
               position: 'absolute',
-              left: minX * CELL_SIZE, 
-              top: minY * CELL_SIZE, 
-              width: wCells * CELL_SIZE, 
+              left: minX * CELL_SIZE,
+              top: minY * CELL_SIZE,
+              width: wCells * CELL_SIZE,
               height: hCells * CELL_SIZE,
               background: isOccupied ? 'rgba(239, 68, 68, 0.5)' : 'rgba(59, 130, 246, 0.5)',
               border: `2px dashed ${isOccupied ? '#ef4444' : '#60a5fa'}`,
@@ -89,6 +91,7 @@ export default function GameGrid({
             }}
           >
              {(!type || type === 'pinball' || type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
+             {type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'1.8rem'}}>🚻</div>}
           </div>
         )
       })()}
@@ -96,12 +99,14 @@ export default function GameGrid({
       {/* Placed machines */}
       {placedMachines.map(m => {
         const mCells = getMachineCells(m.type, m.x, m.y, m.orientation);
-        const minX = Math.min(mCells[0].x, mCells[1]?.x ?? mCells[0].x);
-        const minY = Math.min(mCells[0].y, mCells[1]?.y ?? mCells[0].y);
+        const allX = mCells.map(c => c.x);
+        const allY = mCells.map(c => c.y);
+        const minX = Math.min(...allX);
+        const minY = Math.min(...allY);
+        const wCells = Math.max(...allX) - minX + 1;
+        const hCells = Math.max(...allY) - minY + 1;
         const isVertical = m.orientation === 'N' || m.orientation === 'S';
-        const wCells = mCells.length === 2 && !isVertical ? 2 : 1;
-        const hCells = mCells.length === 2 && isVertical ? 2 : 1;
-        
+
         const frontSideStyle = {
           position: 'absolute',
           [m.orientation === 'N' ? 'bottom' : m.orientation === 'S' ? 'top' : m.orientation === 'E' ? 'left' : 'right']: 0,
@@ -117,42 +122,86 @@ export default function GameGrid({
         };
 
         return (
-          <div 
-            key={m.id} 
+          <div
+            key={m.id}
             className={`machine-placed ${m.durability <= 20 ? 'broken' : ''}`}
             onClick={(e) => { e.stopPropagation(); handleCellClick(m.x, m.y); }}
-            style={{ 
-              left: minX * CELL_SIZE, 
-              top: minY * CELL_SIZE, 
-              width: wCells * CELL_SIZE, 
-              height: hCells * CELL_SIZE 
+            style={{
+              left: minX * CELL_SIZE,
+              top: minY * CELL_SIZE,
+              width: wCells * CELL_SIZE,
+              height: hCells * CELL_SIZE
             }}
-            title={`${m.name} - ${m.durability}% Durability`}
+            title={m.type === 'bathroom' ? m.name : `${m.name} - ${m.durability}% Durability`}
           >
-             {(!m.type || m.type === 'pinball' || m.type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
-             {m.type !== 'kegerator' && m.type !== 'bartop' && <div className="durability-mini-bar" style={{height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444'}}></div>}
+            {(!m.type || m.type === 'pinball' || m.type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
+            {m.type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'2rem',pointerEvents:'none'}}>🚻</div>}
+            {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && <div className="durability-mini-bar" style={{height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444'}}></div>}
           </div>
         )
       })}
 
       {/* Customers */}
       {customers.map(c => {
-        const isWaiting = c.status === 'waiting_for_pinball' || c.status === 'waiting_for_bartop' || c.status === 'walking_to_wait_area';
+        const isWaiting = c.status === 'waiting_for_pinball' || c.status === 'waiting_for_bartop' || c.status === 'waiting_for_bathroom' || c.status === 'walking_to_wait_area';
+        const isWaitingForDrink = c.status === 'waiting_for_drink';
         const patiencePct = c.patienceTicks !== undefined ? (c.patienceTicks / 30) * 100 : 100;
-        const isImpatient = isWaiting && patiencePct < 33;
-        const statusClass = c.status === 'drinking' ? 'drinking' : isImpatient ? 'impatient' : isWaiting ? 'waiting' : '';
+        const drinkPatiencePct = c.drinkPatienceTicks !== undefined ? (c.drinkPatienceTicks / 75) * 100 : 100;
+        const isImpatient = (isWaiting && patiencePct < 33) || (isWaitingForDrink && drinkPatiencePct < 33);
+        const statusClass = c.angry ? 'angry'
+          : c.status === 'drinking' ? 'drinking'
+          : isImpatient ? 'impatient'
+          : isWaiting || isWaitingForDrink ? 'waiting'
+          : '';
+        const showBar = isWaiting || isWaitingForDrink;
+        const barPct = isWaitingForDrink ? drinkPatiencePct : patiencePct;
+
+        // Thought bubble icon
+        let thought = null;
+        if (c.status === 'playing') {
+          thought = { icon: 'fa-gamepad', color: '#10b981' };
+        } else if (c.status === 'drinking') {
+          thought = { icon: 'fa-beer-mug-empty', color: '#60a5fa' };
+        } else if (c.status === 'using_bathroom') {
+          thought = { icon: 'fa-toilet', color: '#10b981' };
+        } else if (c.status === 'walking_in') {
+          thought = { icon: 'fa-gamepad', color: '#fcd34d' };
+        } else if (c.status === 'walking_to_bar' || c.status === 'waiting_for_drink') {
+          thought = { icon: 'fa-beer-mug-empty', color: isImpatient ? '#ef4444' : '#fcd34d' };
+        } else if (c.status === 'walking_to_bathroom' || c.status === 'waiting_for_bathroom') {
+          thought = { icon: 'fa-toilet', color: isImpatient ? '#ef4444' : '#fcd34d' };
+        } else if (c.status === 'waiting_for_pinball') {
+          thought = { icon: 'fa-gamepad', color: isImpatient ? '#ef4444' : '#fcd34d' };
+        } else if (c.status === 'waiting_for_bartop' || (c.status === 'walking_to_wait_area' && c.waitingFor === 'bartop')) {
+          thought = { icon: 'fa-beer-mug-empty', color: isImpatient ? '#ef4444' : '#fcd34d' };
+        } else if (c.status === 'walking_to_wait_area' && c.waitingFor === 'bathroom') {
+          thought = { icon: 'fa-toilet', color: '#fcd34d' };
+        } else if (c.status === 'walking_to_wait_area') {
+          thought = { icon: 'fa-gamepad', color: '#fcd34d' };
+        } else if (c.status === 'evaluating_needs') {
+          const need = c.needs?.[0];
+          if (need === 'pinball') thought = { icon: 'fa-gamepad', color: '#fcd34d' };
+          else if (need === 'drink') thought = { icon: 'fa-beer-mug-empty', color: '#fcd34d' };
+          else if (need === 'bathroom') thought = { icon: 'fa-toilet', color: '#fcd34d' };
+        }
+        // walking_out / angry: no thought bubble
 
         return (
-          <div 
-            key={c.id} 
+          <div
+            key={c.id}
             className={`customer-entity ${statusClass}`}
             style={{
               left: c.x * CELL_SIZE,
               top: c.y * CELL_SIZE
             }}
-            title={isWaiting ? `Waiting (${Math.ceil(patiencePct)}% patience)` : c.status}
+            title={showBar ? `Waiting (${Math.ceil(barPct)}%)` : c.status}
           >
-            {isWaiting && (
+            {thought && (
+              <div className="thought-bubble">
+                <i className={`fa-solid ${thought.icon}`} style={{ color: thought.color }} />
+              </div>
+            )}
+            {showBar && (
               <div style={{
                 position: 'absolute',
                 bottom: -4,
@@ -164,7 +213,7 @@ export default function GameGrid({
                 overflow: 'hidden'
               }}>
                 <div style={{
-                  width: `${patiencePct}%`,
+                  width: `${barPct}%`,
                   height: '100%',
                   background: isImpatient ? '#ef4444' : '#fbbf24',
                   transition: 'width 0.2s',

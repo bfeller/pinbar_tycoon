@@ -2,10 +2,10 @@ import React from 'react';
 import './Inventory.css';
 import { calculatePrice } from '../utils/economy';
 import GameGrid from './GameGrid';
-import { BACKROOM_COLS, BACKROOM_ROWS } from '../constants';
+import { BACKROOM_COLS } from '../constants';
 
 export default function Inventory({
-  backroomMachines, dayState, cash, repairsRemaining, time, hoveredCell,
+  backroomMachines, backroomRows, dayState, cash, repairsRemaining, time, hoveredCell,
   placementMachine, placementRotation, repairMachine, sellMachine, handleCellClick, setHoveredCell,
   placementMachineType
 }) {
@@ -21,7 +21,7 @@ export default function Inventory({
             handleCellClick={handleCellClick}
             setHoveredCell={setHoveredCell}
             cols={BACKROOM_COLS}
-            rows={BACKROOM_ROWS}
+            rows={backroomRows}
             showDoor={false}
             gridId="backroom"
             placementMachineType={placementMachineType}
@@ -43,7 +43,7 @@ export default function Inventory({
                         </button>
                       );
                     })()}
-                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${calculatePrice(m.year, time.year, m.durability)})</button>
+                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0)})</button>
                  </div>
                </div>
              ))}

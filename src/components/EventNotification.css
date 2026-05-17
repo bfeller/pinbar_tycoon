@@ -1,0 +1,55 @@
+.event-notification {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-width: 420px;
+  animation: event-slide-in 0.25s ease-out;
+}
+
+@keyframes event-slide-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.event-notification--bad {
+  background: rgba(30, 10, 10, 0.85);
+  border-color: #ef4444;
+}
+
+.event-notification--good {
+  background: rgba(10, 25, 15, 0.85);
+  border-color: #10b981;
+}
+
+.event-notification--neutral {
+  background: rgba(20, 20, 30, 0.85);
+  border-color: #94a3b8;
+}
+
+.event-notification__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.event-notification--bad   .event-notification__label { color: #ef4444; }
+.event-notification--good  .event-notification__label { color: #10b981; }
+.event-notification--neutral .event-notification__label { color: #94a3b8; }
+
+.event-notification__message {
+  font-size: 0.9rem;
+  color: #f8fafc;
+  line-height: 1.4;
+}

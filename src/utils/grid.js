@@ -1,5 +1,6 @@
 export const getMachineCells = (type, x, y, orientation) => {
   if (type === 'bartop' || type === 'kegerator') return [{x, y}];
+  if (type === 'bathroom') return [{x, y}, {x: x+1, y}, {x, y: y+1}, {x: x+1, y: y+1}];
   if (orientation === 'N') return [{x, y}, {x, y: y-1}];
   if (orientation === 'E') return [{x, y}, {x: x+1, y}];
   if (orientation === 'S') return [{x, y}, {x, y: y+1}];

@@ -2,13 +2,16 @@ import React from 'react';
 import './TopBar.css';
 
 export default function TopBar({
-  time, cash, repairsRemaining, placementMachine, dayState, startDay, setIsComputerOpen
+  pinbarName, time, cash, repairsRemaining, repairCapacity, popularity, placementMachine, dayState, startDay, setIsComputerOpen, unreadEmails
 }) {
   return (
     <div className="topbar">
       <div className="topbar-brand">
         <i className="fa-solid fa-gamepad" style={{color: '#38bdf8', fontSize: '1.5rem'}}></i>
-        <h2>Pinbar Tycoon</h2>
+        <div>
+          <h2 style={{margin: 0, lineHeight: 1}}>{pinbarName}</h2>
+          <span style={{fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase'}}>Pinbar Tycoon</span>
+        </div>
       </div>
 
       <div className="topbar-stats">
@@ -22,7 +25,11 @@ export default function TopBar({
         </div>
         <div className="stat-pill" style={{color: '#f59e0b'}}>
           <i className="fa-solid fa-wrench"></i>
-          <span>{repairsRemaining} / 5%</span>
+          <span>{repairsRemaining} / {repairCapacity}%</span>
+        </div>
+        <div className="stat-pill" style={{color: '#a78bfa'}}>
+          <i className="fa-solid fa-star"></i>
+          <span>{popularity}</span>
         </div>
       </div>
 
@@ -44,12 +51,18 @@ export default function TopBar({
         </button>
 
         {dayState === 'BUILD' && (
-          <button 
-            className="computer-btn" 
+          <button
+            className="computer-btn"
             onClick={() => setIsComputerOpen(true)}
             title="Open Computer"
+            style={{ position: 'relative' }}
           >
             <i className="fa-solid fa-computer"></i>
+            {unreadEmails > 0 && (
+              <span style={{ position: 'absolute', top: '-4px', right: '-4px', background: 'red', color: '#fff', borderRadius: '50%', fontSize: '0.6rem', width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', pointerEvents: 'none' }}>
+                {unreadEmails}
+              </span>
+            )}
           </button>
         )}
       </div>

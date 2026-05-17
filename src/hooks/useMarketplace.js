@@ -1,80 +1,43 @@
 import { useState, useEffect } from 'react';
-import { extractYear } from '../utils/economy';
+import opdbData from '../data/pinball_machines.json';
+
+// Weighted random durability for used machines.
+// Skewed toward better condition — most sellers aren't listing junkers.
+function randomUsedDurability() {
+  const r = Math.random();
+  if (r < 0.20) return Math.floor(Math.random() * 6)  + 95; // 95–100  Mint
+  if (r < 0.45) return Math.floor(Math.random() * 10) + 80; // 80–89   Excellent
+  if (r < 0.65) return Math.floor(Math.random() * 15) + 65; // 65–79   Good
+  if (r < 0.82) return Math.floor(Math.random() * 20) + 45; // 45–64   Playable
+  if (r < 0.93) return Math.floor(Math.random() * 20) + 25; // 25–44   Rough
+  return Math.floor(Math.random() * 25) + 1;                // 1–25    Project
+}
 
 /**
- * Manages the OPDB database seeding and daily marketplace generation.
- * Fetches all machines from OPDB on mount (using API key if available),
- * then generates a daily market of new + used machines whenever the in-game date changes.
+ * Manages daily marketplace generation from the static OPDB dataset.
+ * To refresh the machine database run: npm run fetch-opdb
  */
 export default function useMarketplace(time) {
-  const [opdbDatabase, setOpdbDatabase] = useState([]);
   const [dailyMarket, setDailyMarket] = useState([]);
+  const [soldOutIds, setSoldOutIds] = useState(new Set());
 
-  // Seed local DB from OPDB
+  const markSoldOut = (id) => setSoldOutIds(prev => new Set([...prev, id]));
+
+  // Regenerate the daily market whenever the in-game date changes
   useEffect(() => {
-    const seedDatabase = async () => {
-      const apiKey = import.meta.env.VITE_OPDB_KEY;
-      if (apiKey) {
-        try {
-          const res = await fetch('https://opdb.org/api/export', {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
-          });
-          const data = await res.json();
-          const allMachines = data.map(m => {
-            let parsedYear = 2020;
-            if (m.manufacture_date) {
-              parsedYear = parseInt(m.manufacture_date.substring(0, 4));
-            }
-            return {
-              id: m.opdb_id,
-              name: m.name,
-              supplementary: m.manufacturer?.name || 'Unknown Manufacturer',
-              parsedYear
-            };
-          });
-          setOpdbDatabase(allMachines);
-          return;
-        } catch (e) {
-          console.error("Export API failed, falling back to typeahead", e);
-        }
-      }
+    const newGames = opdbData.filter(m => m.parsedYear === time.year);
+    const olderGames = opdbData.filter(m => m.parsedYear < time.year);
+    const newGamesCount = Math.floor(Math.random() * 4) + 3; // 3–6
+    const usedGamesCount = Math.floor(Math.random() * 3) + 2; // 2–4
+    const selectedNew = [...newGames].sort(() => 0.5 - Math.random()).slice(0, newGamesCount);
+    const selectedUsed = [...olderGames]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, usedGamesCount)
+      .map(m => ({ ...m, durability: randomUsedDurability() }));
 
-      // Fallback: scrape via typeahead
-      const queries = ['pinball', 'star', 'bally', 'stern', 'williams', 'gottlieb', 'data', 'a', 'e', 's', 't', 'm', 'p', 'space', 'monster', 'attack', 'trek'];
-      const allMachines = [];
-      const seenIds = new Set();
+    setSoldOutIds(new Set());
+    setDailyMarket([...selectedNew, ...selectedUsed]);
+  }, [time.year, time.week, time.day]);
 
-      for (const q of queries) {
-        try {
-          const res = await fetch(`https://opdb.org/api/search/typeahead?q=${q}`);
-          const data = await res.json();
-          for (const m of data) {
-            if (!seenIds.has(m.id)) {
-              seenIds.add(m.id);
-              allMachines.push({ ...m, parsedYear: extractYear(m.supplementary) });
-            }
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      setOpdbDatabase(allMachines);
-    };
-    seedDatabase();
-  }, []);
-
-  // Regenerate the daily market whenever the date or database changes
-  useEffect(() => {
-    if (opdbDatabase.length === 0) return;
-
-    const newGames = opdbDatabase.filter(m => m.parsedYear === time.year);
-    const olderGames = opdbDatabase.filter(m => m.parsedYear < time.year);
-    const usedGamesCount = Math.floor(Math.random() * 5) + 1;
-    const shuffledOlder = [...olderGames].sort(() => 0.5 - Math.random());
-    const selectedUsed = shuffledOlder.slice(0, usedGamesCount);
-
-    setDailyMarket([...newGames, ...selectedUsed]);
-  }, [time.year, time.week, time.day, opdbDatabase]);
-
-  return { opdbDatabase, dailyMarket };
+  return { dailyMarket, soldOutIds, markSoldOut };
 }

@@ -1,0 +1,180 @@
+/* ── Outlook Express-style email client ─────────────────────────────────── */
+
+.email-window {
+  position: absolute;
+  top: 8%;
+  left: 4%;
+  width: 92%;
+  height: 84%;
+  background: #c0c0c0;
+  border: 2px solid #fff;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  box-shadow: 2px 2px 0 #000;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Courier New', monospace;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+/* toolbar */
+.email-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  font-size: 0.72rem;
+}
+.email-toolbar-btn {
+  padding: 1px 6px;
+  background: #c0c0c0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: #000;
+  user-select: none;
+}
+.email-toolbar-btn:hover {
+  border: 1px solid #000;
+}
+.email-toolbar-sep {
+  color: #808080;
+  margin: 0 2px;
+}
+
+/* two-pane layout */
+.email-panes {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* left: list */
+.email-list-pane {
+  width: 260px;
+  min-width: 200px;
+  border-right: 2px solid #808080;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.email-list-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 2px 6px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.email-list-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.72rem;
+  color: #000;
+}
+.email-list-row:hover {
+  background: #000080;
+  color: #fff;
+}
+.email-list-row.selected {
+  background: #000080;
+  color: #fff;
+}
+.email-list-row.unread .email-list-from,
+.email-list-row.unread .email-list-subject {
+  font-weight: bold;
+}
+
+.email-list-from,
+.email-list-subject {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+/* right: content */
+.email-content-pane {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.email-header-block {
+  font-size: 0.75rem;
+  color: #000;
+  line-height: 1.6;
+}
+.email-header-label {
+  font-weight: bold;
+  color: #000080;
+}
+
+.email-divider {
+  border: none;
+  border-top: 1px solid #808080;
+  margin: 8px 0;
+}
+
+.email-body {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #000;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  flex: 1;
+  margin: 0;
+}
+
+.email-choices {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #c0c0c0;
+}
+
+.email-choice-btn {
+  padding: 4px 12px;
+}
+
+.email-choice-done {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #c0c0c0;
+  font-size: 0.75rem;
+  color: #555;
+  font-style: italic;
+}
+
+.email-empty {
+  padding: 16px;
+  color: #808080;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* status bar */
+.email-statusbar {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  color: #000;
+  background: #c0c0c0;
+  border-top: 1px solid #808080;
+  flex-shrink: 0;
+}

@@ -1,14 +1,65 @@
 import React from 'react';
 import './ReportModal.css';
 
+const LOG_MAX = Math.log1p(1200);
+
 export default function ReportModal({
-  dailyReport, machines, repairsRemaining, cash, repairMachine, nextDay
+  dailyReport, machines, popularity, repairsRemaining, cash, repairMachine, nextDay
 }) {
+  const machineScore = Math.floor(
+    machines
+      .filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null)
+      .reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 2, 0)
+  );
+  const customerDelta = (dailyReport.satisfied ?? 0) - (dailyReport.unsatisfied ?? 0);
+  const popularityDelta = machineScore + customerDelta;
   return (
     <div className="report-modal-overlay">
        <div className="report-modal">
          <h2>End of Day Report</h2>
          <p style={{fontSize: '1.2rem', color: '#10b981'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
+         <div style={{marginTop: '0.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap'}}>
+           <span style={{color: '#a78bfa'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#10b981' : '#f87171'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
+           <span style={{fontSize: '0.85rem', color: '#94a3b8'}}>
+             {machineScore} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
+           </span>
+         </div>
+         {dailyReport.completedCourses?.length > 0 && (
+           <div style={{marginTop: '1rem', padding: '0.75rem', background: 'rgba(16,185,129,0.1)', border: '1px solid #10b981', borderRadius: '4px'}}>
+             <div style={{color: '#10b981', fontWeight: 'bold', marginBottom: '0.4rem'}}>🎓 Courses Completed</div>
+             {dailyReport.completedCourses.map((c, i) => (
+               <div key={i} style={{color: '#f8fafc'}}>{c.icon} {c.name}</div>
+             ))}
+           </div>
+         )}
+         {dailyReport.events?.length > 0 && (
+           <div style={{ marginTop: '1rem' }}>
+             <p style={{ color: '#94a3b8', marginBottom: '0.4rem' }}>Events:</p>
+             {dailyReport.events.map((e, i) => (
+               <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                 <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: e.severity === 'good' ? '#10b981' : e.severity === 'bad' ? '#ef4444' : '#94a3b8', flexShrink: 0 }}>
+                   {e.label}
+                 </span>
+                 <span style={{ fontSize: '0.85rem', color: '#f8fafc' }}>{e.message}</span>
+               </div>
+             ))}
+           </div>
+         )}
+
+         {dailyReport.expenses?.length > 0 && (
+           <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px' }}>
+             <div style={{ color: '#f87171', fontWeight: 'bold', marginBottom: '0.4rem' }}>
+               Bills Due — <span style={{ fontWeight: 400 }}>-${dailyReport.expenses.reduce((s, e) => s + e.amount, 0).toLocaleString()}</span>
+             </div>
+             {dailyReport.expenses.map((e, i) => (
+               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#f8fafc', marginBottom: '0.2rem' }}>
+                 <span>{e.icon} {e.name}</span>
+                 <span style={{ color: '#f87171' }}>-${e.amount.toLocaleString()}</span>
+               </div>
+             ))}
+           </div>
+         )}
+
          <p style={{marginTop: '1.5rem', color: '#94a3b8'}}>Machines Damaged:</p>
          <ul>
            {dailyReport.damage.length === 0 ? <li>No damage today!</li> : dailyReport.damage.map((d, i) => {

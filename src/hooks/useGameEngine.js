@@ -3,9 +3,40 @@ import PF from 'pathfinding';
 import { DOOR_POS, DAY_LENGTH_SECONDS, GRID_COLS, GRID_ROWS } from '../constants';
 import { getPlayCell, getBackCell, getMachineCells } from '../utils/grid';
 import { buildGrid } from '../utils/pathfinding';
+import { EVENT_DEFS } from '../data/events';
+
+function toLinDay({ year, week, day }) {
+  return (year - 1975) * 30 + (week - 1) * 3 + day;
+}
 
 // Patience ticks before a waiting customer gives up (200ms per tick → ~6 seconds)
 const PATIENCE_TICKS = 30;
+// Drink patience is longer — the customer has a seat, they're just waiting for service (~15 seconds)
+const DRINK_PATIENCE_TICKS = 75;
+// How long a customer spends using the bathroom (~4 seconds)
+const BATHROOM_USE_TICKS = 20;
+
+// Popularity helpers — locationCount is the number of real-world venues with this machine.
+// log scale so the curve is gentle: a machine at 0 locations still earns something,
+// and the gap between 100 and 1000 locations isn't absurd.
+const LOG_MAX = Math.log1p(1200); // normalise against ~peak observed count
+
+function popularityWeight(machine) {
+  return 1 + 2 * (Math.log1p(machine.locationCount ?? 0) / LOG_MAX);
+  // range: 1.0 (unknown) → 3.0 (most popular)
+}
+
+
+function weightedRandomMachine(machines) {
+  const weights = machines.map(popularityWeight);
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < machines.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return machines[i];
+  }
+  return machines[machines.length - 1];
+}
 
 /**
  * Core game simulation loop. Manages:
@@ -22,7 +53,10 @@ export default function useGameEngine({
   cash, setCash,
   bartender, setBartender,
   dailyReport, setDailyReport,
-  time
+  time,
+  popularity,
+  upgradeValues = {},
+  onEvent,
 }) {
   // Refs to access current state inside setInterval closures
   const machinesRef = useRef(machines);
@@ -32,6 +66,10 @@ export default function useGameEngine({
   const dayTimerRef = useRef(dayTimer);
   const timeRef = useRef(time);
   const bartenderRef = useRef(bartender);
+  const upgradeValuesRef = useRef(upgradeValues);
+  const popularityRef = useRef(popularity);
+  const onEventRef = useRef(onEvent);
+  const lastEventDayRef = useRef(-1); // lin-day of last event, prevents >1 per day
 
   useEffect(() => { machinesRef.current = machines; }, [machines]);
   useEffect(() => { customersRef.current = customers; }, [customers]);
@@ -40,12 +78,17 @@ export default function useGameEngine({
   useEffect(() => { dayTimerRef.current = dayTimer; }, [dayTimer]);
   useEffect(() => { timeRef.current = time; }, [time]);
   useEffect(() => { bartenderRef.current = bartender; }, [bartender]);
+  useEffect(() => { upgradeValuesRef.current = upgradeValues; }, [upgradeValues]);
+  useEffect(() => { popularityRef.current = popularity; }, [popularity]);
+  useEffect(() => { onEventRef.current = onEvent; }, [onEvent]);
 
   // Helper: try to pathfind a customer to an available target
   const tryAssignTarget = (nextC, targetType, prev, updated) => {
     const isForPinball = targetType === 'pinball';
+    const isForBathroom = targetType === 'bathroom';
     const candidates = machinesRef.current.filter(m => {
       if (isForPinball) return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0;
+      if (isForBathroom) return m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room);
       return m.type === 'bartop' && m.x !== null;
     });
     const available = candidates.filter(m =>
@@ -54,8 +97,36 @@ export default function useGameEngine({
 
     if (available.length === 0) return false;
 
-    const target = available[Math.floor(Math.random() * available.length)];
+    const target = isForPinball ? weightedRandomMachine(available) : available[Math.floor(Math.random() * available.length)];
     const grid = buildGrid(machinesRef.current);
+
+    // Bathrooms are 2×2 — find any adjacent walkable cell as the entry point
+    if (isForBathroom) {
+      const bathCells = getMachineCells('bathroom', target.x, target.y, 'N');
+      const adjKeys = new Set();
+      for (const bc of bathCells) {
+        for (const n of [{x:bc.x-1,y:bc.y},{x:bc.x+1,y:bc.y},{x:bc.x,y:bc.y-1},{x:bc.x,y:bc.y+1}]) {
+          if (!bathCells.some(c => c.x===n.x && c.y===n.y)) adjKeys.add(`${n.x},${n.y}`);
+        }
+      }
+      const finder = new PF.AStarFinder();
+      for (const key of adjKeys) {
+        const [cx, cy] = key.split(',').map(Number);
+        if (cx < 0 || cx >= GRID_COLS || cy < 0 || cy >= GRID_ROWS || !grid.isWalkableAt(cx, cy)) continue;
+        const path = finder.findPath(nextC.x, nextC.y, cx, cy, grid.clone());
+        if (path && path.length > 0) {
+          nextC.machineId = target.id;
+          nextC.path = path;
+          nextC.pathIndex = 0;
+          nextC.status = 'walking_to_bathroom';
+          nextC.patienceTicks = undefined;
+          nextC.needs.shift();
+          return true;
+        }
+      }
+      return false;
+    }
+
     const playCell = getPlayCell(target.type, target.x, target.y, target.orientation);
     if (!playCell || !grid.isWalkableAt(playCell.x, playCell.y)) return false;
 
@@ -80,7 +151,7 @@ export default function useGameEngine({
     const isForPinball = targetType === 'pinball';
     const candidates = machinesRef.current.filter(m => {
       if (isForPinball) return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0;
-      return m.type === 'bartop' && m.x !== null;
+      return m.type === targetType && m.x !== null; // handles bartop and bathroom
     });
     if (candidates.length === 0) return false;
 
@@ -165,8 +236,12 @@ export default function useGameEngine({
           const possibleNeeds = [];
           if (placedPinballs.length > 0) possibleNeeds.push('pinball');
           if (placedBartops.length > 0 && hasKegerator) possibleNeeds.push('drink');
+          if (timeRef.current.year >= 1976) possibleNeeds.push('bathroom');
 
-          if (possibleNeeds.length > 0 && Math.random() > 0.4) {
+          // Spawn rate scales with popularity: nearly empty at pop 0, busy at pop 300+
+          const popFactor = Math.min(1, popularityRef.current / 300);
+          const spawnThreshold = Math.max(0.15, 0.85 - 0.60 * popFactor) - (upgradeValuesRef.current.spawnBoost ?? 0);
+          if (possibleNeeds.length > 0 && Math.random() > spawnThreshold) {
             const needsCount = Math.floor(Math.random() * 3) + 1;
             const needs = [];
             for (let i = 0; i < needsCount; i++) {
@@ -186,6 +261,91 @@ export default function useGameEngine({
               patienceTicks: undefined
             }]);
           }
+          // ── Random event roll (once per in-game day, midway through) ──
+          const today = toLinDay(timeRef.current);
+          if (timer >= 3 && lastEventDayRef.current !== today) {
+            const ctx = {
+              machines: machinesRef.current,
+              time: timeRef.current,
+              popularity: popularityRef.current,
+              cash: cashRef.current,
+            };
+            const qualifying = EVENT_DEFS.filter(e => e.condition(ctx));
+            if (qualifying.length > 0 && Math.random() < 0.035) {
+              // Weighted random pick
+              const totalWeight = qualifying.reduce((s, e) => s + e.weight, 0);
+              let r = Math.random() * totalWeight;
+              let picked = qualifying[qualifying.length - 1];
+              for (const e of qualifying) { r -= e.weight; if (r <= 0) { picked = e; break; } }
+
+              lastEventDayRef.current = today;
+
+              // Resolve target machine for messages
+              const placed = machinesRef.current.filter(
+                m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0
+              );
+              let machineName = placed.length > 0 ? placed[0].name : 'a machine';
+
+              // Apply effect
+              if (picked.effect === 'machine_damage' || picked.effect === 'all_machine_damage') {
+                let targets;
+                if (picked.effect === 'all_machine_damage') {
+                  targets = placed.map(m => ({ id: m.id, amount: picked.effectValue }));
+                  machineName = 'your machines';
+                } else if (picked.target === 'random') {
+                  const t = placed[Math.floor(Math.random() * placed.length)];
+                  targets = t ? [{ id: t.id, amount: picked.effectValue }] : [];
+                  if (t) machineName = t.name;
+                } else {
+                  // weakest
+                  const t = placed.reduce((a, b) => (a.durability < b.durability ? a : b), placed[0]);
+                  targets = t ? [{ id: t.id, amount: picked.effectValue }] : [];
+                  if (t) machineName = t.name;
+                }
+                if (targets.length > 0) {
+                  setMachines(prev => prev.map(m => {
+                    const hit = targets.find(t => t.id === m.id);
+                    return hit ? { ...m, durability: Math.max(0, m.durability - hit.amount) } : m;
+                  }));
+                  setDailyReport(r => {
+                    const damageMap = new Map(r.damage.map(d => [d.id, { ...d }]));
+                    for (const hit of targets) {
+                      const m = machinesRef.current.find(mac => mac.id === hit.id);
+                      if (!m) continue;
+                      const newDur = Math.max(0, m.durability - hit.amount);
+                      if (damageMap.has(hit.id)) {
+                        damageMap.get(hit.id).damageTaken += hit.amount;
+                        damageMap.get(hit.id).currentDurability = newDur;
+                      } else {
+                        damageMap.set(hit.id, { id: hit.id, name: m.name, damageTaken: hit.amount, currentDurability: newDur });
+                      }
+                    }
+                    return { ...r, damage: Array.from(damageMap.values()) };
+                  });
+                }
+              }
+
+              if (picked.effect === 'income_delta') {
+                setCash(c => c + picked.effectValue);
+              }
+
+              if (picked.effect === 'popularity_delta') {
+                setDailyReport(r => ({
+                  ...r,
+                  eventPopularityDelta: (r.eventPopularityDelta ?? 0) + picked.effectValue,
+                }));
+              }
+
+              // Notify App
+              const message = picked.getMessage({ machineName });
+              setDailyReport(r => ({
+                ...r,
+                events: [...(r.events ?? []), { id: picked.id, label: picked.label, severity: picked.severity, message }],
+              }));
+              onEventRef.current?.({ id: picked.id, label: picked.label, severity: picked.severity, message });
+            }
+          }
+
         } else {
           // Day timer expired — wait for all customers to leave
           if (customersRef.current.length === 0) {
@@ -206,6 +366,8 @@ export default function useGameEngine({
 
       setCustomers(prev => {
         let moneyEarned = 0;
+        let satisfiedCount = 0;
+        let unsatisfiedCount = 0;
         const machinesToDegrade = [];
         const updated = [];
 
@@ -216,21 +378,45 @@ export default function useGameEngine({
             if (nextC.needs.length === 0) {
               // All needs met — walk to door
               if (!sendToExit(nextC)) continue; // trapped — teleport out
+            } else if (dayTimerRef.current >= DAY_LENGTH_SECONDS) {
+              // Bar is closed — abandon remaining needs and leave angry
+              unsatisfiedCount += nextC.needs.length;
+              nextC.needs = [];
+              nextC.angry = true;
+              if (!sendToExit(nextC)) continue;
             } else {
               const need = nextC.needs[0];
-              const targetType = need === 'pinball' ? 'pinball' : 'bartop';
+              const targetType = need === 'pinball' ? 'pinball' : need === 'bathroom' ? 'bathroom' : 'bartop';
+
+              // If a bathroom is needed but none exist in the main room, skip it immediately
+              if (need === 'bathroom') {
+                const hasBathroom = machinesRef.current.some(m => m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room));
+                if (!hasBathroom) {
+                  unsatisfiedCount++;
+                  nextC.needs.shift();
+                  if (nextC.needs.length === 0) {
+                    nextC.angry = true;
+                    if (!sendToExit(nextC)) continue;
+                  } else {
+                    nextC.status = 'evaluating_needs';
+                  }
+                  updated.push(nextC);
+                  continue;
+                }
+              }
+
               const assigned = tryAssignTarget(nextC, targetType, prev, updated);
               if (!assigned) {
                 // Nothing available — walk towards machines to wait nearby
-                const waitType = need === 'pinball' ? 'pinball' : 'bartop';
+                const waitType = targetType;
                 nextC.waitingFor = waitType;
                 if (nextC.patienceTicks === undefined) {
-                  nextC.patienceTicks = PATIENCE_TICKS;
+                  nextC.patienceTicks = upgradeValuesRef.current.patienceTicks ?? PATIENCE_TICKS;
                 }
                 const foundSpot = findWaitingSpot(nextC, waitType, prev, updated);
                 if (!foundSpot) {
                   // Can't even get near — just wait in place
-                  nextC.status = need === 'pinball' ? 'waiting_for_pinball' : 'waiting_for_bartop';
+                  nextC.status = need === 'pinball' ? 'waiting_for_pinball' : need === 'bathroom' ? 'waiting_for_bathroom' : 'waiting_for_bartop';
                 }
               }
             }
@@ -244,7 +430,7 @@ export default function useGameEngine({
             } else {
               // Arrived at waiting spot — start waiting
               const waitType = nextC.waitingFor || 'pinball';
-              nextC.status = waitType === 'pinball' ? 'waiting_for_pinball' : 'waiting_for_bartop';
+              nextC.status = waitType === 'pinball' ? 'waiting_for_pinball' : waitType === 'bathroom' ? 'waiting_for_bathroom' : 'waiting_for_bartop';
             }
             // While walking, also check if a spot opened up
             const walkWaitType = nextC.waitingFor || 'pinball';
@@ -253,7 +439,7 @@ export default function useGameEngine({
               // Grabbed a spot while walking — great!
             }
 
-          } else if (c.status === 'waiting_for_pinball' || c.status === 'waiting_for_bartop') {
+          } else if (c.status === 'waiting_for_pinball' || c.status === 'waiting_for_bartop' || c.status === 'waiting_for_bathroom') {
             // Decrement patience
             if (nextC.patienceTicks !== undefined) {
               nextC.patienceTicks--;
@@ -261,11 +447,13 @@ export default function useGameEngine({
 
             if (nextC.patienceTicks <= 0) {
               // Out of patience — skip this need
+              unsatisfiedCount++;
               nextC.needs.shift();
               nextC.patienceTicks = undefined;
               nextC.waitingFor = undefined;
               if (nextC.needs.length === 0) {
-                // No more needs — leave
+                // No more needs — leave angry
+                nextC.angry = true;
                 if (!sendToExit(nextC)) continue;
               } else {
                 // Try evaluating the next need
@@ -273,21 +461,24 @@ export default function useGameEngine({
               }
             } else {
               // Still patient — try to find a spot again
-              const targetType = c.status === 'waiting_for_pinball' ? 'pinball' : 'bartop';
-              const assigned = tryAssignTarget(nextC, targetType, prev, updated);
-              if (assigned) {
-                // Great — they found a spot, patience is cleared inside tryAssignTarget
-              }
+              const targetType = c.status === 'waiting_for_pinball' ? 'pinball' : c.status === 'waiting_for_bathroom' ? 'bathroom' : 'bartop';
+              tryAssignTarget(nextC, targetType, prev, updated);
               // Otherwise stay waiting
             }
 
-          } else if (c.status === 'walking_in' || c.status === 'walking_to_bar') {
+          } else if (c.status === 'walking_in' || c.status === 'walking_to_bar' || c.status === 'walking_to_bathroom') {
             if (c.pathIndex < c.path.length - 1) {
               nextC.pathIndex++;
               nextC.x = c.path[nextC.pathIndex][0];
               nextC.y = c.path[nextC.pathIndex][1];
+            } else if (c.status === 'walking_to_bar') {
+              nextC.status = 'waiting_for_drink';
+              nextC.drinkPatienceTicks = DRINK_PATIENCE_TICKS;
+            } else if (c.status === 'walking_to_bathroom') {
+              nextC.status = 'using_bathroom';
+              nextC.bathroomTicks = BATHROOM_USE_TICKS;
             } else {
-              nextC.status = c.status === 'walking_in' ? 'playing' : 'waiting_for_drink';
+              nextC.status = 'playing';
             }
           } else if (c.status === 'playing') {
             if (nextC.playTicks === undefined) nextC.playTicks = nextC.playTimeLeft * 5;
@@ -295,21 +486,45 @@ export default function useGameEngine({
               nextC.playTicks--;
             } else {
               moneyEarned += 25;
+              satisfiedCount++;
               machinesToDegrade.push(c.machineId);
               nextC.machineId = null;
               nextC.playTicks = undefined;
               nextC.status = 'evaluating_needs';
             }
           } else if (c.status === 'waiting_for_drink') {
-            // Idle — waiting for bartender to serve
+            if (nextC.drinkPatienceTicks > 0) nextC.drinkPatienceTicks--;
+            if (nextC.drinkPatienceTicks <= 0) {
+              unsatisfiedCount++;
+              nextC.machineId = null;
+              nextC.beingServed = false;
+              nextC.drinkPatienceTicks = undefined;
+              nextC.needs.shift();
+              if (nextC.needs.length === 0) {
+                nextC.angry = true;
+                if (!sendToExit(nextC)) continue;
+              } else {
+                nextC.status = 'evaluating_needs';
+              }
+            }
           } else if (c.status === 'drinking') {
             if (nextC.playTicks === undefined) nextC.playTicks = 15;
             if (nextC.playTicks > 0) {
               nextC.playTicks--;
             } else {
               moneyEarned += 15;
+              satisfiedCount++;
               nextC.machineId = null;
               nextC.playTicks = undefined;
+              nextC.status = 'evaluating_needs';
+            }
+          } else if (c.status === 'using_bathroom') {
+            if (nextC.bathroomTicks > 0) {
+              nextC.bathroomTicks--;
+            } else {
+              satisfiedCount++;
+              nextC.machineId = null;
+              nextC.bathroomTicks = undefined;
               nextC.status = 'evaluating_needs';
             }
           } else if (c.status === 'walking_out') {
@@ -362,7 +577,7 @@ export default function useGameEngine({
                 nextB.y = nextB.path[nextB.pathIndex][1];
               } else {
                 nextB.status = 'pouring';
-                nextB.timer = 5;
+                nextB.timer = Math.max(1, Math.round(5 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
               }
             } else if (nextB.status === 'pouring') {
               nextB.timer--;
@@ -389,12 +604,12 @@ export default function useGameEngine({
                 nextB.y = nextB.path[nextB.pathIndex][1];
               } else {
                 nextB.status = 'serving';
-                nextB.timer = 3;
+                nextB.timer = Math.max(1, Math.round(3 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
               }
             } else if (nextB.status === 'serving') {
               nextB.timer--;
               if (nextB.timer <= 0) {
-                const cust = updated.find(c => c.id === nextB.targetCustId);
+                const cust = updated.find(c => c.id === nextB.targetCustId && c.status === 'waiting_for_drink');
                 if (cust) {
                   cust.status = 'drinking';
                   cust.beingServed = false;
@@ -409,9 +624,14 @@ export default function useGameEngine({
         }
 
         // ── Income & damage processing ──
-        if (moneyEarned > 0) {
-          setCash(c => c + moneyEarned);
-          setDailyReport(r => ({ ...r, income: r.income + moneyEarned }));
+        if (moneyEarned > 0 || satisfiedCount > 0 || unsatisfiedCount > 0) {
+          if (moneyEarned > 0) setCash(c => c + moneyEarned);
+          setDailyReport(r => ({
+            ...r,
+            income: r.income + moneyEarned,
+            satisfied: (r.satisfied ?? 0) + satisfiedCount,
+            unsatisfied: (r.unsatisfied ?? 0) + unsatisfiedCount,
+          }));
         }
 
         if (machinesToDegrade.length > 0) {
@@ -421,7 +641,8 @@ export default function useGameEngine({
             if (!machine) continue;
 
             const age = Math.max(0, timeRef.current.year - machine.year);
-            const damageChance = Math.min(0.60, 0.20 + (age * 0.02));
+            const damageReduction = upgradeValuesRef.current.damageReduction ?? 0;
+            const damageChance = Math.min(0.60, 0.20 + (age * 0.02)) * (1 - damageReduction);
 
             if (Math.random() < damageChance) {
               const amount = Math.floor(Math.random() * 5) + 1;
