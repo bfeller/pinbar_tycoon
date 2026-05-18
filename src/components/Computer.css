@@ -293,3 +293,59 @@
 .upgrade-pip.filled {
   background: #000080;
 }
+
+/* Performance Reports spreadsheet */
+.reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'MS Sans Serif', 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: #000;
+}
+
+.reports-table thead tr {
+  background: #000080;
+  color: #fff;
+  position: sticky;
+  top: 0;
+}
+
+.reports-table th {
+  padding: 5px 10px;
+  text-align: left;
+  font-weight: bold;
+  border-right: 1px solid #4040a0;
+}
+
+.reports-table th:last-child,
+.reports-table td:last-child {
+  border-right: none;
+}
+
+.reports-table td {
+  padding: 3px 10px;
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.reports-row-even {
+  background: #f0f0f8;
+}
+
+.reports-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.reports-total-row {
+  background: #c0c0c0;
+  border-top: 2px solid #000;
+  position: sticky;
+  bottom: 0;
+}
+
+.reports-total-row td {
+  padding: 5px 10px;
+  border-right: 1px solid #808080;
+  border-bottom: none;
+}

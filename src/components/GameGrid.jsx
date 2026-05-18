@@ -2,6 +2,7 @@ import React from 'react';
 import './GameGrid.css';
 import { CELL_SIZE, GRID_COLS, GRID_ROWS, DOOR_POS } from '../constants';
 import { getMachineCells } from '../utils/grid';
+import PinballMachineSVG from './PinballMachineSVG';
 
 export default function GameGrid({
   machines, customers = [], bartender = null, servers = [], hoveredCell, placementMachine, placementRotation,
@@ -59,20 +60,18 @@ export default function GameGrid({
         const minY = Math.min(...allY);
         const wCells = Math.max(...allX) - minX + 1;
         const hCells = Math.max(...allY) - minY + 1;
-        const isVertical = placementRotation === 'N' || placementRotation === 'S';
 
-        const frontSideStyle = {
-          position: 'absolute',
-          [placementRotation === 'N' ? 'bottom' : placementRotation === 'S' ? 'top' : placementRotation === 'E' ? 'left' : 'right']: 0,
-          width: isVertical ? '100%' : '50%',
-          height: isVertical ? '50%' : '100%',
-          background: 'rgba(255,255,255,0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '10px',
-          color: '#fff'
-        };
+        const isPlacementPinball = !type || type === 'pinball';
+        const placementImageUrl = isPlacementPinball
+          ? machines.find(m => m.id === placementMachine)?.imageUrl
+          : null;
+
+        const placementBackSide = {
+          N: { position: 'absolute', top: 3,    left: 5,  width: 40, height: 45, overflow: 'hidden', pointerEvents: 'none' },
+          S: { position: 'absolute', bottom: 3, left: 5,  width: 40, height: 45, overflow: 'hidden', pointerEvents: 'none' },
+          E: { position: 'absolute', top: 5,    right: 3, width: 45, height: 40, overflow: 'hidden', pointerEvents: 'none' },
+          W: { position: 'absolute', top: 5,    left: 3,  width: 45, height: 40, overflow: 'hidden', pointerEvents: 'none' },
+        }[placementRotation] ?? { position: 'absolute', top: 3, left: 5, width: 40, height: 45, overflow: 'hidden', pointerEvents: 'none' };
 
         return (
           <div
@@ -82,16 +81,47 @@ export default function GameGrid({
               top: minY * CELL_SIZE,
               width: wCells * CELL_SIZE,
               height: hCells * CELL_SIZE,
-              background: isOccupied ? 'rgba(239, 68, 68, 0.5)' : 'rgba(59, 130, 246, 0.5)',
+              background: isPlacementPinball
+                ? (isOccupied ? 'rgba(239,68,68,0.25)' : 'transparent')
+                : (isOccupied ? 'rgba(239,68,68,0.5)' : 'rgba(59,130,246,0.5)'),
               border: `2px dashed ${isOccupied ? '#ef4444' : '#60a5fa'}`,
+              opacity: 0.85,
               pointerEvents: 'none',
               zIndex: 30,
               borderRadius: '8px',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              overflow: 'hidden',
             }}
           >
-             {(!type || type === 'pinball' || type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
-             {type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'1.8rem'}}>🚻</div>}
+            {isPlacementPinball && <PinballMachineSVG orientation={placementRotation} />}
+            {isPlacementPinball && placementImageUrl && (() => {
+              const placementImgStyle = {
+                N: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 },
+                S: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9, transform: 'rotate(180deg)' },
+                E: { position: 'absolute', top: '50%', left: '50%', width: '40px', height: '45px', objectFit: 'cover', opacity: 0.9, transform: 'translate(-50%, -50%) rotate(90deg)' },
+                W: { position: 'absolute', top: '50%', left: '50%', width: '40px', height: '45px', objectFit: 'cover', opacity: 0.9, transform: 'translate(-50%, -50%) rotate(-90deg)' },
+              }[placementRotation] ?? { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 };
+              return (
+                <div style={placementBackSide}>
+                  <img
+                    src={placementImageUrl}
+                    alt=""
+                    style={placementImgStyle}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+              );
+            })()}
+            {type === 'bartop' && (
+              <div style={{
+                position: 'absolute',
+                bottom: 0, width: '50%', height: '100%',
+                background: 'rgba(255,255,255,0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '10px', color: '#fff'
+              }}>PLAY SIDE</div>
+            )}
+            {type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'1.8rem'}}>🚻</div>}
           </div>
         )
       })()}
@@ -107,12 +137,13 @@ export default function GameGrid({
         const hCells = Math.max(...allY) - minY + 1;
         const isVertical = m.orientation === 'N' || m.orientation === 'S';
 
+        const isPinball = !m.type || m.type === 'pinball';
         const frontSideStyle = {
           position: 'absolute',
           [m.orientation === 'N' ? 'bottom' : m.orientation === 'S' ? 'top' : m.orientation === 'E' ? 'left' : 'right']: 0,
           width: isVertical ? '100%' : '50%',
           height: isVertical ? '50%' : '100%',
-          background: 'rgba(255,255,255,0.15)',
+          background: isPinball ? 'none' : 'rgba(255,255,255,0.15)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -121,7 +152,15 @@ export default function GameGrid({
           pointerEvents: 'none'
         };
 
-        const backSide = {
+        // For pinball machines the image sits flush inside the SVG bezel:
+        //   N/S: 3px back-cap, 5px side bezels → 40×45px display
+        //   E/W: 3px back-cap, 5px top/bottom bezels → 45×40px display
+        const backSide = isPinball ? ({
+          N: { position: 'absolute', top: 3,    left: 5,  width: 40, height: 45 },
+          S: { position: 'absolute', bottom: 3, left: 5,  width: 40, height: 45 },
+          E: { position: 'absolute', top: 5,    right: 3, width: 45, height: 40 },
+          W: { position: 'absolute', top: 5,    left: 3,  width: 45, height: 40 },
+        }[m.orientation] ?? { position: 'absolute', top: 3, left: 5, width: 40, height: 45 }) : {
           position: 'absolute',
           [m.orientation === 'N' ? 'top' : m.orientation === 'S' ? 'bottom' : m.orientation === 'E' ? 'right' : 'left']: 0,
           width: isVertical ? '100%' : '50%',
@@ -139,31 +178,39 @@ export default function GameGrid({
               left: minX * CELL_SIZE,
               top: minY * CELL_SIZE,
               width: wCells * CELL_SIZE,
-              height: hCells * CELL_SIZE
+              height: hCells * CELL_SIZE,
+              background: isPinball ? (m.durability <= 20 ? 'rgba(239,68,68,0.18)' : 'transparent') : undefined,
+              border: isPinball ? (m.durability <= 20 ? '2px solid #f87171' : 'none') : undefined,
+              boxShadow: isPinball ? 'none' : undefined,
             }}
             title={m.type === 'bathroom' ? m.name : `${m.name} - ${m.durability}% Durability`}
           >
-            {(!m.type || m.type === 'pinball' || m.type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
+            {isPinball && <PinballMachineSVG orientation={m.orientation} />}
+            {m.type === 'bartop' && <div style={frontSideStyle}>PLAY SIDE</div>}
             {(m.type === 'pinball' || !m.type) && m.imageUrl && (() => {
-              const backglassTransform = {
-                N: { transform: 'perspective(60px) rotateX(42deg)', transformOrigin: 'bottom center' },
-                S: { transform: 'perspective(60px) rotateX(-42deg)', transformOrigin: 'top center' },
-                E: { transform: 'perspective(60px) rotateY(-42deg)', transformOrigin: 'left center' },
-                W: { transform: 'perspective(60px) rotateY(42deg)', transformOrigin: 'right center' },
-              }[m.orientation] ?? { transform: 'perspective(60px) rotateX(42deg)', transformOrigin: 'bottom center' };
+              const imgStyle = {
+                N: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 },
+                S: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9, transform: 'rotate(180deg)' },
+                E: { position: 'absolute', top: '50%', left: '50%', width: '40px', height: '45px', objectFit: 'cover', opacity: 0.9, transform: 'translate(-50%, -50%) rotate(90deg)' },
+                W: { position: 'absolute', top: '50%', left: '50%', width: '40px', height: '45px', objectFit: 'cover', opacity: 0.9, transform: 'translate(-50%, -50%) rotate(-90deg)' },
+              }[m.orientation] ?? { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 };
               return (
-                <div style={backSide}>
+                <div style={{ ...backSide, overflow: 'hidden', pointerEvents: 'none' }}>
                   <img
                     src={m.imageUrl}
                     alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85, ...backglassTransform }}
+                    style={imgStyle}
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
                 </div>
               );
             })()}
             {m.type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'2rem',pointerEvents:'none'}}>🚻</div>}
-            {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && <div className="durability-mini-bar" style={{height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444'}}></div>}
+            {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && (
+              isPinball
+                ? <div style={{ position: 'absolute', bottom: 0, left: 0, width: `${m.durability}%`, height: '3px', background: m.durability > 50 ? '#10b981' : '#ef4444', opacity: 0.9, transition: 'width 0.3s' }} />
+                : <div className="durability-mini-bar" style={{ height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444' }} />
+            )}
           </div>
         )
       })}

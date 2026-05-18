@@ -62,6 +62,7 @@ function App() {
   const [dayState, setDayState] = useState('BUILD');
   const [dayTimer, setDayTimer] = useState(0);
   const [dailyReport, setDailyReport] = useState({ income: 0, damage: [], satisfied: 0, unsatisfied: 0 });
+  const [financialHistory, setFinancialHistory] = useState([]);
   const [popularity, setPopularity] = useState(0);
   const [cash, setCash] = useState(25000);
   const [repairsRemaining, setRepairsRemaining] = useState(5);
@@ -171,6 +172,7 @@ function App() {
       firedArcEventIds: [...firedArcEventIds],
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
+      financialHistory,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   }, [time]); // intentionally only fires on day advance
@@ -184,6 +186,7 @@ function App() {
     setDayState('BUILD');
     setDayTimer(0);
     setDailyReport({ income: 0, damage: [], satisfied: 0, unsatisfied: 0 });
+    setFinancialHistory([]);
     setPopularity(0);
     setCash(25000);
     setRepairsRemaining(5);
@@ -231,6 +234,7 @@ function App() {
     });
     const serverCount = typeof savedStaff.server === 'number' ? savedStaff.server : (savedStaff.server ? 1 : 0);
     setServers(Array.from({ length: serverCount }, makeServerEntity));
+    setFinancialHistory(s.financialHistory ?? []);
     setScreen('game');
   };
 
@@ -555,6 +559,17 @@ function App() {
       }
     }
 
+    // Record this day's financials before resetting dailyReport
+    const expenseTotal = weeklyExpenses.reduce((s, e) => s + e.amount, 0);
+    setFinancialHistory(prev => [...prev, {
+      year: time.year,
+      week: time.week,
+      day: time.day,
+      income: dailyReport.income,
+      totalExpenses: expenseTotal,
+      net: dailyReport.income - expenseTotal,
+    }]);
+
     // Check for courses completing on or before the new day
     const justCompleted = enrolledCourses.filter(c => toLinearDay(c.completesAt) <= newLinear);
     const stillEnrolled  = enrolledCourses.filter(c => toLinearDay(c.completesAt) >  newLinear);
@@ -785,6 +800,7 @@ function App() {
             staff={staff}
             onHireStaff={hireStaff}
             onFireStaff={fireStaff}
+            financialHistory={financialHistory}
             closeComputer={() => setIsComputerOpen(false)}
           />
         )}

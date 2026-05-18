@@ -27,6 +27,7 @@ export default function Computer({
   characterName,
   liquidationLot, buyLiquidationMachine,
   staff, onHireStaff, onFireStaff,
+  financialHistory = [],
   closeComputer
 }) {
   const [booting, setBooting] = useState(true);
@@ -110,6 +111,10 @@ export default function Computer({
           <div className="win95-icon" onClick={() => setActiveWindow('staff')}>
             <div className="icon-img">👥</div>
             <span>Staff</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('reports')}>
+            <div className="icon-img">📊</div>
+            <span>Reports</span>
           </div>
         </div>
 
@@ -410,6 +415,64 @@ export default function Computer({
           );
         })()}
 
+        {activeWindow === 'reports' && (() => {
+          const sorted = [...financialHistory].reverse();
+          const totalIncome = financialHistory.reduce((s, r) => s + r.income, 0);
+          const totalExpenses = financialHistory.reduce((s, r) => s + r.totalExpenses, 0);
+          const totalNet = totalIncome - totalExpenses;
+          return (
+            <div className="win95-window">
+              <div className="win95-titlebar">
+                <div className="title">📊 Performance Reports</div>
+                <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+              </div>
+              <div className="win95-toolbar">
+                <span>Financial history — all time</span>
+              </div>
+              <div className="win95-content" style={{ padding: 0 }}>
+                {financialHistory.length === 0 ? (
+                  <p style={{ padding: '16px', fontFamily: 'MS Sans Serif, sans-serif', color: '#555', fontStyle: 'italic' }}>
+                    No data yet — complete your first day to see your report.
+                  </p>
+                ) : (
+                  <table className="reports-table">
+                    <thead>
+                      <tr>
+                        <th>Day</th>
+                        <th>Income</th>
+                        <th>Expenses</th>
+                        <th>Net</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sorted.map((row, i) => (
+                        <tr key={i} className={i % 2 === 0 ? 'reports-row-even' : ''}>
+                          <td>{row.year} W{row.week} D{row.day}</td>
+                          <td className="reports-num">${row.income.toLocaleString()}</td>
+                          <td className="reports-num">{row.totalExpenses > 0 ? `-$${row.totalExpenses.toLocaleString()}` : '—'}</td>
+                          <td className="reports-num" style={{ color: row.net > 0 ? '#006400' : row.net < 0 ? '#8b0000' : '#555', fontWeight: 'bold' }}>
+                            {row.net >= 0 ? '+' : ''}${row.net.toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="reports-total-row">
+                        <td><strong>TOTAL</strong></td>
+                        <td className="reports-num"><strong>${totalIncome.toLocaleString()}</strong></td>
+                        <td className="reports-num"><strong>-${totalExpenses.toLocaleString()}</strong></td>
+                        <td className="reports-num" style={{ color: totalNet >= 0 ? '#006400' : '#8b0000' }}>
+                          <strong>{totalNet >= 0 ? '+' : ''}${totalNet.toLocaleString()}</strong>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         {activeWindow === 'email' && (
           <EmailClient
             emails={inbox}
@@ -432,6 +495,9 @@ export default function Computer({
           )}
           {activeWindow === 'staff' && (
             <div className="taskbar-item active">Staff Management</div>
+          )}
+          {activeWindow === 'reports' && (
+            <div className="taskbar-item active">Performance Reports</div>
           )}
           <div className="taskbar-time">{time.year}</div>
         </div>
