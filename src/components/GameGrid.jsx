@@ -4,7 +4,7 @@ import { CELL_SIZE, GRID_COLS, GRID_ROWS, DOOR_POS } from '../constants';
 import { getMachineCells } from '../utils/grid';
 
 export default function GameGrid({
-  machines, customers = [], bartender = null, hoveredCell, placementMachine, placementRotation,
+  machines, customers = [], bartender = null, servers = [], hoveredCell, placementMachine, placementRotation,
   handleCellClick, setHoveredCell, cols = GRID_COLS, rows = GRID_ROWS, showDoor = true,
   gridId = 'main', placementMachineType = null
 }) {
@@ -121,6 +121,15 @@ export default function GameGrid({
           pointerEvents: 'none'
         };
 
+        const backSide = {
+          position: 'absolute',
+          [m.orientation === 'N' ? 'top' : m.orientation === 'S' ? 'bottom' : m.orientation === 'E' ? 'right' : 'left']: 0,
+          width: isVertical ? '100%' : '50%',
+          height: isVertical ? '50%' : '100%',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        };
+
         return (
           <div
             key={m.id}
@@ -135,6 +144,24 @@ export default function GameGrid({
             title={m.type === 'bathroom' ? m.name : `${m.name} - ${m.durability}% Durability`}
           >
             {(!m.type || m.type === 'pinball' || m.type === 'bartop') && <div style={frontSideStyle}>PLAY SIDE</div>}
+            {(m.type === 'pinball' || !m.type) && m.imageUrl && (() => {
+              const backglassTransform = {
+                N: { transform: 'perspective(60px) rotateX(42deg)', transformOrigin: 'bottom center' },
+                S: { transform: 'perspective(60px) rotateX(-42deg)', transformOrigin: 'top center' },
+                E: { transform: 'perspective(60px) rotateY(-42deg)', transformOrigin: 'left center' },
+                W: { transform: 'perspective(60px) rotateY(42deg)', transformOrigin: 'right center' },
+              }[m.orientation] ?? { transform: 'perspective(60px) rotateX(42deg)', transformOrigin: 'bottom center' };
+              return (
+                <div style={backSide}>
+                  <img
+                    src={m.imageUrl}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85, ...backglassTransform }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+              );
+            })()}
             {m.type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'2rem',pointerEvents:'none'}}>🚻</div>}
             {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && <div className="durability-mini-bar" style={{height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444'}}></div>}
           </div>
@@ -227,13 +254,48 @@ export default function GameGrid({
 
       {/* Bartender */}
       {bartender && bartender.x !== null && (
-        <div 
-          className="bartender-entity"
-          style={{
-            left: bartender.x * CELL_SIZE,
-            top: bartender.y * CELL_SIZE
-          }}
-        ></div>
+        <StaffDot entity={bartender} className="bartender-entity" label="Bartender" />
+      )}
+
+      {/* Servers */}
+      {servers.filter(s => s.x !== null).map(s => (
+        <StaffDot key={s.id} entity={s} className="server-entity" label="Server" />
+      ))}
+    </div>
+  );
+}
+
+function StaffDot({ entity, className, label }) {
+  const { status, timer, timerMax } = entity;
+  const holdingDrink = status === 'pouring' || status === 'walking_to_bartop' || status === 'serving';
+  const showProgress = (status === 'pouring' || status === 'serving') && timerMax > 0;
+  const pct = showProgress ? Math.max(0, (timer / timerMax) * 100) : 0;
+
+  return (
+    <div
+      className={className}
+      style={{ left: entity.x * CELL_SIZE, top: entity.y * CELL_SIZE }}
+      title={label}
+    >
+      {holdingDrink && (
+        <span style={{
+          position: 'absolute', top: -14, left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '11px', lineHeight: 1, pointerEvents: 'none'
+        }}>🍺</span>
+      )}
+      {showProgress && (
+        <div style={{
+          position: 'absolute', bottom: -6, left: -7,
+          width: 34, height: 3,
+          background: 'rgba(0,0,0,0.35)', borderRadius: 2, overflow: 'hidden'
+        }}>
+          <div style={{
+            width: `${pct}%`, height: '100%',
+            background: '#fbbf24', borderRadius: 2,
+            transition: 'width 0.2s linear'
+          }} />
+        </div>
       )}
     </div>
   );

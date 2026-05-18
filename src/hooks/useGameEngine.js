@@ -52,6 +52,7 @@ export default function useGameEngine({
   customers, setCustomers,
   cash, setCash,
   bartender, setBartender,
+  servers = [], setServers,
   dailyReport, setDailyReport,
   time,
   popularity,
@@ -66,6 +67,7 @@ export default function useGameEngine({
   const dayTimerRef = useRef(dayTimer);
   const timeRef = useRef(time);
   const bartenderRef = useRef(bartender);
+  const serversRef = useRef(servers);
   const upgradeValuesRef = useRef(upgradeValues);
   const popularityRef = useRef(popularity);
   const onEventRef = useRef(onEvent);
@@ -78,6 +80,7 @@ export default function useGameEngine({
   useEffect(() => { dayTimerRef.current = dayTimer; }, [dayTimer]);
   useEffect(() => { timeRef.current = time; }, [time]);
   useEffect(() => { bartenderRef.current = bartender; }, [bartender]);
+  useEffect(() => { serversRef.current = servers; }, [servers]);
   useEffect(() => { upgradeValuesRef.current = upgradeValues; }, [upgradeValues]);
   useEffect(() => { popularityRef.current = popularity; }, [popularity]);
   useEffect(() => { onEventRef.current = onEvent; }, [onEvent]);
@@ -349,6 +352,24 @@ export default function useGameEngine({
         } else {
           // Day timer expired — wait for all customers to leave
           if (customersRef.current.length === 0) {
+            // Repairman overnight maintenance — runs before REPORT so results appear in the modal
+            if (upgradeValuesRef.current.repairmanActive) {
+              const repairs = [];
+              const repairedMachines = machinesRef.current.map(m => {
+                const isMainFloor = (m.room === 'main' || !m.room) && m.x !== null;
+                const isPinball = m.type === 'pinball' || !m.type;
+                if (isPinball && isMainFloor && m.durability > 0 && m.durability < 100) {
+                  const gain = Math.min(3, 100 - m.durability);
+                  repairs.push({ id: m.id, name: m.name, gain });
+                  return { ...m, durability: m.durability + gain };
+                }
+                return m;
+              });
+              if (repairs.length > 0) {
+                setMachines(repairedMachines);
+                setDailyReport(r => ({ ...r, repairmanRepairs: repairs }));
+              }
+            }
             setDayState('REPORT');
           }
         }
@@ -368,8 +389,20 @@ export default function useGameEngine({
         let moneyEarned = 0;
         let satisfiedCount = 0;
         let unsatisfiedCount = 0;
+        const unsatisfiedReasons = {};
         const machinesToDegrade = [];
         const updated = [];
+
+        // Returns true if the charm upgrade forgives this unsatisfied instance
+        // (customer already had ≥1 need met, and forgiveness budget isn't spent)
+        const tryForgive = (nextC) => {
+          const charmLevel = upgradeValuesRef.current.charm ?? 0;
+          if (charmLevel > 0 && (nextC.satisfiedNeeds ?? 0) >= 1 && (nextC.forgivenUnsatisfied ?? 0) < charmLevel) {
+            nextC.forgivenUnsatisfied = (nextC.forgivenUnsatisfied ?? 0) + 1;
+            return true;
+          }
+          return false;
+        };
 
         for (const c of prev) {
           const nextC = { ...c, needs: [...(c.needs || [])] };
@@ -380,7 +413,13 @@ export default function useGameEngine({
               if (!sendToExit(nextC)) continue; // trapped — teleport out
             } else if (dayTimerRef.current >= DAY_LENGTH_SECONDS) {
               // Bar is closed — abandon remaining needs and leave angry
-              unsatisfiedCount += nextC.needs.length;
+              for (const n of nextC.needs) {
+                if (!tryForgive(nextC)) {
+                  unsatisfiedCount++;
+                  const key = n === 'pinball' ? 'bar_closed_pinball' : n === 'drink' ? 'bar_closed_drink' : 'bar_closed_bathroom';
+                  unsatisfiedReasons[key] = (unsatisfiedReasons[key] ?? 0) + 1;
+                }
+              }
               nextC.needs = [];
               nextC.angry = true;
               if (!sendToExit(nextC)) continue;
@@ -392,7 +431,10 @@ export default function useGameEngine({
               if (need === 'bathroom') {
                 const hasBathroom = machinesRef.current.some(m => m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room));
                 if (!hasBathroom) {
-                  unsatisfiedCount++;
+                  if (!tryForgive(nextC)) {
+                    unsatisfiedCount++;
+                    unsatisfiedReasons.no_bathroom = (unsatisfiedReasons.no_bathroom ?? 0) + 1;
+                  }
                   nextC.needs.shift();
                   if (nextC.needs.length === 0) {
                     nextC.angry = true;
@@ -447,7 +489,13 @@ export default function useGameEngine({
 
             if (nextC.patienceTicks <= 0) {
               // Out of patience — skip this need
-              unsatisfiedCount++;
+              if (!tryForgive(nextC)) {
+                unsatisfiedCount++;
+                const pReason = c.status === 'waiting_for_pinball' ? 'patience_pinball'
+                  : c.status === 'waiting_for_bathroom' ? 'patience_bathroom'
+                  : 'patience_bartop';
+                unsatisfiedReasons[pReason] = (unsatisfiedReasons[pReason] ?? 0) + 1;
+              }
               nextC.needs.shift();
               nextC.patienceTicks = undefined;
               nextC.waitingFor = undefined;
@@ -473,7 +521,7 @@ export default function useGameEngine({
               nextC.y = c.path[nextC.pathIndex][1];
             } else if (c.status === 'walking_to_bar') {
               nextC.status = 'waiting_for_drink';
-              nextC.drinkPatienceTicks = DRINK_PATIENCE_TICKS;
+              nextC.drinkPatienceTicks = Math.round(DRINK_PATIENCE_TICKS * (upgradeValuesRef.current.drinkPatienceMult ?? 1));
             } else if (c.status === 'walking_to_bathroom') {
               nextC.status = 'using_bathroom';
               nextC.bathroomTicks = BATHROOM_USE_TICKS;
@@ -487,6 +535,7 @@ export default function useGameEngine({
             } else {
               moneyEarned += 25;
               satisfiedCount++;
+              nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               machinesToDegrade.push(c.machineId);
               nextC.machineId = null;
               nextC.playTicks = undefined;
@@ -495,7 +544,10 @@ export default function useGameEngine({
           } else if (c.status === 'waiting_for_drink') {
             if (nextC.drinkPatienceTicks > 0) nextC.drinkPatienceTicks--;
             if (nextC.drinkPatienceTicks <= 0) {
-              unsatisfiedCount++;
+              if (!tryForgive(nextC)) {
+                unsatisfiedCount++;
+                unsatisfiedReasons.drink_wait = (unsatisfiedReasons.drink_wait ?? 0) + 1;
+              }
               nextC.machineId = null;
               nextC.beingServed = false;
               nextC.drinkPatienceTicks = undefined;
@@ -512,8 +564,9 @@ export default function useGameEngine({
             if (nextC.playTicks > 0) {
               nextC.playTicks--;
             } else {
-              moneyEarned += 15;
+              moneyEarned += upgradeValuesRef.current.drinkRevenue ?? 15;
               satisfiedCount++;
+              nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               nextC.machineId = null;
               nextC.playTicks = undefined;
               nextC.status = 'evaluating_needs';
@@ -523,6 +576,7 @@ export default function useGameEngine({
               nextC.bathroomTicks--;
             } else {
               satisfiedCount++;
+              nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               nextC.machineId = null;
               nextC.bathroomTicks = undefined;
               nextC.status = 'evaluating_needs';
@@ -539,102 +593,122 @@ export default function useGameEngine({
           updated.push(nextC);
         }
 
-        // ── Bartender AI ──
-        const nextB = { ...bartenderRef.current };
+        // ── Bar staff AI (bartender + servers share the same logic) ──
         const hasKeg = machinesRef.current.some(m => m.type === 'kegerator' && m.x !== null);
         const hasBartop = machinesRef.current.some(m => m.type === 'bartop' && m.x !== null);
 
-        if (hasKeg && hasBartop) {
-          if (nextB.x === null) {
+        const runBarStaff = (entity) => {
+          if (!hasKeg || !hasBartop) return entity;
+          const next = { ...entity };
+          if (next.x === null) {
             const keg = machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null);
-            if (keg) { nextB.x = keg.x; nextB.y = keg.y; }
-          } else {
-            if (nextB.status === 'idle') {
-              const waitingCust = updated.find(c => c.status === 'waiting_for_drink' && !c.beingServed);
-              if (waitingCust) {
-                waitingCust.beingServed = true;
-                nextB.status = 'walking_to_kegerator';
-                nextB.targetCustId = waitingCust.id;
-                nextB.targetBartopId = waitingCust.machineId;
-
-                const keg = machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null);
-                const grid = buildGrid(machinesRef.current);
-                grid.setWalkableAt(keg.x, keg.y, true); // Bartender can walk on keg
-                const finder = new PF.AStarFinder();
-                const path = finder.findPath(nextB.x, nextB.y, keg.x, keg.y, grid);
-                if (path && path.length > 0) {
-                  nextB.path = path;
-                  nextB.pathIndex = 0;
-                } else {
-                  nextB.status = 'idle';
-                  waitingCust.beingServed = false;
-                }
-              }
-            } else if (nextB.status === 'walking_to_kegerator') {
-              if (nextB.pathIndex < nextB.path.length - 1) {
-                nextB.pathIndex++;
-                nextB.x = nextB.path[nextB.pathIndex][0];
-                nextB.y = nextB.path[nextB.pathIndex][1];
+            if (keg) { next.x = keg.x; next.y = keg.y; }
+            return next;
+          }
+          if (next.status === 'idle') {
+            const waitingCust = updated.find(c => c.status === 'waiting_for_drink' && !c.beingServed);
+            if (waitingCust) {
+              waitingCust.beingServed = true;
+              next.status = 'walking_to_kegerator';
+              next.targetCustId = waitingCust.id;
+              next.targetBartopId = waitingCust.machineId;
+              const keg = machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null);
+              const grid = buildGrid(machinesRef.current);
+              grid.setWalkableAt(keg.x, keg.y, true);
+              const finder = new PF.AStarFinder();
+              const path = finder.findPath(next.x, next.y, keg.x, keg.y, grid);
+              if (path && path.length > 0) {
+                next.path = path; next.pathIndex = 0;
               } else {
-                nextB.status = 'pouring';
-                nextB.timer = Math.max(1, Math.round(5 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
-              }
-            } else if (nextB.status === 'pouring') {
-              nextB.timer--;
-              if (nextB.timer <= 0) {
-                nextB.status = 'walking_to_bartop';
-                const bartop = machinesRef.current.find(m => m.id === nextB.targetBartopId);
-                if (bartop) {
-                  const backCell = getBackCell(bartop.type, bartop.x, bartop.y, bartop.orientation);
-                  const grid = buildGrid(machinesRef.current);
-                  if (backCell) {
-                    const finder = new PF.AStarFinder();
-                    const path = finder.findPath(nextB.x, nextB.y, backCell.x, backCell.y, grid);
-                    if (path && path.length > 0) {
-                      nextB.path = path;
-                      nextB.pathIndex = 0;
-                    } else { nextB.status = 'idle'; }
-                  } else { nextB.status = 'idle'; }
-                } else { nextB.status = 'idle'; }
-              }
-            } else if (nextB.status === 'walking_to_bartop') {
-              if (nextB.pathIndex < nextB.path.length - 1) {
-                nextB.pathIndex++;
-                nextB.x = nextB.path[nextB.pathIndex][0];
-                nextB.y = nextB.path[nextB.pathIndex][1];
-              } else {
-                nextB.status = 'serving';
-                nextB.timer = Math.max(1, Math.round(3 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
-              }
-            } else if (nextB.status === 'serving') {
-              nextB.timer--;
-              if (nextB.timer <= 0) {
-                const cust = updated.find(c => c.id === nextB.targetCustId && c.status === 'waiting_for_drink');
-                if (cust) {
-                  cust.status = 'drinking';
-                  cust.beingServed = false;
-                }
-                nextB.status = 'idle';
-                nextB.targetCustId = null;
-                nextB.targetBartopId = null;
+                next.status = 'idle'; waitingCust.beingServed = false;
               }
             }
+          } else if (next.status === 'walking_to_kegerator') {
+            if (next.pathIndex < next.path.length - 1) {
+              next.pathIndex++;
+              next.x = next.path[next.pathIndex][0];
+              next.y = next.path[next.pathIndex][1];
+            } else {
+              next.status = 'pouring';
+              next.timer = Math.max(1, Math.round(5 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
+              next.timerMax = next.timer;
+            }
+          } else if (next.status === 'pouring') {
+            next.timer--;
+            if (next.timer <= 0) {
+              next.status = 'walking_to_bartop';
+              const bartop = machinesRef.current.find(m => m.id === next.targetBartopId);
+              if (bartop) {
+                const backCell = getBackCell(bartop.type, bartop.x, bartop.y, bartop.orientation);
+                const grid = buildGrid(machinesRef.current);
+                if (backCell) {
+                  const finder = new PF.AStarFinder();
+                  const path = finder.findPath(next.x, next.y, backCell.x, backCell.y, grid);
+                  if (path && path.length > 0) {
+                    next.path = path; next.pathIndex = 0;
+                  } else { next.status = 'idle'; }
+                } else { next.status = 'idle'; }
+              } else { next.status = 'idle'; }
+            }
+          } else if (next.status === 'walking_to_bartop') {
+            if (next.pathIndex < next.path.length - 1) {
+              next.pathIndex++;
+              next.x = next.path[next.pathIndex][0];
+              next.y = next.path[next.pathIndex][1];
+            } else {
+              next.status = 'serving';
+              next.timer = Math.max(1, Math.round(3 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
+              next.timerMax = next.timer;
+            }
+          } else if (next.status === 'serving') {
+            next.timer--;
+            if (next.timer <= 0) {
+              const cust = updated.find(c => c.id === next.targetCustId && c.status === 'waiting_for_drink');
+              if (cust) { cust.status = 'drinking'; cust.beingServed = false; }
+              next.status = 'idle'; next.targetCustId = null; next.targetBartopId = null;
+            }
           }
-          setBartender(nextB);
+          return next;
+        };
+
+        setBartender(runBarStaff(bartenderRef.current));
+        if (serversRef.current.length > 0) {
+          setServers(serversRef.current.map(s => runBarStaff(s)));
         }
 
         // ── Income & damage processing ──
-        if (moneyEarned > 0 || satisfiedCount > 0 || unsatisfiedCount > 0) {
+        const forgivenCount = updated.reduce((sum, c) => sum + (c.forgivenUnsatisfied ?? 0), 0)
+          - prev.reduce((sum, c) => sum + (c.forgivenUnsatisfied ?? 0), 0);
+
+        if (moneyEarned > 0 || satisfiedCount > 0 || unsatisfiedCount > 0 || forgivenCount > 0) {
           if (moneyEarned > 0) setCash(c => c + moneyEarned);
-          setDailyReport(r => ({
-            ...r,
-            income: r.income + moneyEarned,
-            satisfied: (r.satisfied ?? 0) + satisfiedCount,
-            unsatisfied: (r.unsatisfied ?? 0) + unsatisfiedCount,
-          }));
+          setDailyReport(r => {
+            const merged = { ...(r.unsatisfiedReasons ?? {}) };
+            for (const [k, v] of Object.entries(unsatisfiedReasons)) {
+              merged[k] = (merged[k] ?? 0) + v;
+            }
+            return {
+              ...r,
+              income: r.income + moneyEarned,
+              satisfied: (r.satisfied ?? 0) + satisfiedCount,
+              unsatisfied: (r.unsatisfied ?? 0) + unsatisfiedCount,
+              forgiven: (r.forgiven ?? 0) + Math.max(0, forgivenCount),
+              unsatisfiedReasons: merged,
+            };
+          });
         }
 
         if (machinesToDegrade.length > 0) {
+          const coverage = upgradeValuesRef.current.repairmanCoverage ?? 0;
+          const coveredIds = coverage > 0
+            ? new Set(
+                machinesRef.current
+                  .filter(m => (m.type === 'pinball' || !m.type) && (m.room === 'main' || !m.room) && m.x !== null)
+                  .slice(0, coverage)
+                  .map(m => m.id)
+              )
+            : new Set();
+
           const damageEvents = [];
           for (const mId of machinesToDegrade) {
             const machine = machinesRef.current.find(m => m.id === mId);
@@ -642,7 +716,8 @@ export default function useGameEngine({
 
             const age = Math.max(0, timeRef.current.year - machine.year);
             const damageReduction = upgradeValuesRef.current.damageReduction ?? 0;
-            const damageChance = Math.min(0.60, 0.20 + (age * 0.02)) * (1 - damageReduction);
+            const repairmanMult = coveredIds.has(mId) ? 0.6 : 1;
+            const damageChance = Math.min(0.60, 0.20 + (age * 0.02)) * (1 - damageReduction) * repairmanMult;
 
             if (Math.random() < damageChance) {
               const amount = Math.floor(Math.random() * 5) + 1;

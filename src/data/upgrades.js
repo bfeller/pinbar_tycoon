@@ -80,4 +80,14 @@ export const UPGRADE_DEFS = [
     costs: [1200, 3500],
     duration: 6,
   },
+  {
+    id: 'charm',
+    name: 'Hospitality & Charm',
+    icon: '🤝',
+    flavor: 'A warm atmosphere and a kind word at the door. Customers who had a good time forgive minor disappointments.',
+    effect: level => `${['','1 unmet need','2 unmet needs'][level]} forgiven per happy customer`,
+    maxLevel: 2,
+    costs: [900, 2800],
+    duration: 6,
+  },
 ];

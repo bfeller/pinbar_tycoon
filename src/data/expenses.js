@@ -20,4 +20,18 @@ export const EXPENSE_DEFS = [
       return 1100;
     },
   },
+  {
+    id: 'medical',
+    name: 'Medical Treatment',
+    icon: '🏥',
+    description: 'Ongoing treatment costs',
+    frequencyWeeks: 1,
+    startYear: 2020, // checked in App.jsx before firing
+    amount: (time) => {
+      // Weeks elapsed since 2020 W1. Grows at 8.5% per game-week (10 weeks/year).
+      // By 2025 W10 (week 59) this reaches ~$37,000 — deliberately brutal.
+      const weeksFrom2020 = (time.year - 2020) * 10 + (time.week - 1);
+      return Math.round(Math.pow(1.085, weeksFrom2020) * 300 / 10) * 10;
+    },
+  },
 ];

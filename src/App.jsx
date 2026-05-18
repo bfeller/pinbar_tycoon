@@ -6,6 +6,7 @@ import { extractYear, calculatePrice } from './utils/economy';
 import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
 import { UPGRADE_DEFS } from './data/upgrades';
+import { STAFF_DEFS } from './data/staff';
 import { EMAIL_DEFS } from './data/emails';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
 import { EXPENSE_DEFS } from './data/expenses';
@@ -16,6 +17,8 @@ import ReportModal from './components/ReportModal';
 import Computer from './components/Computer';
 import StartMenu from './components/StartMenu';
 import EventNotification from './components/EventNotification';
+import BankruptScreen from './components/BankruptScreen';
+import WinScreen from './components/WinScreen';
 
 const SAVE_KEY = 'pinbar_tycoon_save';
 
@@ -42,13 +45,15 @@ function addGameDays({ year, week, day }, days) {
   return { year: y, week: w, day: d };
 }
 
-const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0 };
+const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0 };
 const DEFAULT_BARTENDER = { x: null, y: null, status: 'idle', path: [], pathIndex: 0 };
+const DEFAULT_STAFF = { server: 0, repairman: false };
+const makeServerEntity = () => ({ id: 'server-' + Date.now() + Math.random(), x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, timer: 0 });
 
 function App() {
   // ── Screen / identity ──
   const [screen, setScreen] = useState('start');
-  const [savedGame] = useState(() => loadSave());
+  const [savedGame, setSavedGame] = useState(() => loadSave());
   const [pinbarName, setPinbarName] = useState('');
   const [characterName, setCharacterName] = useState('');
 
@@ -77,6 +82,10 @@ function App() {
     supply_chain: 0,   // 10% purchase discount per level (max 2)
   });
 
+  // ── Staff ──
+  const [staff, setStaff] = useState(DEFAULT_STAFF);
+  const [servers, setServers] = useState([]);
+
   // ── Email state ──
   const [inbox, setInbox] = useState([]); // [{ ...emailDef, read, choiceMade }]
 
@@ -88,6 +97,8 @@ function App() {
 
   // ── Event notification ──
   const [notification, setNotification] = useState(null); // { label, message, severity }
+  const [gameOverStats, setGameOverStats] = useState(null);
+  const [winStats, setWinStats] = useState(null);
 
   // ── UI state ──
   const [marketTab, setMarketTab] = useState('pinball');
@@ -105,6 +116,11 @@ function App() {
     spawnBoost: upgrades.marketing * 0.08,
     damageReduction: upgrades.electrical_eng * 0.10,
     bartenderSpeed: 1 + upgrades.mixology * 0.5,
+    charm: upgrades.charm,
+    drinkPatienceMult: staff.server > 0 ? 2 : 1,
+    drinkRevenue: staff.server > 0 ? 20 : 15,
+    repairmanActive: staff.repairman,
+    repairmanCoverage: staff.repairman ? 10 : 0,
   };
 
   // ── Hooks ──
@@ -121,6 +137,7 @@ function App() {
     customers, setCustomers,
     cash, setCash,
     bartender, setBartender,
+    servers, setServers,
     dailyReport, setDailyReport,
     time,
     popularity,
@@ -152,7 +169,8 @@ function App() {
       pinbarName, characterName, time, cash, machines, popularity,
       repairsRemaining, upgrades, enrolledCourses, inbox,
       firedArcEventIds: [...firedArcEventIds],
-      popGainMult, liquidationLot, liquidationExpiryDay,
+      popGainMult, liquidationLot, liquidationExpiryDay, staff,
+      serverCount: staff.server,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   }, [time]); // intentionally only fires on day advance
@@ -179,6 +197,8 @@ function App() {
     setPopGainMult(1.0);
     setLiquidationLot([]);
     setLiquidationExpiryDay(null);
+    setStaff(DEFAULT_STAFF);
+    setServers([]);
     setScreen('game');
   };
 
@@ -204,6 +224,13 @@ function App() {
     setPopGainMult(s.popGainMult ?? 1.0);
     setLiquidationLot(s.liquidationLot ?? []);
     setLiquidationExpiryDay(s.liquidationExpiryDay ?? null);
+    const savedStaff = s.staff ?? DEFAULT_STAFF;
+    setStaff({
+      server: typeof savedStaff.server === 'number' ? savedStaff.server : (savedStaff.server ? 1 : 0),
+      repairman: savedStaff.repairman ?? false,
+    });
+    const serverCount = typeof savedStaff.server === 'number' ? savedStaff.server : (savedStaff.server ? 1 : 0);
+    setServers(Array.from({ length: serverCount }, makeServerEntity));
     setScreen('game');
   };
 
@@ -224,6 +251,34 @@ function App() {
       icon: def.icon,
       completesAt: addGameDays(time, def.duration),
     }]);
+    return true;
+  };
+
+  const hireStaff = (id) => {
+    if (dayState === 'RUNNING') return false;
+    const def = STAFF_DEFS.find(d => d.id === id);
+    if (!def) return false;
+    if (id === 'server') {
+      const max = def.maxCount ?? 1;
+      if (staff.server >= max) return false;
+      setStaff(prev => ({ ...prev, server: prev.server + 1 }));
+      setServers(prev => [...prev, makeServerEntity()]);
+      return true;
+    }
+    if (staff[id]) return false;
+    setStaff(prev => ({ ...prev, [id]: true }));
+    return true;
+  };
+
+  const fireStaff = (id) => {
+    if (dayState === 'RUNNING') return false;
+    if (id === 'server') {
+      if (staff.server <= 0) return false;
+      setStaff(prev => ({ ...prev, server: prev.server - 1 }));
+      setServers(prev => prev.slice(0, -1));
+      return true;
+    }
+    setStaff(prev => ({ ...prev, [id]: false }));
     return true;
   };
 
@@ -259,6 +314,7 @@ function App() {
         year: mYear,
         durability,
         locationCount: machine.locationCount ?? 0,
+        imageUrl: machine.imageUrl ?? null,
         x: placeCoords.x, y: placeCoords.y,
         room: assignedRoom,
         orientation: 'N'
@@ -401,6 +457,7 @@ function App() {
         year: machine.parsedYear,
         durability: machine.durability,
         locationCount: machine.locationCount ?? 0,
+        imageUrl: machine.imageUrl ?? null,
         x: placeCoords.x, y: placeCoords.y,
         room: assignedRoom,
         orientation: 'N',
@@ -458,18 +515,44 @@ function App() {
     const newTime = { year, week, day };
     const newLinear = toLinearDay(newTime);
 
+    // Win condition — reach 2026
+    if (newTime.year >= 2026) {
+      localStorage.removeItem(SAVE_KEY);
+      setSavedGame(null);
+      setWinStats({ pinbarName, characterName, time: newTime, cash, popularity, machineCount: machines.length });
+      setScreen('win');
+      return;
+    }
+
     // Weekly expenses — fire on the first day of each new week
     const weeklyExpenses = [];
     if (newTime.day === 1) {
       const weekNum = (newTime.year - 1975) * 10 + newTime.week;
       for (const def of EXPENSE_DEFS) {
+        if (def.startYear && newTime.year < def.startYear) continue;
         if ((weekNum - 1) % def.frequencyWeeks === 0) {
           const amount = typeof def.amount === 'function' ? def.amount(newTime) : def.amount;
           weeklyExpenses.push({ id: def.id, name: def.name, icon: def.icon, amount });
         }
       }
+      // Staff salaries
+      for (const def of STAFF_DEFS) {
+        const val = staff[def.id];
+        const count = typeof val === 'number' ? val : (val ? 1 : 0);
+        if (count > 0) weeklyExpenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
+      }
       const totalExpenses = weeklyExpenses.reduce((sum, e) => sum + e.amount, 0);
-      if (totalExpenses > 0) setCash(c => c - totalExpenses);
+      if (totalExpenses > 0) {
+        const newCash = cash - totalExpenses;
+        setCash(newCash);
+        if (newCash < 0) {
+          localStorage.removeItem(SAVE_KEY);
+          setSavedGame(null);
+          setGameOverStats({ pinbarName, characterName, time: newTime, cash: newCash, popularity });
+          setScreen('bankrupt');
+          return;
+        }
+      }
     }
 
     // Check for courses completing on or before the new day
@@ -566,6 +649,8 @@ function App() {
       damage: [],
       satisfied: 0,
       unsatisfied: 0,
+      forgiven: 0,
+      unsatisfiedReasons: {},
       events: [],
       eventPopularityDelta: 0,
       completedCourses: justCompleted.map(c => ({ name: c.name, icon: c.icon })),
@@ -584,6 +669,24 @@ function App() {
     return <StartMenu savedGame={savedGame} onNewGame={handleNewGame} onContinue={handleContinue} />;
   }
 
+  if (screen === 'bankrupt') {
+    return (
+      <BankruptScreen
+        stats={gameOverStats}
+        onRestart={() => { setGameOverStats(null); setScreen('start'); }}
+      />
+    );
+  }
+
+  if (screen === 'win') {
+    return (
+      <WinScreen
+        stats={winStats}
+        onRestart={() => { setWinStats(null); setScreen('start'); }}
+      />
+    );
+  }
+
   return (
     <div className="game-container">
       <TopBar
@@ -595,6 +698,7 @@ function App() {
         popularity={popularity}
         placementMachine={placementMachine}
         dayState={dayState}
+        dayTimer={dayTimer}
         startDay={startDay}
         setIsComputerOpen={setIsComputerOpen}
         unreadEmails={inbox.filter(e => !e.read).length}
@@ -615,6 +719,7 @@ function App() {
               machines={mainMachines}
               customers={customers}
               bartender={bartender}
+              servers={servers}
               hoveredCell={hoveredCell}
               placementMachine={placementMachine}
               placementRotation={placementRotation}
@@ -677,6 +782,9 @@ function App() {
             characterName={characterName}
             liquidationLot={liquidationLot}
             buyLiquidationMachine={buyLiquidationMachine}
+            staff={staff}
+            onHireStaff={hireStaff}
+            onFireStaff={fireStaff}
             closeComputer={() => setIsComputerOpen(false)}
           />
         )}

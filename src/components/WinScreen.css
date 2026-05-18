@@ -1,0 +1,171 @@
+.win-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 24px 16px;
+  font-family: 'Georgia', serif;
+}
+
+.win-card {
+  background: #1e293b;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.25), 0 0 80px rgba(245, 158, 11, 0.1);
+  max-width: 520px;
+  width: 100%;
+  padding: 32px 36px;
+  text-align: center;
+  color: #f1f5f9;
+}
+
+.win-header {
+  margin-bottom: 20px;
+}
+
+.win-game-title {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-family: 'Arial', sans-serif;
+}
+
+.win-banner {
+  margin-bottom: 16px;
+}
+
+.win-banner-line {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #f59e0b;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.win-bar-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+
+.win-bar-dates {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+  font-family: 'Arial', sans-serif;
+}
+
+.win-divider {
+  border: none;
+  border-top: 1px solid #334155;
+  margin: 20px 0;
+}
+
+.win-narrative {
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+
+.win-narrative p {
+  margin: 0 0 12px 0;
+}
+
+.win-narrative strong {
+  color: #f1f5f9;
+}
+
+.win-reveal {
+  color: #f59e0b !important;
+  font-style: italic;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+.win-twist {
+  color: #f1f5f9 !important;
+  font-weight: bold;
+  font-size: 1.05rem !important;
+  line-height: 1.7 !important;
+  border-left: 3px solid #f59e0b;
+  padding-left: 14px;
+  margin-left: 4px;
+}
+
+.win-score-label {
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 12px;
+}
+
+.win-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.88rem;
+}
+
+.win-score-key {
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.win-score-dots {
+  flex: 1;
+  border-bottom: 1px dotted #334155;
+  margin: 0 6px 3px;
+}
+
+.win-score-val {
+  color: #f1f5f9;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.win-quill-sig {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+  line-height: 1.6;
+  font-family: 'Arial', sans-serif;
+}
+
+.win-quill-formerly {
+  color: #475569;
+}
+
+.win-btn {
+  margin-top: 24px;
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 8px 28px;
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: 'Arial', sans-serif;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.win-btn:hover {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}

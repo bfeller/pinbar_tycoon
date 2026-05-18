@@ -187,6 +187,39 @@ Temporal Continuity Office, Dept. 7`,
     choices: null,
   },
 
+  {
+    id: 'quill_illness',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Something I Need to Tell You',
+    body:
+`I have been composing this email for some time.
+
+In 2020, you are going to become unwell. I am not able to tell you what the illness is. This is partly a disclosure restriction and partly because I am not certain the medical terminology would mean anything to you in 1975, or 2019, or whenever you are reading this.
+
+What I can tell you is that the treatment will be expensive. Increasingly so. The billing escalates in a way I find genuinely difficult to describe without resorting to language that might cause alarm. So I will simply say: the final years are hard.
+
+I want to be honest with you: I have watched many versions of this timeline. Most of them do not make it to 2026. The ones that do are the ones who built something that could sustain the cost. That kept the machines running. That did not, under any circumstances, give up.
+
+What happens if you make it to 2026 is something I cannot tell you. Office policy prevents me from disclosing outcomes. But I will say — and I am choosing my words carefully here — that what is waiting for you on the other side of it is worth more than I am authorised to describe.
+
+Keep the bar open. Whatever it costs.
+
+I mean that in more ways than one.
+
+Dr. Quill
+
+P.S. I know this is a lot to absorb. Please do not let it affect your machine maintenance schedule. The machines still matter. This is not a metaphor.`,
+    trigger: ({ time, sentIds }) =>
+      time.year >= 2019 && time.week >= 8 && sentIds.has('quill_06') && !sentIds.has('quill_illness'),
+    choices: null,
+    event: {
+      label: 'Message from Dr. Quill',
+      severity: 'bad',
+      message: 'Dr. Quill has sent an urgent message. Check your inbox.',
+    },
+  },
+
   // ── Gary Kowalski ────────────────────────────────────────────────────────
 
   {

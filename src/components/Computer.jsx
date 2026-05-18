@@ -3,6 +3,7 @@ import './Computer.css';
 import { calculatePrice } from '../utils/economy';
 import { getUsedBlurb } from '../data/used_blurbs';
 import { UPGRADE_DEFS } from '../data/upgrades';
+import { STAFF_DEFS } from '../data/staff';
 import EmailClient from './EmailClient';
 
 function conditionLabel(durability) {
@@ -25,6 +26,7 @@ export default function Computer({
   inbox, onEmailChoice, onEmailRead,
   characterName,
   liquidationLot, buyLiquidationMachine,
+  staff, onHireStaff, onFireStaff,
   closeComputer
 }) {
   const [booting, setBooting] = useState(true);
@@ -104,6 +106,10 @@ export default function Computer({
               )}
             </div>
             <span>Outlook Express</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('staff')}>
+            <div className="icon-img">👥</div>
+            <span>Staff</span>
           </div>
         </div>
 
@@ -322,6 +328,88 @@ export default function Computer({
           </div>
         )}
 
+        {activeWindow === 'staff' && (() => {
+          const weeklyPayroll = STAFF_DEFS.reduce((total, d) => {
+            const val = staff?.[d.id] ?? 0;
+            const count = typeof val === 'number' ? val : (val ? 1 : 0);
+            return total + count * d.weeklySalary;
+          }, 0);
+          return (
+            <div className="win95-window">
+              <div className="win95-titlebar">
+                <div className="title">Staff Management</div>
+                <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+              </div>
+              <div className="win95-content">
+                <div className="browser-page">
+                  <h1 style={{ color: '#333', textDecoration: 'none', fontSize: '1.1rem', marginBottom: '4px' }}>Staff</h1>
+                  <p style={{ fontSize: '0.82rem', color: '#555', marginBottom: '4px' }}>
+                    Hire staff to automate operations. Salaries are deducted weekly.
+                  </p>
+                  {weeklyPayroll > 0 && (
+                    <p style={{ fontSize: '0.82rem', color: '#c00', marginBottom: '12px', fontWeight: 'bold' }}>
+                      Weekly payroll: ${weeklyPayroll.toLocaleString()}
+                    </p>
+                  )}
+                  <hr />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+                    {STAFF_DEFS.map(def => {
+                      const isCountable = def.maxCount !== undefined;
+                      const count = isCountable ? (staff?.[def.id] ?? 0) : 0;
+                      const hired = isCountable ? count > 0 : (staff?.[def.id] ?? false);
+                      const maxCount = def.maxCount ?? 1;
+                      const atMax = isCountable ? count >= maxCount : hired;
+                      const weeklyTotal = isCountable ? count * def.weeklySalary : (hired ? def.weeklySalary : 0);
+                      return (
+                        <div key={def.id} className="win95-card" style={{ textAlign: 'left' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                            <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{def.icon} {def.name}</div>
+                            <span style={{
+                              fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 8px',
+                              background: hired ? '#006400' : '#888', color: '#fff', letterSpacing: '0.05em'
+                            }}>
+                              {isCountable ? `${count} / ${maxCount}` : (hired ? 'EMPLOYED' : 'VACANT')}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: '0.8rem', color: '#444', margin: '0 0 6px 0', fontStyle: 'italic' }}>{def.description}</p>
+                          <ul style={{ margin: '0 0 8px 0', paddingLeft: '18px', fontSize: '0.78rem', color: '#333' }}>
+                            {def.effects.map((e, i) => <li key={i}>{e}</li>)}
+                          </ul>
+                          <div style={{ fontSize: '0.78rem', color: '#555', marginBottom: '8px' }}>
+                            ${def.weeklySalary.toLocaleString()}/week each
+                            {weeklyTotal > 0 && <span style={{ color: '#c00', marginLeft: '6px' }}>— ${weeklyTotal.toLocaleString()}/week total</span>}
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            {hired && (
+                              <button
+                                className="win95-btn"
+                                style={{ background: '#c0c0c0', color: '#333' }}
+                                disabled={dayState === 'RUNNING'}
+                                onClick={() => onFireStaff(def.id)}
+                              >
+                                {isCountable ? 'Let One Go' : 'Let Go'}
+                              </button>
+                            )}
+                            {!atMax && (
+                              <button
+                                className="win95-btn"
+                                disabled={dayState === 'RUNNING'}
+                                onClick={() => onHireStaff(def.id)}
+                              >
+                                {isCountable && count > 0 ? 'Hire Another' : 'Hire'}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {activeWindow === 'email' && (
           <EmailClient
             emails={inbox}
@@ -341,6 +429,9 @@ export default function Computer({
           )}
           {activeWindow === 'email' && (
             <div className="taskbar-item active">Outlook Express</div>
+          )}
+          {activeWindow === 'staff' && (
+            <div className="taskbar-item active">Staff Management</div>
           )}
           <div className="taskbar-time">{time.year}</div>
         </div>

@@ -1,6 +1,17 @@
 import React from 'react';
 import './ReportModal.css';
 
+const UNSATISFIED_REASONS = {
+  patience_pinball:   'Gave up waiting for a machine',
+  patience_bartop:    'Gave up waiting at the bar',
+  patience_bathroom:  'Gave up waiting for the bathroom',
+  drink_wait:         'Waited too long for a drink',
+  no_bathroom:        'No bathroom in the bar',
+  bar_closed_pinball: 'Bar closed — still wanted to play',
+  bar_closed_drink:   'Bar closed — still wanted a drink',
+  bar_closed_bathroom:'Bar closed — still needed the bathroom',
+};
+
 const LOG_MAX = Math.log1p(1200);
 
 export default function ReportModal({
@@ -22,8 +33,28 @@ export default function ReportModal({
            <span style={{color: '#a78bfa'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#10b981' : '#f87171'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
            <span style={{fontSize: '0.85rem', color: '#94a3b8'}}>
              {machineScore} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
+             {(dailyReport.forgiven ?? 0) > 0 && (
+               <span style={{color: '#34d399', marginLeft: '0.5rem'}}>· {dailyReport.forgiven} forgiven 🤝</span>
+             )}
            </span>
          </div>
+         {(dailyReport.unsatisfied ?? 0) > 0 && dailyReport.unsatisfiedReasons && (() => {
+           const top3 = Object.entries(dailyReport.unsatisfiedReasons)
+             .sort((a, b) => b[1] - a[1])
+             .slice(0, 3);
+           if (top3.length === 0) return null;
+           return (
+             <div style={{ marginTop: '0.5rem', padding: '0.5rem 0.75rem', background: 'rgba(248,113,113,0.07)', borderRadius: '4px', borderLeft: '2px solid rgba(248,113,113,0.4)' }}>
+               <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: '0.35rem' }}>Why they left unhappy</div>
+               {top3.map(([key, count]) => (
+                 <div key={key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem', color: '#f8fafc', marginBottom: '0.15rem' }}>
+                   <span>{UNSATISFIED_REASONS[key] ?? key}</span>
+                   <span style={{ color: '#f87171', marginLeft: '1rem', flexShrink: 0 }}>{count}×</span>
+                 </div>
+               ))}
+             </div>
+           );
+         })()}
          {dailyReport.completedCourses?.length > 0 && (
            <div style={{marginTop: '1rem', padding: '0.75rem', background: 'rgba(16,185,129,0.1)', border: '1px solid #10b981', borderRadius: '4px'}}>
              <div style={{color: '#10b981', fontWeight: 'bold', marginBottom: '0.4rem'}}>🎓 Courses Completed</div>
@@ -89,6 +120,17 @@ export default function ReportModal({
              );
            })}
          </ul>
+         {dailyReport.repairmanRepairs?.length > 0 && (
+           <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '4px' }}>
+             <div style={{ color: '#34d399', fontWeight: 'bold', marginBottom: '0.4rem' }}>🔧 Overnight Repairs</div>
+             {dailyReport.repairmanRepairs.map((r, i) => (
+               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#f8fafc', marginBottom: '0.2rem' }}>
+                 <span>{r.name}</span>
+                 <span style={{ color: '#34d399' }}>+{r.gain}%</span>
+               </div>
+             ))}
+           </div>
+         )}
          <button className="start-day-btn" onClick={nextDay}>Next Day</button>
        </div>
      </div>

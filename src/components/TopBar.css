@@ -40,6 +40,33 @@
   font-weight: bold;
 }
 
+.day-clock {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.day-clock-label {
+  position: absolute;
+  font-size: 0.62rem;
+  font-weight: bold;
+  line-height: 1;
+  pointer-events: none;
+}
+
+@keyframes clock-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+.day-clock.urgent {
+  animation: clock-pulse 0.5s ease-in-out infinite;
+}
+
 .placement-indicator {
   background: rgba(56, 189, 248, 0.1);
   color: #38bdf8;
