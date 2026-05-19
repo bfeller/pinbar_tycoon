@@ -1,9 +1,10 @@
 import { NEW_MACHINE_PRICE } from '../constants';
 
 export const BAR_SUPPLY_PURCHASE_PRICE = {
-  kegerator: 1000,
-  bartop: 500,
-  bathroom: 2000,
+  kegerator:  1000,
+  bartop:      500,
+  bathroom:   2000,
+  speed_well: 1500,
 };
 
 export const BAR_SUPPLY_SELL_RATIO = 0.5;

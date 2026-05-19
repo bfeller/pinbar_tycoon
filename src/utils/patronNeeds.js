@@ -1,10 +1,12 @@
 export const BATHROOM_AFTER_DRINK_BASE_CHANCE = 0.55;
 export const BATHROOM_UNLOCK_YEAR = 1976;
+export const COCKTAIL_UNLOCK_YEAR = 1980;
 
-export function buildSpawnNeedPool({ hasPinball, hasDrink }) {
+export function buildSpawnNeedPool({ hasPinball, hasDrink, hasCocktail }) {
   const pool = [];
-  if (hasPinball) pool.push('pinball');
-  if (hasDrink) pool.push('drink');
+  if (hasPinball)  pool.push('pinball');
+  if (hasDrink)    pool.push('drink');
+  if (hasCocktail) pool.push('cocktail');
   return pool;
 }
 
@@ -13,17 +15,20 @@ export function rollSpawnNeeds(needPool, rng = Math.random) {
   const needs = [];
   let drinkAdded = false;
   let pinballAdded = false;
+  let cocktailAdded = false;
   for (let i = 0; i < needsCount; i++) {
     const available = needPool.filter((n) => {
-      if (n === 'drink' && drinkAdded) return false;
-      if (n === 'pinball' && pinballAdded) return false;
+      if (n === 'drink'    && drinkAdded)    return false;
+      if (n === 'pinball'  && pinballAdded)  return false;
+      if (n === 'cocktail' && cocktailAdded) return false;
       return true;
     });
     const pool = available.length > 0 ? available : needPool;
     const pick = pool[Math.floor(rng() * pool.length)];
     needs.push(pick);
-    if (pick === 'drink') drinkAdded = true;
-    if (pick === 'pinball') pinballAdded = true;
+    if (pick === 'drink')    drinkAdded    = true;
+    if (pick === 'pinball')  pinballAdded  = true;
+    if (pick === 'cocktail') cocktailAdded = true;
   }
   return needs;
 }

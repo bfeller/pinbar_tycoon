@@ -1,5 +1,5 @@
 export const getMachineCells = (type, x, y, orientation) => {
-  if (type === 'bartop' || type === 'kegerator') return [{x, y}];
+  if (type === 'bartop' || type === 'kegerator' || type === 'speed_well') return [{x, y}];
   if (type === 'bathroom') return [{x, y}, {x: x+1, y}, {x, y: y+1}, {x: x+1, y: y+1}];
   if (orientation === 'N') return [{x, y}, {x, y: y-1}];
   if (orientation === 'E') return [{x, y}, {x: x+1, y}];
@@ -10,7 +10,7 @@ export const getMachineCells = (type, x, y, orientation) => {
 
 export const getPlayCell = (type, x, y, orientation) => {
   // Kegerator / bartop: front is the tap side staff or customers approach (N = south)
-  if (type === 'kegerator' || type === 'bartop') {
+  if (type === 'kegerator' || type === 'bartop' || type === 'speed_well') {
     if (orientation === 'N') return { x, y: y + 1 };
     if (orientation === 'E') return { x: x - 1, y };
     if (orientation === 'S') return { x, y: y - 1 };
