@@ -259,6 +259,39 @@ P.S. On the subject of dignity: I once filed a report about a fish and chip shop
   },
 
   {
+    id: 'quill_cocktail',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Re: Upcoming Changes to Patron Beverage Preferences (1980)',
+    body:
+`I am writing ahead of a change that will affect your bar beginning in 1980.
+
+Starting that year, some of your patrons will want cocktails.
+
+I want to acknowledge, before continuing, that sending a message through time to inform someone about cocktails is not the most dignified application of temporal communication technology. I have been in this role for eleven years. I have made peace with it.
+
+The practical information is as follows. Cocktails require a piece of equipment called a speed well — a low, stainless steel unit that sits behind the bar. Staff approach it the same way they approach the kegerator: they walk over, prepare the drink, and bring it to the patron at the bartop. The preparation takes longer. The drinks sell for more.
+
+You can purchase a speed well through the Bar Supplies section of your computer at any time. It costs $1,500. I recommend buying one before 1980, since demand will appear without warning and your staff will not spontaneously know how to make cocktails without the equipment present.
+
+Some clarifications, which I am including because I have observed what happens when I don't:
+
+— A speed well does not replace the kegerator. Patrons who want beer will still want beer. Patrons who want cocktails will want cocktails. Both types of patron may be present on the same evening. Both types of equipment will be in use simultaneously if your staffing supports it.
+
+— Cocktail demand does not appear before 1980. If you are reading this in 1979, you have some time. If you are reading this in 1980 or later, I apologise for the timing. The office runs on a fixed schedule.
+
+— I have researched this period. Cocktails become, as best I can describe it, culturally significant. I do not mean this as a recommendation. I mean it as context.
+
+I will write again if anything else changes.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      (time.year === 1979 && time.week >= 9 || time.year >= 1980) &&
+      !sentIds.has('quill_cocktail'),
+    choices: null,
+  },
+
+  {
     id: 'quill_06',
     from: 'Dr. H. Quill',
     address: 'horatio.quill@temporalcontinuity.gov',
@@ -269,6 +302,8 @@ P.S. On the subject of dignity: I once filed a report about a fish and chip shop
 I want to say something I have been composing for some time, which is: you have done remarkably well. It is now fifteen years since you started. The bar exists. It has a reputation and a regular clientele and at least one academic writing a thesis about it. The timeline, from where I am sitting, is holding.
 
 I should also prepare you for something. The years ahead are going to be harder. I cannot say more than that without running into disclosure territory that would trigger an automatic review, but I want you to know that what is coming is not a result of anything you did wrong. It is a broader shift — in technology, in leisure, in how people spend their evenings — that I have studied at length and find genuinely sad.
+
+The nineteen-nineties, in contrast, are a strong period for pinball. Your positive reputation growth from good nights should return to full strength for this decade — the one-time shocks of the eighties do not carry forward as a permanent penalty. I am telling you this because operators sometimes assume the home-console era never ends. It does, for pinball, for a while.
 
 From the turn of the century onward, the timeline applies a dampener to positive reputation growth on good nights. Bad nights still hurt at full strength. I will send a memo when that begins so you are not caught off guard by the arithmetic in your report. The important thing, and I am being as direct as I am permitted to be, is that you do not close. Keeping the bar open through what is coming matters. The reasons will eventually become clear.
 
