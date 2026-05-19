@@ -745,13 +745,9 @@ function App() {
     }
 
     // Popularity — arc one-time delta is a fraction of current popularity
-    const rawMachineScore = Math.floor(
-      machines
-        .filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null)
-        .reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 2, 0)
-    );
+    const mainPinball = machines.filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null);
     const machineExpectation = Math.floor(popularity / 100);
-    const machineScore = rawMachineScore - machineExpectation;
+    const machineScore = mainPinball.length - machineExpectation;
     const customerDelta = calcCustomerPopDelta(
       dailyReport.satisfied,
       dailyReport.unsatisfied,
