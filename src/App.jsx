@@ -48,7 +48,7 @@ function addGameDays({ year, week, day }, days) {
   return { year: y, week: w, day: d };
 }
 
-const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0 };
+const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0, liquor_licensing: 0 };
 const DEFAULT_BARTENDER = { id: 'bartender', x: null, y: null, status: 'idle', path: [], pathIndex: 0 };
 const DEFAULT_STAFF = { server: 0, repairman: false };
 const makeServerEntity = () => ({ id: 'server-' + Date.now() + Math.random(), x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, timer: 0 });
@@ -86,6 +86,7 @@ function App() {
     electrical_eng: 0, // 10% less machine damage per level (max 3)
     social_media: 0,   // +50% popularity gain per level (max 2)
     supply_chain: 0,   // 10% purchase discount per level (max 2)
+    liquor_licensing: 0, // +5s operating day per level (max 3)
   });
 
   // ── Staff ──

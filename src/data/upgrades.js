@@ -90,4 +90,14 @@ export const UPGRADE_DEFS = [
     costs: [900, 2800],
     duration: 6,
   },
+  {
+    id: 'liquor_licensing',
+    name: 'Liquor Licensing',
+    icon: '📋',
+    flavor: 'Cut through the red tape. Extend your operating hours with the proper permits.',
+    effect: level => `Operating hours: ${15 + level * 5}s per day`,
+    maxLevel: 3,
+    costs: [800, 2000, 4500],
+    duration: 6,
+  },
 ];
