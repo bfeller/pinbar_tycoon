@@ -1,7 +1,5 @@
-import {
-  POPULARITY_UNSATISFIED_DOUBLE_ABOVE,
-  POPULARITY_UNSATISFIED_TRIPLE_ABOVE,
-} from '../../constants';
+import { POPULARITY_UNSATISFIED_FIRST_TIER, POPULARITY_TIER_SIZE } from '../../constants';
+import { isApproachingUnsatisfiedTier } from '../../utils/popularity';
 import { lin } from './utils';
 
 // ── Dr. Horatio Quill (Temporal Continuity Office) ───────────────────────────
@@ -109,7 +107,7 @@ Each night, after you close, your popularity changes based on the day you just r
 
 Your total popularity is the running sum of these daily changes, plus any surprises from events, correspondence choices, or the occasional bad week in the wider world.
 
-Popularity is not decorative. As your score rises, more people hear about the bar and more will try to visit during the day. There is a limit to how crowded any one room can get — foot traffic does eventually level off — but a higher score generally means a busier shift.
+Popularity is not decorative. As your score rises, more people hear about the bar and more will try to visit during the day. The effect never truly stops — a higher score always nudges foot traffic upward — though each additional point of reputation matters a little less than the last.
 
 I will write again if the rules around reputation change. They do change, in this timeline. I wish they did not, but I am not in charge of home video games, economic recessions, or human plumbing requirements.
 
@@ -129,7 +127,7 @@ Dr. Quill`,
 
 Your popularity score is now high enough that you should notice more patrons arriving during the day than when you first opened. This is working as intended. Word spreads. The door gets used.
 
-Do not expect it to increase without limit. No bar can physically absorb infinite arrivals in a single evening, and the model I am using — which I did not build, I am merely required to monitor — assumes that very famous establishments eventually reach a practical ceiling on how many new walk-ins appear per minute. You are not there yet. You may never be. But if growth in daily arrivals seems to slow even while your score is still climbing, that is not a malfunction.
+Do not expect every point of popularity to feel as dramatic as the first hundred. The model I am required to monitor uses diminishing returns on arrivals — each step up still brings more people through the door, but the jump from five thousand to six thousand is quieter than the jump from zero to one thousand. That is intentional. It is also not a ceiling.
 
 The more reliable lever is still the quality of each visit: satisfied customers raise your score, unsatisfied ones lower it. Volume helps only if you can serve it.
 
@@ -151,39 +149,19 @@ Dr. Quill`,
 
 I am writing before you cross that line because the rules change slightly when you do.
 
-Above one thousand popularity, unsatisfied customers will weigh more heavily on your nightly reputation score. Each one will count double against you in the end-of-day calculation. Satisfied customers still count the same. Your machines still count the same.
+Above ${POPULARITY_UNSATISFIED_FIRST_TIER.toLocaleString()} popularity, unsatisfied customers weigh more heavily on your nightly reputation score. The first step is double — each unhappy patron counts twice. Satisfied customers still count the same. Your machines still count the same.
 
-I am telling you this so you are not surprised when you see it in the report. The bar is under more scrutiny now. People expect more of a place they have heard of. A long queue that times out, a broken machine, a missing bathroom — these failures matter more when your name is on the map.
+This does not stop at double. For every additional ${POPULARITY_TIER_SIZE.toLocaleString()} popularity you accumulate above that line, the penalty rises by another full count. Triple at the next mark, then quadruple, and so on. The end-of-day report will show the active multiplier when it applies.
+
+I am telling you this so you are not surprised when you see it in the report. The bar is under more scrutiny as it grows. People expect more of a place they have heard of. A long queue that times out, a broken machine, a missing bathroom — these failures matter more when your name is on the map.
 
 This is not punishment. It is proportion. A quiet Tuesday at a new pinball room forgives one walk-out. A busy Friday at a famous one does not.
 
 Dr. Quill`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= POPULARITY_UNSATISFIED_DOUBLE_ABOVE - 100 &&
+      isApproachingUnsatisfiedTier(popularity, 2) &&
       sentIds.has('quill_popularity_basics') &&
       !sentIds.has('quill_popularity_accountability'),
-    choices: null,
-  },
-
-  {
-    id: 'quill_popularity_accountability_high',
-    from: 'Dr. H. Quill',
-    address: 'horatio.quill@temporalcontinuity.gov',
-    subject: 'Further Notice — Heightened Scrutiny',
-    body:
-`Another threshold is approaching.
-
-When your popularity rises above two thousand, unsatisfied customers will count triple against your nightly score. Satisfied patrons and machine contribution are unchanged. Only the penalty for failure increases.
-
-At this level you are, by any reasonable measure, a destination. Destinations are remembered for what went wrong as much as what went right. I have read enough review columns in enough decades to know that a single bad night at a famous bar travels farther than a good month at an unknown one.
-
-Watch the end-of-day report. If you see unsatisfied patrons listed, treat them as urgent. The report will note when the multiplier is active.
-
-Dr. Quill`,
-    trigger: ({ popularity, sentIds }) =>
-      popularity >= POPULARITY_UNSATISFIED_TRIPLE_ABOVE - 100 &&
-      sentIds.has('quill_popularity_accountability') &&
-      !sentIds.has('quill_popularity_accountability_high'),
     choices: null,
   },
 
@@ -226,7 +204,8 @@ Dr. Quill
 
 P.S. I looked up Gary in the historical record. He keeps the log for another thirty-one years. I am not going to tell you what it says at the end, but I will say it is quite something.`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= 1000 && sentIds.has('quill_03') && !sentIds.has('quill_05'),
+      popularity >= POPULARITY_UNSATISFIED_FIRST_TIER &&
+      sentIds.has('quill_03') && !sentIds.has('quill_05'),
     choices: null,
   },
 

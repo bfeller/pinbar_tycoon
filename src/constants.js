@@ -7,12 +7,14 @@ export const CELL_SIZE = 50;
 export const DOOR_POS = { x: 7, y: 9 }; 
 export const DAY_LENGTH_SECONDS = 15;
 
-/** Popularity at which daily spawn rate stops increasing. */
-export const POPULARITY_SPAWN_CAP = 3000;
+/** Above this score, each unsatisfied patron uses an escalating penalty tier. */
+export const POPULARITY_UNSATISFIED_FIRST_TIER = 1000;
 
-/** Above these scores, each unsatisfied patron costs more popularity (2× / 3×). */
-export const POPULARITY_UNSATISFIED_DOUBLE_ABOVE = 1000;
-export const POPULARITY_UNSATISFIED_TRIPLE_ABOVE = 2000;
+/** Every additional chunk of popularity above FIRST_TIER adds one penalty tier (2×, 3×, 4×, …). */
+export const POPULARITY_TIER_SIZE = 1000;
+
+/** Higher = slower approach to peak spawn rate; rate still improves indefinitely. */
+export const POPULARITY_SPAWN_HALF_SATURATION = 750;
 
 /** Finite day length for sim + UI (NaN from bad saves must not bypass the day-end gate). */
 export function resolveDayLengthSeconds(upgradeValues = {}) {
