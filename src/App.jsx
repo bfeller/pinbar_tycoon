@@ -34,6 +34,8 @@ function loadSave() {
 }
 
 
+const LOG_MAX = Math.log1p(1200); // normalise locationCount — ~peak observed value
+
 // Convert game time to a comparable linear day number
 function toLinearDay({ year, week, day }) {
   return (year - 1975) * 30 + (week - 1) * 3 + day;
@@ -745,8 +747,11 @@ function App() {
 
     // Popularity — arc one-time delta is a fraction of current popularity
     const mainPinball = machines.filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null);
+    const machineEquivalents = Math.floor(
+      mainPinball.reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 4, 0)
+    );
     const machineExpectation = Math.floor(popularity / 100);
-    const machineScore = mainPinball.length - machineExpectation;
+    const machineScore = machineEquivalents - machineExpectation;
     const customerDelta = calcCustomerPopDelta(
       dailyReport.satisfied,
       dailyReport.unsatisfied,
