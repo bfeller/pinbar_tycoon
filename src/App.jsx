@@ -48,7 +48,7 @@ function addGameDays({ year, week, day }, days) {
 }
 
 const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0 };
-const DEFAULT_BARTENDER = { x: null, y: null, status: 'idle', path: [], pathIndex: 0 };
+const DEFAULT_BARTENDER = { id: 'bartender', x: null, y: null, status: 'idle', path: [], pathIndex: 0 };
 const DEFAULT_STAFF = { server: 0, repairman: false };
 const makeServerEntity = () => ({ id: 'server-' + Date.now() + Math.random(), x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, timer: 0 });
 
@@ -72,7 +72,7 @@ function App() {
   const [customers, setCustomers] = useState([]);
   const [spendPopups, setSpendPopups] = useState([]);
   const spendPopupIdRef = useRef(0);
-  const [bartender, setBartender] = useState({ x: null, y: null, status: 'idle', path: [], pathIndex: 0 });
+  const [bartender, setBartender] = useState({ ...DEFAULT_BARTENDER });
 
   // ── Upgrades ──
   const [enrolledCourses, setEnrolledCourses] = useState([]); // [{ id, name, icon, completesAt }]

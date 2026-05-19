@@ -3,6 +3,7 @@ import PF from 'pathfinding';
 import { DOOR_POS, DAY_LENGTH_SECONDS, GRID_COLS, GRID_ROWS } from '../constants';
 import { getPlayCell, getBackCell, getMachineCells } from '../utils/grid';
 import { buildGrid } from '../utils/pathfinding';
+import { buildSpawnNeedPool, rollSpawnNeeds, maybeQueueBathroomAfterDrink } from '../utils/patronNeeds';
 import { EVENT_DEFS } from '../data/events';
 import { DECISION_DEFS } from '../data/decisions';
 
@@ -242,20 +243,16 @@ export default function useGameEngine({
           const placedBartops = currentMachines.filter(m => m.type === 'bartop' && m.x !== null && m.y !== null);
           const hasKegerator = currentMachines.some(m => m.type === 'kegerator' && m.x !== null && m.y !== null);
 
-          const possibleNeeds = [];
-          if (placedPinballs.length > 0) possibleNeeds.push('pinball');
-          if (placedBartops.length > 0 && hasKegerator) possibleNeeds.push('drink');
-          if (timeRef.current.year >= 1976) possibleNeeds.push('bathroom');
+          const needPool = buildSpawnNeedPool({
+            hasPinball: placedPinballs.length > 0,
+            hasDrink: placedBartops.length > 0 && hasKegerator,
+          });
 
           // Spawn rate scales with popularity: nearly empty at pop 0, busy at pop 300+
           const popFactor = Math.min(1, popularityRef.current / 300);
           const spawnThreshold = Math.max(0.15, 0.85 - 0.60 * popFactor) - (upgradeValuesRef.current.spawnBoost ?? 0);
-          if (possibleNeeds.length > 0 && Math.random() > spawnThreshold) {
-            const needsCount = Math.floor(Math.random() * 3) + 1;
-            const needs = [];
-            for (let i = 0; i < needsCount; i++) {
-              needs.push(possibleNeeds[Math.floor(Math.random() * possibleNeeds.length)]);
-            }
+          if (needPool.length > 0 && Math.random() > spawnThreshold) {
+            const needs = rollSpawnNeeds(needPool);
 
             setCustomers(prev => [...prev, {
               id: 'cust-' + Date.now() + Math.random(),
@@ -267,7 +264,9 @@ export default function useGameEngine({
               y: DOOR_POS.y,
               needs,
               playTimeLeft: 0,
-              patienceTicks: undefined
+              patienceTicks: undefined,
+              drinksHad: 0,
+              bathroomQueued: false,
             }]);
           }
           // ── Event rolls (once per in-game day, midway through) ──
@@ -472,6 +471,7 @@ export default function useGameEngine({
                     unsatisfiedReasons.no_bathroom = (unsatisfiedReasons.no_bathroom ?? 0) + 1;
                   }
                   nextC.needs.shift();
+                  nextC.bathroomQueued = true;
                   if (nextC.needs.length === 0) {
                     nextC.angry = true;
                     if (!sendToExit(nextC)) continue;
@@ -611,6 +611,16 @@ export default function useGameEngine({
               nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               nextC.machineId = null;
               nextC.playTicks = undefined;
+              const hasBathroom = machinesRef.current.some(m =>
+                m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room)
+              );
+              const afterDrink = maybeQueueBathroomAfterDrink(nextC, {
+                year: timeRef.current.year,
+                hasBathroom,
+              });
+              nextC.needs = afterDrink.needs;
+              nextC.drinksHad = afterDrink.drinksHad;
+              nextC.bathroomQueued = afterDrink.bathroomQueued;
               nextC.status = 'evaluating_needs';
             }
           } else if (c.status === 'using_bathroom') {
@@ -624,6 +634,7 @@ export default function useGameEngine({
               if (bath) { nextC.x = bath.x; nextC.y = bath.y + 2; }
               nextC.machineId = null;
               nextC.bathroomTicks = undefined;
+              nextC.bathroomQueued = true;
               nextC.status = 'evaluating_needs';
             }
           } else if (c.status === 'walking_out') {
@@ -638,62 +649,193 @@ export default function useGameEngine({
           updated.push(nextC);
         }
 
-        // ── Bar staff AI (bartender + servers share the same logic) ──
+        // ── Bar staff AI (single kegerator lock, deterministic queue) ──
         const hasKeg = machinesRef.current.some(m => m.type === 'kegerator' && m.x !== null);
         const hasBartop = machinesRef.current.some(m => m.type === 'bartop' && m.x !== null);
+        const keg = hasKeg ? machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null) : null;
+        const kegFront = keg ? getPlayCell('kegerator', keg.x, keg.y, keg.orientation) : null;
 
-        const runBarStaff = (entity) => {
-          if (!hasKeg || !hasBartop) return entity;
-          const next = { ...entity };
-          if (next.x === null) {
-            const keg = machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null);
-            if (keg) { next.x = keg.x; next.y = keg.y; }
-            return next;
+        const findKegeratorApproach = (fromX, fromY, includeFront, blockedCells) => {
+          if (!keg || !kegFront) return null;
+          const finder = new PF.AStarFinder();
+
+          if (includeFront) {
+            const frontKey = `${kegFront.x},${kegFront.y}`;
+            const grid = buildGrid(machinesRef.current);
+            if (!grid.isWalkableAt(kegFront.x, kegFront.y)) return null;
+            if (blockedCells.has(frontKey)) return null;
+            const path = finder.findPath(fromX, fromY, kegFront.x, kegFront.y, grid);
+            if (!path || path.length === 0) return null;
+            return { path, x: kegFront.x, y: kegFront.y };
           }
+
+          const candidates = new Map();
+          const add = (x, y) => {
+            const key = `${x},${y}`;
+            if (candidates.has(key)) return;
+            if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) return;
+            const grid = buildGrid(machinesRef.current);
+            if (!grid.isWalkableAt(x, y)) return;
+            if (blockedCells.has(key)) return;
+            candidates.set(key, { x, y });
+          };
+
+          if (includeFront) add(kegFront.x, kegFront.y);
+          for (const kc of getMachineCells('kegerator', keg.x, keg.y, keg.orientation)) {
+            const adj = [
+              { x: kc.x - 1, y: kc.y }, { x: kc.x + 1, y: kc.y },
+              { x: kc.x, y: kc.y - 1 }, { x: kc.x, y: kc.y + 1 },
+            ];
+            for (const a of adj) {
+              if (!includeFront && a.x === kegFront.x && a.y === kegFront.y) continue;
+              add(a.x, a.y);
+            }
+          }
+
+          let best = null;
+          for (const cell of candidates.values()) {
+            const grid = buildGrid(machinesRef.current);
+            const path = finder.findPath(fromX, fromY, cell.x, cell.y, grid);
+            if (path && path.length > 0 && (!best || path.length < best.path.length)) {
+              best = { path, x: cell.x, y: cell.y };
+            }
+          }
+          return best;
+        };
+
+        const releaseCustomer = (custId) => {
+          if (!custId) return;
+          const cust = updated.find(c => c.id === custId && c.status === 'waiting_for_drink');
+          if (cust) cust.beingServed = false;
+        };
+
+        const staffUnits = [
+          { id: bartenderRef.current?.id ?? 'bartender', entity: bartenderRef.current },
+          ...serversRef.current.map(s => ({ id: s.id, entity: s })),
+        ];
+
+        let kegLockId = staffUnits.find(({ entity }) =>
+          entity && (entity.status === 'walking_to_kegerator' || entity.status === 'pouring')
+        )?.id ?? null;
+
+        const staffPositions = new Map();
+        const nextStaffEntities = [];
+
+        for (const { id, entity } of staffUnits) {
+          if (!entity || !hasKeg || !hasBartop || !kegFront) {
+            nextStaffEntities.push(entity);
+            continue;
+          }
+
+          const blocked = new Set(
+            [...staffPositions.entries()]
+              .filter(([otherId]) => otherId !== id)
+              .map(([, pos]) => `${pos.x},${pos.y}`)
+          );
+
+          const next = { ...entity };
+          if (next.status === 'waiting_at_kegerator') next.status = 'queued_for_kegerator';
+
+          if (next.x === null) {
+            const approach = findKegeratorApproach(DOOR_POS.x, DOOR_POS.y, false, blocked);
+            if (approach) { next.x = approach.x; next.y = approach.y; }
+            if (next.x !== null) staffPositions.set(id, { x: next.x, y: next.y });
+            nextStaffEntities.push(next);
+            continue;
+          }
+
+          // Drop stale job targets.
+          if (next.targetCustId) {
+            const stillWaiting = updated.some(c => c.id === next.targetCustId && c.status === 'waiting_for_drink');
+            if (!stillWaiting) {
+              if (kegLockId === id) kegLockId = null;
+              next.targetCustId = null;
+              next.targetBartopId = null;
+              next.status = 'idle';
+            }
+          }
+
           if (next.status === 'idle') {
             const waitingCust = updated.find(c => c.status === 'waiting_for_drink' && !c.beingServed);
             if (waitingCust) {
               waitingCust.beingServed = true;
-              next.status = 'walking_to_kegerator';
               next.targetCustId = waitingCust.id;
               next.targetBartopId = waitingCust.machineId;
-              const keg = machinesRef.current.find(m => m.type === 'kegerator' && m.x !== null);
-              const grid = buildGrid(machinesRef.current);
-              grid.setWalkableAt(keg.x, keg.y, true);
-              const finder = new PF.AStarFinder();
-              const path = finder.findPath(next.x, next.y, keg.x, keg.y, grid);
-              if (path && path.length > 0) {
-                next.path = path; next.pathIndex = 0;
-              } else {
-                next.status = 'idle'; waitingCust.beingServed = false;
+              next.status = 'queued_for_kegerator';
+            }
+          }
+
+          if (next.status === 'queued_for_kegerator' && next.targetCustId) {
+            if (!kegLockId || kegLockId === id) {
+              kegLockId = id;
+              const approach = findKegeratorApproach(next.x, next.y, true, blocked);
+              if (approach) {
+                next.status = 'walking_to_kegerator';
+                next.path = approach.path;
+                next.pathIndex = 0;
+              } else if (kegLockId === id) {
+                // Couldn't secure a route to the pour spot; don't deadlock the queue.
+                kegLockId = null;
               }
             }
           } else if (next.status === 'walking_to_kegerator') {
-            if (next.pathIndex < next.path.length - 1) {
+            if (kegLockId !== id) {
+              releaseCustomer(next.targetCustId);
+              next.targetCustId = null;
+              next.targetBartopId = null;
+              next.status = 'idle';
+            } else if (next.pathIndex < next.path.length - 1) {
               next.pathIndex++;
               next.x = next.path[next.pathIndex][0];
               next.y = next.path[next.pathIndex][1];
-            } else {
+            } else if (next.x === kegFront.x && next.y === kegFront.y) {
               next.status = 'pouring';
               next.timer = Math.max(1, Math.round(5 / (upgradeValuesRef.current.bartenderSpeed ?? 1)));
               next.timerMax = next.timer;
+            } else {
+              const approach = findKegeratorApproach(next.x, next.y, true, blocked);
+              if (approach) {
+                next.path = approach.path;
+                next.pathIndex = 0;
+              } else {
+                if (kegLockId === id) kegLockId = null;
+                next.status = 'queued_for_kegerator';
+              }
             }
           } else if (next.status === 'pouring') {
+            if (kegLockId !== id) kegLockId = id;
             next.timer--;
             if (next.timer <= 0) {
+              if (kegLockId === id) kegLockId = null;
               next.status = 'walking_to_bartop';
               const bartop = machinesRef.current.find(m => m.id === next.targetBartopId);
               if (bartop) {
                 const backCell = getBackCell(bartop.type, bartop.x, bartop.y, bartop.orientation);
-                const grid = buildGrid(machinesRef.current);
                 if (backCell) {
+                  const grid = buildGrid(machinesRef.current);
                   const finder = new PF.AStarFinder();
                   const path = finder.findPath(next.x, next.y, backCell.x, backCell.y, grid);
                   if (path && path.length > 0) {
-                    next.path = path; next.pathIndex = 0;
-                  } else { next.status = 'idle'; }
-                } else { next.status = 'idle'; }
-              } else { next.status = 'idle'; }
+                    next.path = path;
+                    next.pathIndex = 0;
+                  } else {
+                    releaseCustomer(next.targetCustId);
+                    next.targetCustId = null;
+                    next.targetBartopId = null;
+                    next.status = 'idle';
+                  }
+                } else {
+                  releaseCustomer(next.targetCustId);
+                  next.targetCustId = null;
+                  next.targetBartopId = null;
+                  next.status = 'idle';
+                }
+              } else {
+                releaseCustomer(next.targetCustId);
+                next.targetCustId = null;
+                next.targetBartopId = null;
+                next.status = 'idle';
+              }
             }
           } else if (next.status === 'walking_to_bartop') {
             if (next.pathIndex < next.path.length - 1) {
@@ -709,16 +851,23 @@ export default function useGameEngine({
             next.timer--;
             if (next.timer <= 0) {
               const cust = updated.find(c => c.id === next.targetCustId && c.status === 'waiting_for_drink');
-              if (cust) { cust.status = 'drinking'; cust.beingServed = false; }
-              next.status = 'idle'; next.targetCustId = null; next.targetBartopId = null;
+              if (cust) {
+                cust.status = 'drinking';
+                cust.beingServed = false;
+              }
+              next.status = 'idle';
+              next.targetCustId = null;
+              next.targetBartopId = null;
             }
           }
-          return next;
-        };
 
-        setBartender(runBarStaff(bartenderRef.current));
+          if (next.x !== null) staffPositions.set(id, { x: next.x, y: next.y });
+          nextStaffEntities.push(next);
+        }
+
+        setBartender(nextStaffEntities[0] ?? bartenderRef.current);
         if (serversRef.current.length > 0) {
-          setServers(serversRef.current.map(s => runBarStaff(s)));
+          setServers(nextStaffEntities.slice(1));
         }
 
         // ── Income & damage processing ──

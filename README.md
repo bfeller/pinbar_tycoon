@@ -132,7 +132,7 @@ choices: [
 
 ## TODO
 
-- kegerator currently lets multiple bartender/servers use at a time, needs to use queue system to encourage the player to add more as needs increase, kegerator should also get used from in front of and not on top of and not be traversable by the server/bartenders
+
 - the rent/costs reporting is strange because the money decreases before the end of day report, maybe the end of day report with expenses should happen the day before so if the player doesn't have enough money to cover expenses the button can say "Go Bankrupt" and the player can see what has happened before it happens.
 - add an email from the university upon finishing an upgrade (make them silly, think if Greendale from Community had online courses, should suggest strange follow up courses that the player can never take)
 - events are sometimes unclear about the effect that they have in the toast, they should have small text in the top right of them with the affect (ie: -$50)
@@ -143,3 +143,4 @@ choices: [
 - in the machine actions add a link to the opdb page that the player can click to open a new window to see information about the machine. also add a credits section on the computer that we can use to give credit and thanks to the opdb.
 - email offers should expire after a week, like when reg offers a pinball for sale.
 - if the player buys the $800 pinball machine from reg it should start a storyline where reg is spying on the bar through the machine.
+- refactor useGameEngine.js into more easily managed pieces. especially consider reusable logic for things like the kegerator, what if we add a speed well in the future that lets the user serve cocktails, it would have very similar logic.
