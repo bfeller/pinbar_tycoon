@@ -1,3 +1,7 @@
+import {
+  POPULARITY_UNSATISFIED_DOUBLE_ABOVE,
+  POPULARITY_UNSATISFIED_TRIPLE_ABOVE,
+} from '../../constants';
 import { lin } from './utils';
 
 // ── Dr. Horatio Quill (Temporal Continuity Office) ───────────────────────────
@@ -69,7 +73,9 @@ Dr. Quill`,
     body:
 `You have now run at least one full day of business. Well done.
 
-The end-of-day report is worth reading carefully. It shows how many customers were satisfied, how many gave up and left without playing, and what damage your machines took during the day. Unsatisfied customers affect your reputation — tracked in this game as "popularity." Over time, popularity shapes how busy your bar becomes.
+The end-of-day report is worth reading carefully. It shows how many customers were satisfied, how many gave up and left without playing, and what damage your machines took during the day.
+
+You will also see a number called popularity in your status bar. I should have explained this earlier. I am sending a separate memo on how reputation works in your operation — please read it when it arrives. The short version is that satisfied customers help you and unhappy ones hurt you, and the figure in the bar is how the wider world currently views your establishment.
 
 This is also, broadly, how businesses work in real life. I mention it because the documentation I was given suggested I should explain things thoroughly.
 
@@ -82,6 +88,102 @@ Dr. Quill
 P.S. I am required by office policy to note that this correspondence does not constitute official endorsement of any commercial activity by the Temporal Continuity Office. This is a legal formality. I am absolutely endorsing your commercial activity.`,
     trigger: ({ time, sentIds }) =>
       lin(time) >= 4 && sentIds.has('quill_02') && !sentIds.has('quill_03'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_basics',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Memo — How Popularity Works',
+    body:
+`Following up on my last note: this is the full explanation of popularity, which is the reputation score shown in your status bar.
+
+Each night, after you close, your popularity changes based on the day you just ran:
+
+• Pinball machines on the main floor add to your score. Well-known machines — the ones with more stars in the market — count for more than obscure ones.
+
+• Each satisfied customer adds one point to that day's reputation change.
+
+• Each unsatisfied customer subtracts one point. These are patrons who left without getting what they came for — they waited too long, could not find a machine, needed a drink you could not serve, and so on. The end-of-day report lists the most common reasons if you want to improve.
+
+Your total popularity is the running sum of these daily changes, plus any surprises from events, correspondence choices, or the occasional bad week in the wider world.
+
+Popularity is not decorative. As your score rises, more people hear about the bar and more will try to visit during the day. There is a limit to how crowded any one room can get — foot traffic does eventually level off — but a higher score generally means a busier shift.
+
+I will write again if the rules around reputation change. They do change, in this timeline. I wish they did not, but I am not in charge of home video games, economic recessions, or human plumbing requirements.
+
+Dr. Quill`,
+    trigger: ({ sentIds }) =>
+      sentIds.has('quill_03') && !sentIds.has('quill_popularity_basics'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_footfall',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Foot Traffic — What to Expect',
+    body:
+`You have built enough of a reputation that I should clarify how busyness works.
+
+Your popularity score is now high enough that you should notice more patrons arriving during the day than when you first opened. This is working as intended. Word spreads. The door gets used.
+
+Do not expect it to increase without limit. No bar can physically absorb infinite arrivals in a single evening, and the model I am using — which I did not build, I am merely required to monitor — assumes that very famous establishments eventually reach a practical ceiling on how many new walk-ins appear per minute. You are not there yet. You may never be. But if growth in daily arrivals seems to slow even while your score is still climbing, that is not a malfunction.
+
+The more reliable lever is still the quality of each visit: satisfied customers raise your score, unsatisfied ones lower it. Volume helps only if you can serve it.
+
+Dr. Quill`,
+    trigger: ({ popularity, sentIds }) =>
+      popularity >= 100 &&
+      sentIds.has('quill_popularity_basics') &&
+      !sentIds.has('quill_popularity_footfall'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_accountability',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Advance Notice — Reputation at Scale',
+    body:
+`You are approaching a level of popularity where the timeline treats your bar as a genuine institution rather than a promising experiment.
+
+I am writing before you cross that line because the rules change slightly when you do.
+
+Above one thousand popularity, unsatisfied customers will weigh more heavily on your nightly reputation score. Each one will count double against you in the end-of-day calculation. Satisfied customers still count the same. Your machines still count the same.
+
+I am telling you this so you are not surprised when you see it in the report. The bar is under more scrutiny now. People expect more of a place they have heard of. A long queue that times out, a broken machine, a missing bathroom — these failures matter more when your name is on the map.
+
+This is not punishment. It is proportion. A quiet Tuesday at a new pinball room forgives one walk-out. A busy Friday at a famous one does not.
+
+Dr. Quill`,
+    trigger: ({ popularity, sentIds }) =>
+      popularity >= POPULARITY_UNSATISFIED_DOUBLE_ABOVE - 100 &&
+      sentIds.has('quill_popularity_basics') &&
+      !sentIds.has('quill_popularity_accountability'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_accountability_high',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Further Notice — Heightened Scrutiny',
+    body:
+`Another threshold is approaching.
+
+When your popularity rises above two thousand, unsatisfied customers will count triple against your nightly score. Satisfied patrons and machine contribution are unchanged. Only the penalty for failure increases.
+
+At this level you are, by any reasonable measure, a destination. Destinations are remembered for what went wrong as much as what went right. I have read enough review columns in enough decades to know that a single bad night at a famous bar travels farther than a good month at an unknown one.
+
+Watch the end-of-day report. If you see unsatisfied patrons listed, treat them as urgent. The report will note when the multiplier is active.
+
+Dr. Quill`,
+    trigger: ({ popularity, sentIds }) =>
+      popularity >= POPULARITY_UNSATISFIED_TRIPLE_ABOVE - 100 &&
+      sentIds.has('quill_popularity_accountability') &&
+      !sentIds.has('quill_popularity_accountability_high'),
     choices: null,
   },
 
@@ -129,6 +231,28 @@ P.S. I looked up Gary in the historical record. He keeps the log for another thi
   },
 
   {
+    id: 'quill_popularity_1981',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'The Years Ahead — Competition',
+    body:
+`We are entering the early nineteen-eighties. I want to prepare you for how this affects reputation.
+
+Home video games are arriving. They are not pinball. They are, nevertheless, competition for the same evening and the same pocket money. Arcades that survive this period do so by being good at what pinball does — social, physical, immediate — but the wider leisure market will occasionally deliver shocks to your standing. You may see sudden drops in popularity that are not caused by anything you did on the floor that day. Industry letters, local press, a bad rumour: the model treats these as one-time hits to your score.
+
+Day-to-day reputation from satisfied and unsatisfied customers still works the same way. What changes is that the world outside your door is noisier.
+
+Keep the machines working. Keep the regulars happy. The bar has survived worse than a television with a cartridge slot.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      (time.year === 1980 && time.week >= 8 || time.year >= 1981) &&
+      sentIds.has('quill_popularity_basics') &&
+      !sentIds.has('quill_popularity_1981'),
+    choices: null,
+  },
+
+  {
     id: 'quill_bathroom',
     from: 'Dr. H. Quill',
     address: 'horatio.quill@temporalcontinuity.gov',
@@ -167,7 +291,7 @@ I want to say something I have been composing for some time, which is: you have 
 
 I should also prepare you for something. The years ahead are going to be harder. I cannot say more than that without running into disclosure territory that would trigger an automatic review, but I want you to know that what is coming is not a result of anything you did wrong. It is a broader shift — in technology, in leisure, in how people spend their evenings — that I have studied at length and find genuinely sad.
 
-The important thing, and I am being as direct as I am permitted to be, is that you do not close. Keeping the bar open through what is coming matters. The reasons will eventually become clear.
+From the turn of the century onward, the timeline applies a dampener to positive reputation growth on good nights. Bad nights still hurt at full strength. I will send a memo when that begins so you are not caught off guard by the arithmetic in your report. The important thing, and I am being as direct as I am permitted to be, is that you do not close. Keeping the bar open through what is coming matters. The reasons will eventually become clear.
 
 Also: please repair your machines more consistently. I notice you let some of them run quite low before addressing them. The temporal stakes are real, but also just — it is a good habit.
 
@@ -178,6 +302,75 @@ Senior Analyst (Acting) — there have been some departmental restructures
 Temporal Continuity Office, Dept. 7`,
     trigger: ({ time, sentIds }) =>
       time.year >= 1990 && sentIds.has('quill_05') && !sentIds.has('quill_06'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_crisis',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Memo — The Slow Years (Reputation)',
+    body:
+`The new century has arrived. The change I warned you about in my earlier letter is now in effect.
+
+During this period, positive reputation growth from a good day is reduced. Points you earn from satisfied customers and from your machines on the floor still count — but not at their full value when the total would have been a gain. Losses are different. Unsatisfied customers still subtract at full strength. A bad service day can still wound you. A good day builds your buffer more slowly than it used to.
+
+This reflects a real historical squeeze on arcades: fewer walk-ins, tighter margins, more ways to stay home. The model is not saying you ran the bar poorly. It is saying the era makes momentum harder.
+
+You may also still receive sudden reputation shocks from events outside the room. Those are separate from the nightly satisfied and unsatisfied tally.
+
+Endure it. Adjust staffing, drinks, repairs — whatever you need. The dampener is not permanent.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      (time.year === 2000 && time.week >= 8 || time.year >= 2001) &&
+      sentIds.has('quill_06') &&
+      sentIds.has('quill_popularity_basics') &&
+      !sentIds.has('quill_popularity_crisis'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_crisis_deepens',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Memo — The Slow Years (Update)',
+    body:
+`The squeeze has worsened.
+
+Positive reputation growth from good nights is reduced further than when this period began. Again: satisfied customers and machines still contribute, but the gain is scaled down before it is added to your total. Unsatisfied customers still count against you at full value. A rough Friday can still erase a careful week.
+
+I want to be precise because I have seen operators misread the report and believe they are immune to bad nights. They are not. Only the upside is muted.
+
+If you have been relying on volume alone, this is the point to rely on service quality instead. Forgive fewer queues. Fix machines before you open. Hire help for the bar if you can afford it.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      (time.year === 2005 && time.week >= 8 || time.year >= 2006) &&
+      sentIds.has('quill_popularity_crisis') &&
+      !sentIds.has('quill_popularity_crisis_deepens'),
+    choices: null,
+  },
+
+  {
+    id: 'quill_popularity_renaissance',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Memo — Reputation Growth Restored',
+    body:
+`Good news, for once, on the subject of arithmetic.
+
+The dampener on positive reputation growth has been lifted. Good nights once again add their full value from satisfied customers and machines. Bad nights still subtract at full strength — the world has not become forgiving — but you are no longer fighting uphill on every successful evening.
+
+This matches what I have observed in the historical record: a renewed interest in pinball as craft, nostalgia, and social experience. People are coming back to rooms like yours on purpose.
+
+Use it. The timeline is still moving toward 2026. You will need every point of reputation you can earn while the window is open.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      (time.year === 2014 && time.week >= 8 || time.year >= 2015) &&
+      sentIds.has('quill_popularity_crisis_deepens') &&
+      !sentIds.has('quill_popularity_renaissance'),
     choices: null,
   },
 
