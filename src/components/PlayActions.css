@@ -152,6 +152,32 @@
   pointer-events: none;
 }
 
+.rotate-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #c0c0c0;
+  color: #000;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rotate-btn:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
 .placement-helper kbd {
   display: inline-block;
   background: #c0c0c0;

@@ -36,6 +36,7 @@ function DayClock({ dayTimer, dayLengthSeconds }) {
 
 export default function PlayActions({
   dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails, placementMachine,
+  onRotate, placementRotation,
 }) {
   if (placementMachine) {
     return (
@@ -45,6 +46,10 @@ export default function PlayActions({
           <span>
             Press <kbd>R</kbd> to rotate — click a tile to place
           </span>
+          <button className="rotate-btn" onClick={onRotate} title="Rotate machine">
+            <i className="fa-solid fa-rotate-right" />
+            <span>{placementRotation}</span>
+          </button>
         </div>
       </div>
     );

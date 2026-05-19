@@ -211,20 +211,22 @@ function App() {
     onCustomerSpend: addSpendPopup,
   });
 
-  // ── Keyboard: rotate placement ──
+  // ── Rotate placement (keyboard R or rotate button) ──
+  const rotatePlacement = () => {
+    if (dayState === 'REPORT') return;
+    setPlacementRotation(prev => {
+      const rots = ['N', 'E', 'S', 'W'];
+      return rots[(rots.indexOf(prev) + 1) % 4];
+    });
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'r' || e.key === 'R') {
-        if (dayState === 'REPORT') return;
-        setPlacementRotation(prev => {
-          const rots = ['N', 'E', 'S', 'W'];
-          return rots[(rots.indexOf(prev) + 1) % 4];
-        });
-      }
+      if (e.key === 'r' || e.key === 'R') rotatePlacement();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [dayState]);
+  }, [dayState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Auto-save on day advance ──
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -927,6 +929,8 @@ function App() {
             setIsComputerOpen={setIsComputerOpen}
             unreadEmails={inbox.filter(e => !e.read).length}
             placementMachine={placementMachine}
+            onRotate={rotatePlacement}
+            placementRotation={placementRotation}
           />
 
           <Inventory
