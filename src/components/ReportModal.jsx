@@ -27,14 +27,15 @@ export default function ReportModal({
   return (
     <div className="report-modal-overlay">
        <div className="report-modal">
-         <h2>End of Day Report</h2>
-         <p style={{fontSize: '1.2rem', color: '#10b981'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
+         <div className="report-modal-titlebar">📊 End of Day Report</div>
+         <div className="report-modal-body">
+         <p style={{fontSize: '1.2rem', color: '#006400'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
          <div style={{marginTop: '0.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap'}}>
-           <span style={{color: '#a78bfa'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#10b981' : '#f87171'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
-           <span style={{fontSize: '0.85rem', color: '#94a3b8'}}>
+           <span style={{color: '#000000'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#006400' : '#cc0000'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
+           <span style={{fontSize: '0.85rem', color: '#444444'}}>
              {machineScore} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
              {(dailyReport.forgiven ?? 0) > 0 && (
-               <span style={{color: '#34d399', marginLeft: '0.5rem'}}>· {dailyReport.forgiven} forgiven 🤝</span>
+               <span style={{color: '#006400', marginLeft: '0.5rem'}}>· {dailyReport.forgiven} forgiven 🤝</span>
              )}
            </span>
          </div>
@@ -44,54 +45,54 @@ export default function ReportModal({
              .slice(0, 3);
            if (top3.length === 0) return null;
            return (
-             <div style={{ marginTop: '0.5rem', padding: '0.5rem 0.75rem', background: 'rgba(248,113,113,0.07)', borderRadius: '4px', borderLeft: '2px solid rgba(248,113,113,0.4)' }}>
-               <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: '0.35rem' }}>Why they left unhappy</div>
+             <div style={{ marginTop: '6px', padding: '6px 8px', borderTop: '2px solid #808080', borderLeft: '2px solid #808080', borderBottom: '2px solid #ffffff', borderRight: '2px solid #ffffff', background: '#ffffff' }}>
+               <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#444444', marginBottom: '0.35rem' }}>Why they left unhappy</div>
                {top3.map(([key, count]) => (
-                 <div key={key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem', color: '#f8fafc', marginBottom: '0.15rem' }}>
+                 <div key={key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.83rem', color: '#000000', marginBottom: '0.15rem' }}>
                    <span>{UNSATISFIED_REASONS[key] ?? key}</span>
-                   <span style={{ color: '#f87171', marginLeft: '1rem', flexShrink: 0 }}>{count}×</span>
+                   <span style={{ color: '#cc0000', marginLeft: '1rem', flexShrink: 0 }}>{count}×</span>
                  </div>
                ))}
              </div>
            );
          })()}
          {dailyReport.completedCourses?.length > 0 && (
-           <div style={{marginTop: '1rem', padding: '0.75rem', background: 'rgba(16,185,129,0.1)', border: '1px solid #10b981', borderRadius: '4px'}}>
-             <div style={{color: '#10b981', fontWeight: 'bold', marginBottom: '0.4rem'}}>🎓 Courses Completed</div>
+           <div style={{marginTop: '8px', padding: '6px 8px', borderTop: '2px solid #ffffff', borderLeft: '2px solid #ffffff', borderBottom: '2px solid #808080', borderRight: '2px solid #808080', background: '#c0c0c0'}}>
+             <div style={{color: '#006400', fontWeight: 'bold', marginBottom: '0.4rem'}}>🎓 Courses Completed</div>
              {dailyReport.completedCourses.map((c, i) => (
-               <div key={i} style={{color: '#f8fafc'}}>{c.icon} {c.name}</div>
+               <div key={i} style={{color: '#000000'}}>{c.icon} {c.name}</div>
              ))}
            </div>
          )}
          {dailyReport.events?.length > 0 && (
            <div style={{ marginTop: '1rem' }}>
-             <p style={{ color: '#94a3b8', marginBottom: '0.4rem' }}>Events:</p>
+             <p style={{ color: '#444444', marginBottom: '0.4rem' }}>Events:</p>
              {dailyReport.events.map((e, i) => (
                <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.3rem' }}>
-                 <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: e.severity === 'good' ? '#10b981' : e.severity === 'bad' ? '#ef4444' : '#94a3b8', flexShrink: 0 }}>
+                 <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: e.severity === 'good' ? '#006400' : e.severity === 'bad' ? '#cc0000' : '#444444', flexShrink: 0 }}>
                    {e.label}
                  </span>
-                 <span style={{ fontSize: '0.85rem', color: '#f8fafc' }}>{e.message}</span>
+                 <span style={{ fontSize: '0.85rem', color: '#000000' }}>{e.message}</span>
                </div>
              ))}
            </div>
          )}
 
          {dailyReport.expenses?.length > 0 && (
-           <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: '4px' }}>
-             <div style={{ color: '#f87171', fontWeight: 'bold', marginBottom: '0.4rem' }}>
+           <div style={{ marginTop: '1rem', padding: '0.75rem', borderTop: '2px solid #808080', borderLeft: '2px solid #808080', borderBottom: '2px solid #ffffff', borderRight: '2px solid #ffffff', background: '#ffffff' }}>
+             <div style={{ color: '#cc0000', fontWeight: 'bold', marginBottom: '0.4rem' }}>
                Bills Due — <span style={{ fontWeight: 400 }}>-${dailyReport.expenses.reduce((s, e) => s + e.amount, 0).toLocaleString()}</span>
              </div>
              {dailyReport.expenses.map((e, i) => (
-               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#f8fafc', marginBottom: '0.2rem' }}>
+               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#000000', marginBottom: '0.2rem' }}>
                  <span>{e.icon} {e.name}</span>
-                 <span style={{ color: '#f87171' }}>-${e.amount.toLocaleString()}</span>
+                 <span style={{ color: '#cc0000' }}>-${e.amount.toLocaleString()}</span>
                </div>
              ))}
            </div>
          )}
 
-         <p style={{marginTop: '1.5rem', color: '#94a3b8'}}>Machines Damaged:</p>
+         <p style={{marginTop: '1.5rem', color: '#444444'}}>Machines Damaged:</p>
          <ul>
            {dailyReport.damage.length === 0 ? <li>No damage today!</li> : dailyReport.damage.map((d, i) => {
              const machineState = machines.find(m => m.id === d.id);
@@ -102,16 +103,16 @@ export default function ReportModal({
              const canRepair = !isRepaired && repairsRemaining > 0 && cash >= cost;
 
              return (
-               <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+               <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', padding: '0.5rem', background: '#c0c0c0', borderTop: '2px solid #ffffff', borderLeft: '2px solid #ffffff', borderBottom: '2px solid #808080', borderRight: '2px solid #808080' }}>
                  <div style={{textAlign: 'left'}}>
-                   <div style={{color: '#f8fafc', fontWeight: 'bold'}}>{d.name}</div>
-                   <div style={{fontSize: '0.8rem', color: isRepaired ? '#10b981' : '#f87171'}}>
+                   <div style={{color: '#000000', fontWeight: 'bold'}}>{d.name}</div>
+                   <div style={{fontSize: '0.8rem', color: isRepaired ? '#006400' : '#cc0000'}}>
                      {isRepaired ? '100% Intact' : `-${d.damageTaken}% (Now ${currentDur}%)`}
                    </div>
                  </div>
-                 <button 
-                   className="repair-btn" 
-                   disabled={!canRepair} 
+                 <button
+                   className="repair-btn"
+                   disabled={!canRepair}
                    onClick={() => repairMachine(d.id)}
                  >
                    {isRepaired ? '100%' : repairsRemaining === 0 ? 'No Capacity' : `Repair +${damageToFix}% ($${cost})`}
@@ -121,17 +122,18 @@ export default function ReportModal({
            })}
          </ul>
          {dailyReport.repairmanRepairs?.length > 0 && (
-           <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '4px' }}>
-             <div style={{ color: '#34d399', fontWeight: 'bold', marginBottom: '0.4rem' }}>🔧 Overnight Repairs</div>
+           <div style={{ marginTop: '1rem', padding: '0.75rem', borderTop: '2px solid #ffffff', borderLeft: '2px solid #ffffff', borderBottom: '2px solid #808080', borderRight: '2px solid #808080', background: '#c0c0c0' }}>
+             <div style={{ color: '#006400', fontWeight: 'bold', marginBottom: '0.4rem' }}>🔧 Overnight Repairs</div>
              {dailyReport.repairmanRepairs.map((r, i) => (
-               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#f8fafc', marginBottom: '0.2rem' }}>
+               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#000000', marginBottom: '0.2rem' }}>
                  <span>{r.name}</span>
-                 <span style={{ color: '#34d399' }}>+{r.gain}%</span>
+                 <span style={{ color: '#006400' }}>+{r.gain}%</span>
                </div>
              ))}
            </div>
          )}
          <button className="start-day-btn" onClick={nextDay}>Next Day</button>
+         </div>{/* end report-modal-body */}
        </div>
      </div>
   );
