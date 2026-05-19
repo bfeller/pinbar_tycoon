@@ -211,11 +211,24 @@
   background: #e0e0e0;
 }
 
-.taskbar-time {
+.taskbar-tray {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taskbar-cash,
+.taskbar-time {
   border: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   padding: 2px 10px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.taskbar-cash {
+  color: #006400;
 }
 
 /* Market sections */

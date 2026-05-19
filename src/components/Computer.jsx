@@ -589,7 +589,10 @@ export default function Computer({
           {activeWindow === 'credits' && (
             <div className="taskbar-item active">About Pinbar Tycoon</div>
           )}
-          <div className="taskbar-time">{time.year}</div>
+          <div className="taskbar-tray">
+            <div className="taskbar-cash">${cash.toLocaleString()}</div>
+            <div className="taskbar-time">{time.year}</div>
+          </div>
         </div>
       </div>
     </div>
