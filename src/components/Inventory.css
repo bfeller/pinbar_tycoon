@@ -1,29 +1,33 @@
 .inventory-panel {
   width: 100%;
   max-width: 800px;
-  background: var(--panel-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  padding: 1rem;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  padding: 8px 12px;
+  box-sizing: border-box;
 }
 
 .inventory-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .inventory-item {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--glass-border);
-  padding: 1rem;
-  border-radius: 8px;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  padding: 8px 12px;
   min-width: 150px;
   cursor: pointer;
-  transition: background 0.2s;
+  color: #000000;
 }
-
 .inventory-item:hover {
-  background: rgba(255,255,255,0.1);
+  background: #d4d4d4;
 }

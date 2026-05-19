@@ -1,21 +1,22 @@
 .play-area.grid-mode {
   flex: 1;
   position: relative;
-  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-  padding: 2rem;
+  background: #008080;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: center;
   overflow: auto;
 }
 
 .bar-grid {
   position: relative;
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid var(--glass-border);
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  border-radius: 4px;
+  background: #1e2a38;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
 }
 
 .grid-cell {
@@ -161,5 +162,12 @@
 @media (max-width: 1024px) {
   .play-area.grid-mode {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .play-area.grid-mode {
+    padding: 0.5rem;
+    align-items: flex-start;
   }
 }
