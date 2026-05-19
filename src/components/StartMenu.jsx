@@ -26,6 +26,8 @@ export default function StartMenu({ savedGame, onNewGame, onContinue }) {
   return (
     <div className="startmenu-screen">
       <div className="startmenu-modal">
+        <div className="startmenu-titlebar">🎰 Pinbar Tycoon</div>
+        <div className="startmenu-body">
         {view === 'main' && (
           <>
             <div className="startmenu-header">
@@ -98,6 +100,7 @@ export default function StartMenu({ savedGame, onNewGame, onContinue }) {
             </form>
           </>
         )}
+        </div>{/* end startmenu-body */}
       </div>
     </div>
   );
