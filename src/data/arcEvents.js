@@ -33,6 +33,13 @@ export const ARC_EVENTS = [
       sentIds.has('voss_03') && !firedIds.has('arc_clustering'),
   },
   {
+    id: 'arc_nineties_boom',
+    // Pinball's second wind — full positive growth; 80s one-time shocks do not linger here.
+    setGainMult: 1.0,
+    trigger: ({ time, firedIds }) =>
+      time.year >= 1990 && time.year < 2001 && !firedIds.has('arc_nineties_boom'),
+  },
+  {
     id: 'arc_crisis_begins',
     popularityPct: -0.35,
     setGainMult: 0.75,
