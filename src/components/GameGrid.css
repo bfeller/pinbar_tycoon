@@ -31,18 +31,16 @@
 }
 
 .grid-cell.door {
-  background: rgba(16, 185, 129, 0.2);
-  border-bottom: 2px solid #10b981;
+  overflow: hidden;
 }
 
 .machine-placed {
   position: absolute;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border: 2px solid var(--accent-color);
+  background: transparent;
+  border: none;
   box-sizing: border-box;
   border-radius: 8px;
   cursor: grab;
-  box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2);
   transition: transform 0.2s;
   overflow: hidden;
 }
