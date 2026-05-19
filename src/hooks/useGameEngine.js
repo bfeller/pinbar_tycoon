@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { DOOR_POS, resolveDayLengthSeconds } from '../constants';
 import { getSpawnThreshold } from '../utils/popularity';
-import { buildSpawnNeedPool, rollSpawnNeeds } from '../utils/patronNeeds';
+import { buildSpawnNeedPool, rollSpawnNeeds, COCKTAIL_UNLOCK_YEAR } from '../utils/patronNeeds';
 import { tickCustomers } from '../simulation/customerAI';
 import { tickStaff } from '../simulation/staffAI';
 import { rollDayEvent } from '../simulation/eventRoller';
@@ -77,7 +77,7 @@ export default function useGameEngine({
       hasPinball:  currentMachines.some(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0),
       hasDrink:    currentMachines.some(m => m.type === 'bartop'    && m.x !== null) &&
                    currentMachines.some(m => m.type === 'kegerator' && m.x !== null),
-      hasCocktail: timeRef.current.year >= 1980 &&
+      hasCocktail: timeRef.current.year >= COCKTAIL_UNLOCK_YEAR &&
                    currentMachines.some(m => m.type === 'bartop'    && m.x !== null) &&
                    currentMachines.some(m => m.type === 'speed_well' && m.x !== null),
     });
