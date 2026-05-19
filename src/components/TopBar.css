@@ -95,10 +95,6 @@
   margin-left: auto;
 }
 
-.placement-indicator + .topbar-actions {
-  margin-left: 0;
-}
-
 .start-day-btn {
   background: #000080;
   color: #ffffff;
@@ -130,6 +126,10 @@
   border-color: #808080;
   cursor: not-allowed;
 }
+.start-day-btn:focus-visible {
+  outline: 2px solid #ffff00;
+  outline-offset: 1px;
+}
 
 .computer-btn {
   background: #c0c0c0;
@@ -157,6 +157,10 @@
   border-bottom-color: #ffffff;
   border-right-color: #ffffff;
 }
+.computer-btn:focus-visible {
+  outline: 2px solid #000080;
+  outline-offset: 1px;
+}
 
 /* Mobile: two rows at ≤640px */
 @media (max-width: 640px) {
@@ -168,6 +172,7 @@
   .topbar-brand {
     flex: 1;
     min-width: 0;
+    order: 1;
   }
   .topbar-brand h2 {
     font-size: 0.88rem;
@@ -178,6 +183,7 @@
   .topbar-actions {
     margin-left: 0;
     flex-shrink: 0;
+    order: 2;
   }
   .topbar-stats {
     width: 100%;
