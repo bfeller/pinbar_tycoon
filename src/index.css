@@ -57,6 +57,10 @@ body {
   border-color: #808080;
   cursor: not-allowed;
 }
+.buy-btn:focus-visible {
+  outline: 2px solid #aaaacc;
+  outline-offset: 1px;
+}
 
 .repair-btn {
   background: #c0c0c0;
@@ -75,9 +79,13 @@ body {
   color: #808080;
   cursor: not-allowed;
 }
-
-@media (max-width: 1024px) {
-  .game-container {
-    flex-direction: column;
-  }
+.repair-btn:active:not(:disabled) {
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+}
+.repair-btn:focus-visible {
+  outline: 2px solid #000080;
+  outline-offset: 1px;
 }

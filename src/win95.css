@@ -54,6 +54,10 @@
   color: #808080;
   cursor: not-allowed;
 }
+.w95-btn:focus-visible {
+  outline: 2px solid #000080;
+  outline-offset: 1px;
+}
 
 /* Primary button (navy) */
 .w95-btn-primary {
@@ -78,4 +82,8 @@
   background: #808080;
   border-color: #808080;
   cursor: not-allowed;
+}
+.w95-btn-primary:focus-visible {
+  outline: 2px solid #aaaacc;
+  outline-offset: 1px;
 }
