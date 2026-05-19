@@ -1,0 +1,81 @@
+/* Raised panel — standard Win95 box */
+.w95-panel {
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+}
+
+/* Sunken inset — for lists, grids, text areas */
+.w95-inset {
+  background: #ffffff;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+/* Title bar — blue gradient, white text */
+.w95-titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Standard button */
+.w95-btn {
+  background: #c0c0c0;
+  color: #000000;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 4px 16px;
+}
+.w95-btn:active:not(:disabled) {
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+  padding: 5px 15px 3px 17px;
+}
+.w95-btn:disabled {
+  color: #808080;
+  cursor: not-allowed;
+}
+
+/* Primary button (navy) */
+.w95-btn-primary {
+  background: #000080;
+  color: #ffffff;
+  border-top: 2px solid #aaaacc;
+  border-left: 2px solid #aaaacc;
+  border-bottom: 2px solid #000040;
+  border-right: 2px solid #000040;
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 4px 16px;
+}
+.w95-btn-primary:active:not(:disabled) {
+  border-top-color: #000040;
+  border-left-color: #000040;
+  border-bottom-color: #aaaacc;
+  border-right-color: #aaaacc;
+}
+.w95-btn-primary:disabled {
+  background: #808080;
+  border-color: #808080;
+  cursor: not-allowed;
+}
