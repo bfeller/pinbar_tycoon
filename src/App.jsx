@@ -33,7 +33,6 @@ function loadSave() {
   } catch { return null; }
 }
 
-const LOG_MAX = Math.log1p(1200);
 
 // Convert game time to a comparable linear day number
 function toLinearDay({ year, week, day }) {
