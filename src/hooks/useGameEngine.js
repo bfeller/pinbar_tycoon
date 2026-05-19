@@ -49,6 +49,9 @@ export default function useGameEngine({
   const onCustomerSpendRef = useRef(onCustomerSpend);
   const decisionsRef       = useRef(decisions);
   const lastEventDayRef    = useRef(-1); // lin-day of last fired event, prevents >1 per day
+  const prevDayStateRef    = useRef(dayState);
+
+  const trySpawnPatronRef = useRef(() => false);
 
   useEffect(() => { machinesRef.current        = machines;       }, [machines]);
   useEffect(() => { customersRef.current       = customers;      }, [customers]);
@@ -64,6 +67,48 @@ export default function useGameEngine({
   useEffect(() => { onDecisionRef.current      = onDecision;     }, [onDecision]);
   useEffect(() => { onCustomerSpendRef.current = onCustomerSpend;}, [onCustomerSpend]);
   useEffect(() => { decisionsRef.current       = decisions;      }, [decisions]);
+
+  trySpawnPatronRef.current = ({ guaranteed = false, openingRush = false } = {}) => {
+    if (isPausedRef?.current || dayStateRef.current !== 'RUNNING') return false;
+
+    const currentMachines = machinesRef.current;
+    const needPool = buildSpawnNeedPool({
+      hasPinball: currentMachines.some(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0),
+      hasDrink:   currentMachines.some(m => m.type === 'bartop' && m.x !== null) &&
+                  currentMachines.some(m => m.type === 'kegerator' && m.x !== null),
+    });
+    if (needPool.length === 0) return false;
+
+    const popFactor = Math.min(1, popularityRef.current / 300);
+    let spawnThreshold = Math.max(0.15, 0.85 - 0.60 * popFactor) - (upgradeValuesRef.current.spawnBoost ?? 0);
+    if (openingRush) spawnThreshold = Math.max(0.05, spawnThreshold - 0.25);
+
+    if (!guaranteed && Math.random() <= spawnThreshold) return false;
+
+    setCustomers(prev => [...prev, {
+      id: 'cust-' + Date.now() + Math.random(),
+      machineId: null,
+      path: [],
+      pathIndex: 0,
+      status: 'evaluating_needs',
+      x: DOOR_POS.x,
+      y: DOOR_POS.y,
+      needs: rollSpawnNeeds(needPool),
+      playTimeLeft: 0,
+      patienceTicks: undefined,
+      drinksHad: 0,
+      bathroomQueued: false,
+    }]);
+    return true;
+  };
+
+  // Doors open — at least one patron right away when the bar can serve anyone.
+  useEffect(() => {
+    if (dayState === 'RUNNING' && prevDayStateRef.current === 'BUILD') {
+      trySpawnPatronRef.current({ guaranteed: true });
+    }
+    prevDayStateRef.current = dayState;
+  }, [dayState]);
 
   // ── Macro Loop: day timer · spawning · event/decision rolls ─────────────
   useEffect(() => {
@@ -100,32 +145,8 @@ export default function useGameEngine({
         return;
       }
 
-      // ── Spawn customers ──────────────────────────────────────────────────
-      const currentMachines = machinesRef.current;
-      const needPool = buildSpawnNeedPool({
-        hasPinball: currentMachines.some(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0),
-        hasDrink:   currentMachines.some(m => m.type === 'bartop' && m.x !== null) &&
-                    currentMachines.some(m => m.type === 'kegerator' && m.x !== null),
-      });
-
-      const popFactor      = Math.min(1, popularityRef.current / 300);
-      const spawnThreshold = Math.max(0.15, 0.85 - 0.60 * popFactor) - (upgradeValuesRef.current.spawnBoost ?? 0);
-      if (needPool.length > 0 && Math.random() > spawnThreshold) {
-        setCustomers(prev => [...prev, {
-          id: 'cust-' + Date.now() + Math.random(),
-          machineId: null,
-          path: [],
-          pathIndex: 0,
-          status: 'evaluating_needs',
-          x: DOOR_POS.x,
-          y: DOOR_POS.y,
-          needs: rollSpawnNeeds(needPool),
-          playTimeLeft: 0,
-          patienceTicks: undefined,
-          drinksHad: 0,
-          bathroomQueued: false,
-        }]);
-      }
+      // ── Spawn customers (busier in the first few seconds after opening) ──
+      trySpawnPatronRef.current({ openingRush: nextTimer <= 3 });
 
       // ── Event / decision roll ────────────────────────────────────────────
       const rolled = rollDayEvent({

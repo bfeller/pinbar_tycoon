@@ -312,7 +312,10 @@ function App() {
 
   // ── Actions ──
   const startDay = () => {
-    if (dayState === 'BUILD') setDayState('RUNNING');
+    if (dayState === 'BUILD') {
+      setDayTimer(0);
+      setDayState('RUNNING');
+    }
   };
 
   const purchaseUpgrade = (id, cost) => {
