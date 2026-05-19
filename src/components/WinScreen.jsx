@@ -7,6 +7,8 @@ export default function WinScreen({ stats, onRestart }) {
   return (
     <div className="win-overlay">
       <div className="win-card">
+        <div className="win-titlebar">🏆 Pinbar Tycoon — Final Report</div>
+        <div className="win-body">
 
         <div className="win-header">
           <span className="win-game-title">🎰 PINBAR TYCOON</span>
@@ -77,6 +79,7 @@ export default function WinScreen({ stats, onRestart }) {
           Play Again
         </button>
 
+        </div>{/* end win-body */}
       </div>
     </div>
   );
