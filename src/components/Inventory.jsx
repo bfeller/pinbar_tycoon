@@ -29,13 +29,25 @@ export default function Inventory({
          <div style={{ flex: 1 }}>
            <h4 style={{marginTop: 0}}>Machine Actions</h4>
            <div className="inventory-list" style={{ marginTop: 0 }}>
-             {backroomMachines.map(m => (
+             {backroomMachines.map(m => {
+               const sellValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
+               const locationCount = m.locationCount ?? 0;
+               const isPinball = m.type === 'pinball' || !m.type;
+               const machineEquiv = isPinball
+                 ? +(1 + (Math.log1p(locationCount) / Math.log1p(1200)) * 4).toFixed(1)
+                 : null;
+               return (
                <div key={m.id} className="inventory-item" style={{ width: '100%', marginBottom: '10px' }}>
                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
                    <div style={{fontWeight: 'bold'}}>{m.name}</div>
                    <a href={`https://opdb.org/machines/${m.id}`} target="_blank" rel="noopener noreferrer" style={{fontSize: '0.72rem', color: '#000080', textDecoration: 'underline'}}>OPDB ↗</a>
                  </div>
                  <div style={{fontSize: '0.8rem'}}>{m.durability}% Durability</div>
+                 <div style={{fontSize: '0.8rem', color: '#333', marginTop: '2px', display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                   <span>Market Value: ${sellValue}</span>
+                   {isPinball && <span>{locationCount.toLocaleString()} locations</span>}
+                   {machineEquiv !== null && <span>Pop. weight: {machineEquiv}×</span>}
+                 </div>
                  <div style={{display: 'flex', gap: '5px', marginTop: '5px'}}>
                     {m.durability < 100 && (() => {
                       const damageToFix = Math.min(repairsRemaining, 100 - m.durability);
@@ -46,10 +58,11 @@ export default function Inventory({
                         </button>
                       );
                     })()}
-                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type)})</button>
+                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${sellValue})</button>
                  </div>
                </div>
-             ))}
+               );
+             })}
              {backroomMachines.length === 0 && <div style={{color: '#444444', fontStyle: 'italic'}}>Storage empty.</div>}
            </div>
          </div>
