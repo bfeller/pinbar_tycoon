@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './index.css';
 import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
@@ -7,7 +7,7 @@ import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
 import { UPGRADE_DEFS } from './data/upgrades';
 import { STAFF_DEFS } from './data/staff';
-import { EMAIL_DEFS } from './data/emails';
+import { EMAIL_DEFS } from './data/emails/index';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
 import { EXPENSE_DEFS } from './data/expenses';
 import TopBar from './components/TopBar';
@@ -19,6 +19,7 @@ import StartMenu from './components/StartMenu';
 import EventNotification from './components/EventNotification';
 import BankruptScreen from './components/BankruptScreen';
 import WinScreen from './components/WinScreen';
+import DecisionModal from './components/DecisionModal';
 
 const SAVE_KEY = 'pinbar_tycoon_save';
 
@@ -96,6 +97,11 @@ function App() {
   const [liquidationLot, setLiquidationLot] = useState([]);
   const [liquidationExpiryDay, setLiquidationExpiryDay] = useState(null);
 
+  // ── Decision events ──
+  const [activeDecision, setActiveDecision] = useState(null); // resolved { ...def, message }
+  const [decisions, setDecisions] = useState({});             // { flagId: true, ... }
+  const isPausedRef = useRef(false);
+
   // ── Event notification ──
   const [notification, setNotification] = useState(null); // { label, message, severity }
   const [gameOverStats, setGameOverStats] = useState(null);
@@ -131,6 +137,38 @@ function App() {
     setNotification(event);
   };
 
+  const handleDecision = (eventDef, ctx) => {
+    setActiveDecision({ ...eventDef, message: eventDef.getMessage(ctx) });
+  };
+
+  const handleChoice = (choice) => {
+    setDecisions(prev => ({ ...prev, [choice.flagId]: true }));
+
+    if (choice.effect === 'income_delta') {
+      setCash(c => c + choice.effectValue);
+    } else if (choice.effect === 'popularity_delta') {
+      setPopularity(p => Math.max(0, p + choice.effectValue));
+    } else if (choice.effect === 'machine_damage') {
+      const placed = machines.filter(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0);
+      if (placed.length > 0) {
+        const target = placed.reduce((a, b) => a.durability < b.durability ? a : b);
+        setMachines(prev => prev.map(m =>
+          m.id === target.id ? { ...m, durability: Math.max(0, m.durability - choice.effectValue) } : m
+        ));
+      }
+    }
+
+    if (choice.effect2 === 'income_delta') {
+      setCash(c => c + choice.effect2Value);
+    } else if (choice.effect2 === 'popularity_delta') {
+      setPopularity(p => Math.max(0, p + choice.effect2Value));
+    }
+
+    setNotification({ label: activeDecision.label, ...choice.resolution });
+    setActiveDecision(null);
+    isPausedRef.current = false;
+  };
+
   useGameEngine({
     dayState, setDayState,
     dayTimer, setDayTimer,
@@ -143,7 +181,10 @@ function App() {
     time,
     popularity,
     upgradeValues,
+    decisions,
+    isPausedRef,
     onEvent: handleEvent,
+    onDecision: handleDecision,
   });
 
   // ── Keyboard: rotate placement ──
@@ -172,7 +213,7 @@ function App() {
       firedArcEventIds: [...firedArcEventIds],
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
-      financialHistory,
+      financialHistory, decisions,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   }, [time]); // intentionally only fires on day advance
@@ -202,6 +243,7 @@ function App() {
     setLiquidationExpiryDay(null);
     setStaff(DEFAULT_STAFF);
     setServers([]);
+    setDecisions({});
     setScreen('game');
   };
 
@@ -235,6 +277,7 @@ function App() {
     const serverCount = typeof savedStaff.server === 'number' ? savedStaff.server : (savedStaff.server ? 1 : 0);
     setServers(Array.from({ length: serverCount }, makeServerEntity));
     setFinancialHistory(s.financialHistory ?? []);
+    setDecisions(s.decisions ?? {});
     setScreen('game');
   };
 
@@ -726,6 +769,13 @@ function App() {
         />
       )}
 
+      {activeDecision && (
+        <DecisionModal
+          event={activeDecision}
+          onChoice={handleChoice}
+        />
+      )}
+
       <div className="play-area grid-mode">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
@@ -742,6 +792,7 @@ function App() {
               setHoveredCell={setHoveredCell}
               gridId="main"
               placementMachineType={placementMachineType}
+              dayState={dayState}
             />
           </div>
 
