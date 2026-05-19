@@ -56,7 +56,6 @@
 
 .machine-placed.broken {
   background: linear-gradient(135deg, #ef4444, #b91c1c);
-  border-color: #f87171;
 }
 
 .durability-mini-bar {
