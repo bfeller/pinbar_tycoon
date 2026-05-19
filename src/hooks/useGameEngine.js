@@ -236,11 +236,17 @@ export default function useGameEngine({
         // Without this, a second tick firing before the render can see stale idle state,
         // overwrite the queued_for_kegerator transition, and leave a patron stuck with
         // beingServed=true but no staff assigned — causing them to time out unserved.
-        const hadServers = serversRef.current.length > 0;
         bartenderRef.current = nextBartender;
-        serversRef.current = nextServers;
         setBartender(nextBartender);
-        if (hadServers || nextServers.length > 0) setServers(nextServers);
+        if (nextServers.length > 0) {
+          // Merge tick results by ID rather than replacing the array wholesale.
+          // A value-replacement setServers(nextServers) would drop any server just
+          // hired between when serversRef was read and when this updater runs —
+          // because the stale ref only knew about the previous count.
+          const tickServerMap = new Map(nextServers.map(s => [s.id, s]));
+          serversRef.current = serversRef.current.map(s => tickServerMap.get(s.id) ?? s);
+          setServers(prev => prev.length > 0 ? prev.map(s => tickServerMap.get(s.id) ?? s) : prev);
+        }
 
         // 3. Accumulate income and satisfaction counts
         const { moneyEarned, satisfiedCount, unsatisfiedCount, unsatisfiedReasons, machinesToDegrade, forgivenCount } = result;
