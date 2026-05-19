@@ -203,7 +203,7 @@ export default function GameGrid({
       {/* Customers */}
       {customers.map(c => {
         const isWaiting = c.status === 'waiting_for_pinball' || c.status === 'waiting_for_bartop' || c.status === 'waiting_for_bathroom' || c.status === 'walking_to_wait_area';
-        const isWaitingForDrink = c.status === 'waiting_for_drink';
+        const isWaitingForDrink = c.status === 'waiting_for_drink' || c.status === 'waiting_for_cocktail';
         const patiencePct = c.patienceTicks !== undefined ? (c.patienceTicks / 30) * 100 : 100;
         const drinkPatiencePct = c.drinkPatienceTicks !== undefined ? (c.drinkPatienceTicks / 75) * 100 : 100;
         const isImpatient = (isWaiting && patiencePct < 33) || (isWaitingForDrink && drinkPatiencePct < 33);
@@ -225,7 +225,7 @@ export default function GameGrid({
           thought = { icon: 'fa-toilet', color: '#10b981' };
         } else if (c.status === 'walking_in') {
           thought = { icon: 'fa-gamepad', color: '#fcd34d' };
-        } else if (c.status === 'walking_to_bar' || c.status === 'waiting_for_drink') {
+        } else if (c.status === 'walking_to_bar' || c.status === 'waiting_for_drink' || c.status === 'waiting_for_cocktail') {
           thought = { icon: 'fa-beer-mug-empty', color: isImpatient ? '#ef4444' : '#fcd34d' };
         } else if (c.status === 'walking_to_bathroom' || c.status === 'waiting_for_bathroom') {
           thought = { icon: 'fa-toilet', color: isImpatient ? '#ef4444' : '#fcd34d' };
