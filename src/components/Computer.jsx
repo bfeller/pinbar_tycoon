@@ -5,6 +5,7 @@ import { getUsedBlurb } from '../data/used_blurbs';
 import { UPGRADE_DEFS } from '../data/upgrades';
 import { STAFF_DEFS } from '../data/staff';
 import EmailClient from './EmailClient';
+import BankWindow from './BankWindow';
 
 function conditionLabel(durability) {
   if (durability >= 95) return { label: 'Mint',      color: '#006400' };
@@ -28,10 +29,11 @@ export default function Computer({
   liquidationLot, buyLiquidationMachine,
   staff, onHireStaff, onFireStaff,
   financialHistory = [],
+  activeInvestment, activeLoan, onInvest, onTakeLoan,
   closeComputer
 }) {
   const [booting, setBooting] = useState(true);
-  const [activeWindow, setActiveWindow] = useState(null); // 'browser' | 'university' | 'email' | null
+  const [activeWindow, setActiveWindow] = useState(null); // 'browser' | 'university' | 'email' | 'bank' | null
   const [purchasedItems, setPurchasedItems] = useState({});
   const [enrolledId, setEnrolledId] = useState(null);
 
@@ -115,6 +117,10 @@ export default function Computer({
           <div className="win95-icon" onClick={() => setActiveWindow('reports')}>
             <div className="icon-img">📊</div>
             <span>Reports</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('bank')}>
+            <div className="icon-img">🏦</div>
+            <span>Bank</span>
           </div>
           <div className="win95-icon" onClick={() => setActiveWindow('credits')}>
             <div className="icon-img">ℹ️</div>
@@ -477,6 +483,19 @@ export default function Computer({
           );
         })()}
 
+        {activeWindow === 'bank' && (
+          <BankWindow
+            cash={cash}
+            dayState={dayState}
+            time={time}
+            activeInvestment={activeInvestment}
+            activeLoan={activeLoan}
+            onInvest={onInvest}
+            onTakeLoan={onTakeLoan}
+            onClose={() => setActiveWindow(null)}
+          />
+        )}
+
         {activeWindow === 'credits' && (
           <div className="win95-window">
             <div className="win95-titlebar">
@@ -561,6 +580,9 @@ export default function Computer({
           )}
           {activeWindow === 'reports' && (
             <div className="taskbar-item active">Performance Reports</div>
+          )}
+          {activeWindow === 'bank' && (
+            <div className="taskbar-item active">First Pinbar Bank</div>
           )}
           {activeWindow === 'credits' && (
             <div className="taskbar-item active">About Pinbar Tycoon</div>

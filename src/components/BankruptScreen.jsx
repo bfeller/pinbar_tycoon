@@ -2,7 +2,7 @@ import React from 'react';
 import './BankruptScreen.css';
 
 export default function BankruptScreen({ stats, onRestart }) {
-  const { pinbarName, characterName, time, cash, popularity } = stats;
+  const { pinbarName, characterName, time, cash, popularity, forfeitedInvestment } = stats;
   const yearsRun = time.year - 1975;
   const deficit = Math.abs(cash);
 
@@ -41,6 +41,12 @@ export default function BankruptScreen({ stats, onRestart }) {
               <span>Popularity at closure</span>
               <span>{popularity}</span>
             </div>
+            {forfeitedInvestment && (
+              <div className="bankrupt-stat-row" style={{ color: '#8b0000' }}>
+                <span>Forfeited deposit</span>
+                <span>-${forfeitedInvestment.amount.toLocaleString()} ({forfeitedInvestment.productName})</span>
+              </div>
+            )}
           </div>
 
           <blockquote className="bankrupt-quill">

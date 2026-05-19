@@ -10,6 +10,7 @@ import { STAFF_DEFS } from './data/staff';
 import { EMAIL_DEFS } from './data/emails/index';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
 import { EXPENSE_DEFS } from './data/expenses';
+import { INVESTMENT_DEFS } from './data/banking';
 import TopBar from './components/TopBar';
 import PlayActions from './components/PlayActions';
 import GameGrid from './components/GameGrid';
@@ -99,6 +100,12 @@ function App() {
   const [popGainMult, setPopGainMult] = useState(1.0);
   const [liquidationLot, setLiquidationLot] = useState([]);
   const [liquidationExpiryDay, setLiquidationExpiryDay] = useState(null);
+
+  // ── Banking ──
+  const [activeInvestment, setActiveInvestment] = useState(null);
+  // { defId, productName, amount, depositedAt, maturesAt, returnAmount }
+  const [activeLoan, setActiveLoan] = useState(null);
+  // { amount, weeklyPayment, weeksRemaining }
 
   // ── Decision events ──
   const [activeDecision, setActiveDecision] = useState(null); // resolved { ...def, message }
@@ -226,6 +233,7 @@ function App() {
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
       financialHistory, decisions,
+      activeInvestment, activeLoan,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   }, [time]); // intentionally only fires on day advance
@@ -257,6 +265,8 @@ function App() {
     setStaff(DEFAULT_STAFF);
     setServers([]);
     setDecisions({});
+    setActiveInvestment(null);
+    setActiveLoan(null);
     setScreen('game');
   };
 
@@ -292,6 +302,8 @@ function App() {
     setServers(Array.from({ length: serverCount }, makeServerEntity));
     setFinancialHistory(s.financialHistory ?? []);
     setDecisions(s.decisions ?? {});
+    setActiveInvestment(s.activeInvestment ?? null);
+    setActiveLoan(s.activeLoan ?? null);
     setScreen('game');
   };
 
@@ -494,6 +506,24 @@ function App() {
     setInbox(prev => prev.map(e => e.id === emailId ? { ...e, read: true } : e));
   };
 
+  const handleInvest = (defId, amount) => {
+    const def = INVESTMENT_DEFS.find(d => d.id === defId);
+    if (!def || cash < amount || amount < def.minAmount || activeInvestment || dayState === 'REPORT') return;
+    const depositedAt = toLinearDay(time);
+    const maturesAt = depositedAt + def.durationWeeks * 3;
+    const returnAmount = Math.round(amount * (1 + def.interestRate));
+    setCash(c => c - amount);
+    setActiveInvestment({ defId, productName: def.name, amount, depositedAt, maturesAt, returnAmount });
+  };
+
+  const handleTakeLoan = (preset) => {
+    if (activeLoan || dayState === 'REPORT') return;
+    const total = Math.round(preset.amount * (1 + preset.totalInterestRate));
+    const weeklyPayment = Math.round(total / preset.durationWeeks);
+    setCash(c => c + preset.amount);
+    setActiveLoan({ amount: preset.amount, weeklyPayment, weeksRemaining: preset.durationWeeks });
+  };
+
   const buyLiquidationMachine = (machine) => {
     if (dayState === 'REPORT') return false;
     const rawPrice = calculatePrice(machine.parsedYear, time.year, machine.durability, machine.locationCount ?? 0);
@@ -598,6 +628,15 @@ function App() {
       return;
     }
 
+    // Investment maturity check — must happen before expenses so payout can offset them
+    let investmentPayout = 0;
+    let maturedProductName = null;
+    if (activeInvestment && newLinear >= activeInvestment.maturesAt) {
+      investmentPayout = activeInvestment.returnAmount;
+      maturedProductName = activeInvestment.productName;
+      setActiveInvestment(null);
+    }
+
     // Weekly expenses — fire on the first day of each new week
     const weeklyExpenses = [];
     if (newTime.day === 1) {
@@ -615,18 +654,35 @@ function App() {
         const count = typeof val === 'number' ? val : (val ? 1 : 0);
         if (count > 0) weeklyExpenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
       }
+      // Loan payment
+      if (activeLoan) {
+        weeklyExpenses.push({ id: 'loan_payment', name: 'Loan Payment', icon: '💸', amount: activeLoan.weeklyPayment });
+        if (activeLoan.weeksRemaining <= 1) {
+          setActiveLoan(null);
+        } else {
+          setActiveLoan(al => al ? { ...al, weeksRemaining: al.weeksRemaining - 1 } : null);
+        }
+      }
       const totalExpenses = weeklyExpenses.reduce((sum, e) => sum + e.amount, 0);
-      if (totalExpenses > 0) {
-        const newCash = cash - totalExpenses;
+      if (investmentPayout > 0 || totalExpenses > 0) {
+        const newCash = cash + investmentPayout - totalExpenses;
         setCash(newCash);
+        if (investmentPayout > 0) {
+          setNotification({ id: 'investment_matured', label: 'Investment Matured', severity: 'good',
+            message: `Your ${maturedProductName} matured and returned $${investmentPayout.toLocaleString()}.` });
+        }
         if (newCash < 0) {
           localStorage.removeItem(SAVE_KEY);
           setSavedGame(null);
-          setGameOverStats({ pinbarName, characterName, time: newTime, cash: newCash, popularity });
+          setGameOverStats({ pinbarName, characterName, time: newTime, cash: newCash, popularity, forfeitedInvestment: investmentPayout > 0 ? null : activeInvestment });
           setScreen('bankrupt');
           return;
         }
       }
+    } else if (investmentPayout > 0) {
+      setCash(c => c + investmentPayout);
+      setNotification({ id: 'investment_matured', label: 'Investment Matured', severity: 'good',
+        message: `Your ${maturedProductName} matured and returned $${investmentPayout.toLocaleString()}.` });
     }
 
     // Record this day's financials before resetting dailyReport
@@ -773,6 +829,9 @@ function App() {
       const count = typeof val === 'number' ? val : (val ? 1 : 0);
       if (count > 0) expenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
     }
+    if (activeLoan) {
+      expenses.push({ id: 'loan_payment', name: 'Loan Payment', icon: '💸', amount: activeLoan.weeklyPayment });
+    }
     return expenses;
   })();
 
@@ -911,6 +970,10 @@ function App() {
             onHireStaff={hireStaff}
             onFireStaff={fireStaff}
             financialHistory={financialHistory}
+            activeInvestment={activeInvestment}
+            activeLoan={activeLoan}
+            onInvest={handleInvest}
+            onTakeLoan={handleTakeLoan}
             closeComputer={() => setIsComputerOpen(false)}
           />
         )}
