@@ -180,6 +180,7 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
     // Bar closed — patrons already seated/waiting must leave; in-progress activities finish first
     if (barClosed && (
       c.status === 'waiting_for_drink' ||
+      c.status === 'waiting_for_cocktail' ||
       c.status === 'waiting_for_pinball' ||
       c.status === 'waiting_for_bartop' ||
       c.status === 'waiting_for_bathroom' ||
@@ -188,6 +189,7 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
       nextC.beingServed = false;
       const reason = c.status === 'waiting_for_drink' || c.status === 'waiting_for_bartop'
         ? 'bar_closed_drink'
+        : c.status === 'waiting_for_cocktail' ? 'bar_closed_cocktail'
         : c.status === 'waiting_for_pinball' ? 'bar_closed_pinball'
         : 'bar_closed_bathroom';
       if (!tryForgive(nextC)) {
@@ -210,7 +212,10 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
         for (const n of nextC.needs) {
           if (!tryForgive(nextC)) {
             unsatisfiedCount++;
-            const key = n === 'pinball' ? 'bar_closed_pinball' : n === 'drink' ? 'bar_closed_drink' : 'bar_closed_bathroom';
+            const key = n === 'pinball' ? 'bar_closed_pinball'
+            : n === 'drink' ? 'bar_closed_drink'
+            : n === 'cocktail' ? 'bar_closed_cocktail'
+            : 'bar_closed_bathroom';
             unsatisfiedReasons[key] = (unsatisfiedReasons[key] ?? 0) + 1;
           }
         }
@@ -221,6 +226,8 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
       } else {
         const need = nextC.needs[0];
         const targetType = need === 'pinball' ? 'pinball' : need === 'bathroom' ? 'bathroom' : 'bartop';
+        if (need === 'cocktail') nextC.drinkType = 'cocktail';
+        else if (need === 'drink') nextC.drinkType = 'beer';
 
         if (need === 'bathroom') {
           const hasBathroom = machines.some(m => m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room));
@@ -311,7 +318,7 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
         nextC.x = c.path[nextC.pathIndex][0];
         nextC.y = c.path[nextC.pathIndex][1];
       } else if (c.status === 'walking_to_bar') {
-        nextC.status = 'waiting_for_drink';
+        nextC.status = nextC.drinkType === 'cocktail' ? 'waiting_for_cocktail' : 'waiting_for_drink';
         nextC.drinkPatienceTicks = Math.round(DRINK_PATIENCE_TICKS * (upgradeValues.drinkPatienceMult ?? 1));
       } else if (c.status === 'walking_to_bathroom') {
         const bath = machines.find(m => m.id === nextC.machineId);
@@ -356,12 +363,33 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
         }
       }
 
+    } else if (c.status === 'waiting_for_cocktail') {
+      if (nextC.drinkPatienceTicks > 0) nextC.drinkPatienceTicks--;
+      if (nextC.drinkPatienceTicks <= 0) {
+        if (!tryForgive(nextC)) {
+          unsatisfiedCount++;
+          unsatisfiedReasons.cocktail_wait = (unsatisfiedReasons.cocktail_wait ?? 0) + 1;
+        }
+        nextC.machineId = null;
+        nextC.beingServed = false;
+        nextC.drinkPatienceTicks = undefined;
+        nextC.needs.shift();
+        if (nextC.needs.length === 0) {
+          nextC.angry = true;
+          if (!sendToExit(nextC, machines)) continue;
+        } else {
+          nextC.status = 'evaluating_needs';
+        }
+      }
+
     } else if (c.status === 'drinking') {
       if (nextC.playTicks === undefined) nextC.playTicks = 15;
       if (nextC.playTicks > 0) {
         nextC.playTicks--;
       } else {
-        const drinkAmount = upgradeValues.drinkRevenue ?? 15;
+        const drinkAmount = nextC.drinkType === 'cocktail'
+          ? (upgradeValues.cocktailRevenue ?? 25)
+          : (upgradeValues.drinkRevenue ?? 15);
         moneyEarned += drinkAmount;
         onCustomerSpend?.({ x: nextC.x, y: nextC.y, amount: drinkAmount });
         satisfiedCount++;
