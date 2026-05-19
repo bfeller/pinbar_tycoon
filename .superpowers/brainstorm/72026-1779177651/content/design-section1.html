@@ -1,0 +1,67 @@
+<h2>Design: Section 1 of 2 — Design System</h2>
+<p class="subtitle">The foundation everything else inherits from. Does this look right?</p>
+
+<div class="section">
+  <h3>New file: <code>src/win95.css</code></h3>
+  <p>One shared stylesheet imported by <code>index.css</code>. Provides reusable Win95 building blocks used by every component.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+
+    <div>
+      <div class="label">Raised panel (.w95-panel)</div>
+      <div style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:12px;font-family:monospace;font-size:13px;color:#000;">
+        Panel content here
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Sunken inset (.w95-inset) — for lists, grids, text areas</div>
+      <div style="background:#c0c0c0;border-top:2px solid #808080;border-left:2px solid #808080;border-bottom:2px solid #fff;border-right:2px solid #fff;padding:12px;font-family:monospace;font-size:13px;color:#000;">
+        Inset content here
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Title bar (.w95-titlebar)</div>
+      <div style="background:linear-gradient(to right,#000080,#1084d0);color:#fff;padding:4px 8px;font-family:monospace;font-size:12px;font-weight:bold;letter-spacing:0.02em;">
+        📋 Window Title
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Button (.w95-btn)</div>
+      <div style="display:flex;gap:8px;align-items:center;padding:4px 0;">
+        <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 16px;font-family:monospace;font-size:12px;cursor:pointer;">Normal</button>
+        <button style="background:#000080;color:#fff;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 16px;font-family:monospace;font-size:12px;cursor:pointer;">Primary</button>
+        <button style="background:#808080;color:#c0c0c0;border-top:2px solid #808080;border-left:2px solid #808080;border-bottom:2px solid #fff;border-right:2px solid #fff;padding:4px 16px;font-family:monospace;font-size:12px;cursor:not-allowed;" disabled>Disabled</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>Updated <code>index.css</code> tokens</h3>
+  <div style="background:#1a1a2e;color:#a8ff78;padding:12px;font-family:monospace;font-size:12px;border-radius:4px;line-height:1.7;">
+    --bg-color: #c0c0c0<br>
+    --panel-bg: #c0c0c0<br>
+    --accent-color: #000080<br>
+    --text-primary: #000000<br>
+    --text-secondary: #444444<br>
+    --glass-border: #808080<br>
+    font-family: 'MS Sans Serif', Tahoma, sans-serif
+  </div>
+  <p style="font-size:0.85rem;color:#666;margin-top:8px;">All existing components that use <code>var(--bg-color)</code> etc. automatically pick up Win95 colours. Per-component CSS adds beveled borders and removes blur/glassmorphism.</p>
+</div>
+
+<div class="section">
+  <h3>Play area background</h3>
+  <p>The <code>.play-area</code> wrapper gets <strong>teal #008080</strong> — the classic Win95 desktop colour — so the bar grid feels like a window sitting on the desktop. The bar grid itself stays dark (it's the interior of a bar, not a UI element).</p>
+  <div style="background:#008080;padding:16px;display:flex;justify-content:center;">
+    <div style="background:#1e2a38;width:200px;height:80px;border-top:2px solid #808080;border-left:2px solid #808080;border-bottom:2px solid #fff;border-right:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;font-family:monospace;">
+      bar grid (dark, immersive)
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1rem;">Does this design system look right? Reply in terminal to continue to Section 2.</p>

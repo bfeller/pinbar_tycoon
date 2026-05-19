@@ -15,7 +15,7 @@ export default function TopBar({
   return (
     <div className="topbar">
       <div className="topbar-brand">
-        <i className="fa-solid fa-gamepad" style={{color: '#38bdf8', fontSize: '1.5rem'}}></i>
+        <i className="fa-solid fa-gamepad" style={{color: '#000080', fontSize: '1.5rem'}}></i>
         <div>
           <h2 style={{margin: 0, lineHeight: 1}}>{pinbarName}</h2>
           <span style={{fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase'}}>Pinbar Tycoon</span>
@@ -24,18 +24,18 @@ export default function TopBar({
 
       <div className="topbar-stats" style={{ alignItems: 'center' }}>
         <div className="stat-pill">
-          <i className="fa-regular fa-calendar" style={{color: '#94a3b8'}}></i>
+          <i className="fa-regular fa-calendar" style={{color: '#444444'}}></i>
           <span>Y: {time.year} | W: {time.week} | D: {time.day}</span>
         </div>
-        <div className="stat-pill" style={{color: '#10b981'}}>
+        <div className="stat-pill" style={{color: '#006400'}}>
           <i className="fa-solid fa-sack-dollar"></i>
           <span>${cash}</span>
         </div>
-        <div className="stat-pill" style={{color: '#f59e0b'}}>
+        <div className="stat-pill" style={{color: '#b35900'}}>
           <i className="fa-solid fa-wrench"></i>
           <span>{repairsRemaining} / {repairCapacity}%</span>
         </div>
-        <div className="stat-pill" style={{color: '#a78bfa'}}>
+        <div className="stat-pill" style={{color: '#5b21b6'}}>
           <i className="fa-solid fa-star"></i>
           <span>{popularity}</span>
         </div>
@@ -43,7 +43,7 @@ export default function TopBar({
         {dayState === 'RUNNING' && (
           <div className={`day-clock${urgent ? ' urgent' : ''}`} title={`${remaining}s remaining`}>
             <svg width="44" height="44" viewBox="0 0 44 44">
-              <circle cx="22" cy="22" r={r} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" />
+              <circle cx="22" cy="22" r={r} fill="none" stroke="#808080" strokeWidth="4" />
               <circle
                 cx="22" cy="22" r={r}
                 fill="none"

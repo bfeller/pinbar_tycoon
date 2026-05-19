@@ -779,7 +779,6 @@ function App() {
       <div className="play-area grid-mode">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
-            <h3 style={{ margin: '0 0 10px 0', color: '#94a3b8' }}>Main Floor</h3>
             <GameGrid
               machines={mainMachines}
               customers={customers}

@@ -1,0 +1,82 @@
+<h2>Design: Section 2 of 2 — Components + Mobile (updated)</h2>
+<p class="subtitle">Black text on silver throughout. Reply in terminal to approve.</p>
+
+<div class="section">
+  <h3>TopBar</h3>
+  <div style="font-family:'Courier New',monospace;font-size:12px;">
+    <div class="label" style="margin-bottom:4px;">Desktop</div>
+    <div style="background:#c0c0c0;border-bottom:2px solid #808080;padding:6px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <strong style="color:#000;font-size:13px;">🎮 Bryan's Pinbar</strong>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;color:#000;">💰 $4,200</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;color:#000;">📅 Y1 W2 D3</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;color:#000;">🔧 2/80%</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;color:#000;">⭐ 72</span>
+      <span style="flex:1"></span>
+      <button style="background:#000080;color:#fff;border-top:2px solid #aaaacc;border-left:2px solid #aaaacc;border-bottom:2px solid #000040;border-right:2px solid #000040;padding:4px 14px;font-family:inherit;font-size:12px;cursor:pointer;">▶ Open Bar</button>
+      <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 10px;font-family:inherit;font-size:12px;color:#000;cursor:pointer;">💻</button>
+    </div>
+
+    <div class="label" style="margin-top:12px;margin-bottom:4px;">Mobile — two rows (≤640px)</div>
+    <div style="background:#c0c0c0;border-bottom:2px solid #808080;padding:6px 10px;max-width:320px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <strong style="color:#000;font-size:13px;">🎮 Bryan's Pinbar</strong>
+        <div style="display:flex;gap:5px;">
+          <button style="background:#000080;color:#fff;border-top:2px solid #aaaacc;border-left:2px solid #aaaacc;border-bottom:2px solid #000040;border-right:2px solid #000040;padding:3px 10px;font-family:inherit;font-size:11px;cursor:pointer;">▶ Open</button>
+          <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:3px 8px;font-family:inherit;font-size:11px;color:#000;cursor:pointer;">💻</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;color:#000;">💰 $4,200</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;color:#000;">📅 Y1W2D3</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;color:#000;">🔧 2/80%</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;color:#000;">⭐ 72</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Modals (StartMenu, ReportModal, WinScreen, BankruptScreen)</h3>
+  <div style="font-family:'Courier New',monospace;font-size:12px;max-width:340px;">
+    <div style="background:linear-gradient(to right,#000080,#1084d0);color:#fff;padding:4px 8px;font-weight:bold;font-size:12px;">📊 End of Day Report</div>
+    <div style="background:#c0c0c0;border-left:2px solid #fff;border-right:2px solid #808080;border-bottom:2px solid #808080;padding:12px;">
+      <div style="background:#c0c0c0;border-top:2px solid #808080;border-left:2px solid #808080;border-bottom:2px solid #fff;border-right:2px solid #fff;padding:8px;font-size:11px;margin-bottom:10px;color:#000;">
+        Revenue: $1,240<br>Customers served: 18<br>Machines repaired: 2
+      </div>
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 18px;font-family:inherit;font-size:12px;color:#000;cursor:pointer;">Next Day</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Event Notification</h3>
+  <div style="font-family:'Courier New',monospace;font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:320px;">
+    <div style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:8px 12px;">
+      <div style="font-size:10px;font-weight:bold;letter-spacing:0.08em;color:#000;margin-bottom:2px;">⚠️ MACHINE FAILURE</div>
+      <div style="font-size:12px;color:#000;">Space Invaders is out of order.</div>
+    </div>
+    <div style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:8px 12px;">
+      <div style="font-size:10px;font-weight:bold;letter-spacing:0.08em;color:#000;margin-bottom:2px;">✅ GREAT NIGHT</div>
+      <div style="font-size:12px;color:#000;">Popularity increased by 5.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Mobile grid</h3>
+  <p style="color:#000;font-size:0.875rem;">On screens ≤768px: <code>.play-area</code> gets <code>overflow: auto</code>. The 750×500px grid scrolls inside it. TopBar and overlays stay fixed.</p>
+</div>
+
+<div class="section">
+  <h3>Unchanged</h3>
+  <ul style="font-size:0.875rem;color:#000;margin:0;padding-left:1.2rem;line-height:1.8;">
+    <li>Computer screen (already Win95)</li>
+    <li>DecisionModal (already Win95)</li>
+    <li>Game grid dark floor (bar interior)</li>
+    <li>Customer/machine SVGs and game logic</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="margin-top:1rem;">Ready to write the spec? Reply in terminal.</p>

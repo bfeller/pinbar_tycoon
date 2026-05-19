@@ -4,6 +4,7 @@ import { DOOR_POS, DAY_LENGTH_SECONDS, GRID_COLS, GRID_ROWS } from '../constants
 import { getPlayCell, getBackCell, getMachineCells } from '../utils/grid';
 import { buildGrid } from '../utils/pathfinding';
 import { EVENT_DEFS } from '../data/events';
+import { DECISION_DEFS } from '../data/decisions';
 
 function toLinDay({ year, week, day }) {
   return (year - 1975) * 30 + (week - 1) * 3 + day;
@@ -57,7 +58,10 @@ export default function useGameEngine({
   time,
   popularity,
   upgradeValues = {},
+  decisions = {},
+  isPausedRef,
   onEvent,
+  onDecision,
 }) {
   // Refs to access current state inside setInterval closures
   const machinesRef = useRef(machines);
@@ -71,6 +75,8 @@ export default function useGameEngine({
   const upgradeValuesRef = useRef(upgradeValues);
   const popularityRef = useRef(popularity);
   const onEventRef = useRef(onEvent);
+  const onDecisionRef = useRef(onDecision);
+  const decisionsRef = useRef(decisions);
   const lastEventDayRef = useRef(-1); // lin-day of last event, prevents >1 per day
 
   useEffect(() => { machinesRef.current = machines; }, [machines]);
@@ -84,6 +90,8 @@ export default function useGameEngine({
   useEffect(() => { upgradeValuesRef.current = upgradeValues; }, [upgradeValues]);
   useEffect(() => { popularityRef.current = popularity; }, [popularity]);
   useEffect(() => { onEventRef.current = onEvent; }, [onEvent]);
+  useEffect(() => { onDecisionRef.current = onDecision; }, [onDecision]);
+  useEffect(() => { decisionsRef.current = decisions; }, [decisions]);
 
   // Helper: try to pathfind a customer to an available target
   const tryAssignTarget = (nextC, targetType, prev, updated) => {
@@ -103,29 +111,23 @@ export default function useGameEngine({
     const target = isForPinball ? weightedRandomMachine(available) : available[Math.floor(Math.random() * available.length)];
     const grid = buildGrid(machinesRef.current);
 
-    // Bathrooms are 2×2 — find any adjacent walkable cell as the entry point
+    // Bathroom entry is fixed to the cell directly below the bottom-left tile,
+    // matching the door position in BathroomSVG.
     if (isForBathroom) {
-      const bathCells = getMachineCells('bathroom', target.x, target.y, 'N');
-      const adjKeys = new Set();
-      for (const bc of bathCells) {
-        for (const n of [{x:bc.x-1,y:bc.y},{x:bc.x+1,y:bc.y},{x:bc.x,y:bc.y-1},{x:bc.x,y:bc.y+1}]) {
-          if (!bathCells.some(c => c.x===n.x && c.y===n.y)) adjKeys.add(`${n.x},${n.y}`);
-        }
-      }
+      const entryX = target.x;
+      const entryY = target.y + 2;
+      if (entryX < 0 || entryX >= GRID_COLS || entryY < 0 || entryY >= GRID_ROWS) return false;
+      if (!grid.isWalkableAt(entryX, entryY)) return false;
       const finder = new PF.AStarFinder();
-      for (const key of adjKeys) {
-        const [cx, cy] = key.split(',').map(Number);
-        if (cx < 0 || cx >= GRID_COLS || cy < 0 || cy >= GRID_ROWS || !grid.isWalkableAt(cx, cy)) continue;
-        const path = finder.findPath(nextC.x, nextC.y, cx, cy, grid.clone());
-        if (path && path.length > 0) {
-          nextC.machineId = target.id;
-          nextC.path = path;
-          nextC.pathIndex = 0;
-          nextC.status = 'walking_to_bathroom';
-          nextC.patienceTicks = undefined;
-          nextC.needs.shift();
-          return true;
-        }
+      const path = finder.findPath(nextC.x, nextC.y, entryX, entryY, grid.clone());
+      if (path && path.length > 0) {
+        nextC.machineId = target.id;
+        nextC.path = path;
+        nextC.pathIndex = 0;
+        nextC.status = 'walking_to_bathroom';
+        nextC.patienceTicks = undefined;
+        nextC.needs.shift();
+        return true;
       }
       return false;
     }
@@ -225,6 +227,7 @@ export default function useGameEngine({
   // ──────────────────────────────────────────
   useEffect(() => {
     const macroTick = setInterval(() => {
+      if (isPausedRef?.current) return;
       if (dayStateRef.current === 'RUNNING') {
         const timer = dayTimerRef.current;
         setDayTimer(t => t + 1);
@@ -264,9 +267,42 @@ export default function useGameEngine({
               patienceTicks: undefined
             }]);
           }
-          // ── Random event roll (once per in-game day, midway through) ──
+          // ── Event rolls (once per in-game day, midway through) ──
           const today = toLinDay(timeRef.current);
           if (timer >= 3 && lastEventDayRef.current !== today) {
+            const placed = machinesRef.current.filter(
+              m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0
+            );
+            const machineName = placed.length > 0
+              ? placed[Math.floor(Math.random() * placed.length)].name
+              : 'a machine';
+
+            // ── Decision roll (takes priority over passive events) ──
+            if (Math.random() < 0.025) {
+              const dCtx = {
+                machines: machinesRef.current,
+                decisions: decisionsRef.current,
+                popularity: popularityRef.current,
+                cash: cashRef.current,
+                time: timeRef.current,
+              };
+              const eligible = DECISION_DEFS.filter(d => {
+                const alreadyFired = !d.repeatable && d.choices.some(c => decisionsRef.current[c.flagId]);
+                return !alreadyFired && d.condition(dCtx);
+              });
+              if (eligible.length > 0) {
+                const totalWeight = eligible.reduce((s, d) => s + d.weight, 0);
+                let r = Math.random() * totalWeight;
+                let picked = eligible[eligible.length - 1];
+                for (const d of eligible) { r -= d.weight; if (r <= 0) { picked = d; break; } }
+                lastEventDayRef.current = today;
+                if (isPausedRef) isPausedRef.current = true;
+                onDecisionRef.current?.(picked, { machineName });
+                return;
+              }
+            }
+
+            // ── Passive event roll ──
             const ctx = {
               machines: machinesRef.current,
               time: timeRef.current,
@@ -283,27 +319,24 @@ export default function useGameEngine({
 
               lastEventDayRef.current = today;
 
-              // Resolve target machine for messages
-              const placed = machinesRef.current.filter(
-                m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0
-              );
-              let machineName = placed.length > 0 ? placed[0].name : 'a machine';
+              // machineName already resolved above; copy for mutation inside damage branch
+              let eventMachineName = machineName;
 
               // Apply effect
               if (picked.effect === 'machine_damage' || picked.effect === 'all_machine_damage') {
                 let targets;
                 if (picked.effect === 'all_machine_damage') {
                   targets = placed.map(m => ({ id: m.id, amount: picked.effectValue }));
-                  machineName = 'your machines';
+                  eventMachineName = 'your machines';
                 } else if (picked.target === 'random') {
                   const t = placed[Math.floor(Math.random() * placed.length)];
                   targets = t ? [{ id: t.id, amount: picked.effectValue }] : [];
-                  if (t) machineName = t.name;
+                  if (t) eventMachineName = t.name;
                 } else {
                   // weakest
                   const t = placed.reduce((a, b) => (a.durability < b.durability ? a : b), placed[0]);
                   targets = t ? [{ id: t.id, amount: picked.effectValue }] : [];
-                  if (t) machineName = t.name;
+                  if (t) eventMachineName = t.name;
                 }
                 if (targets.length > 0) {
                   setMachines(prev => prev.map(m => {
@@ -340,7 +373,7 @@ export default function useGameEngine({
               }
 
               // Notify App
-              const message = picked.getMessage({ machineName });
+              const message = picked.getMessage({ machineName: eventMachineName });
               setDailyReport(r => ({
                 ...r,
                 events: [...(r.events ?? []), { id: picked.id, label: picked.label, severity: picked.severity, message }],
@@ -383,7 +416,7 @@ export default function useGameEngine({
   // ──────────────────────────────────────────
   useEffect(() => {
     const moveTick = setInterval(() => {
-      if (dayStateRef.current !== 'RUNNING') return;
+      if (dayStateRef.current !== 'RUNNING' || isPausedRef?.current) return;
 
       setCustomers(prev => {
         let moneyEarned = 0;
@@ -523,6 +556,9 @@ export default function useGameEngine({
               nextC.status = 'waiting_for_drink';
               nextC.drinkPatienceTicks = Math.round(DRINK_PATIENCE_TICKS * (upgradeValuesRef.current.drinkPatienceMult ?? 1));
             } else if (c.status === 'walking_to_bathroom') {
+              // Teleport inside to the toilet cell (top-right of the 2×2 footprint)
+              const bath = machinesRef.current.find(m => m.id === nextC.machineId);
+              if (bath) { nextC.x = bath.x + 1; nextC.y = bath.y; }
               nextC.status = 'using_bathroom';
               nextC.bathroomTicks = BATHROOM_USE_TICKS;
             } else {
@@ -577,6 +613,9 @@ export default function useGameEngine({
             } else {
               satisfiedCount++;
               nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
+              // Teleport back to the door cell so the customer is on walkable ground
+              const bath = machinesRef.current.find(m => m.id === nextC.machineId);
+              if (bath) { nextC.x = bath.x; nextC.y = bath.y + 2; }
               nextC.machineId = null;
               nextC.bathroomTicks = undefined;
               nextC.status = 'evaluating_needs';

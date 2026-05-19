@@ -1,0 +1,30 @@
+<h2>Mobile: what happens to the game grid on small screens?</h2>
+<p class="subtitle">The grid is 750×500px. On a phone (390px wide) it won't fit. Three options:</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Scrollable / pannable grid</h3>
+      <p>The grid overflows and the player scrolls/pans around it. The UI chrome (TopBar, buttons) stays fixed. Simple to implement, feels like a real tycoon game on mobile.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Scale-to-fit (zoom out)</h3>
+      <p>The grid shrinks to fit the viewport using CSS transform scale. Everything stays visible but cells get tiny on phone — might be hard to tap accurately.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Smaller cells on mobile</h3>
+      <p>CELL_SIZE drops from 50px to ~32px on small screens (via CSS or a breakpoint). Grid becomes ~480×320px — fits on most phones. Machines/customers scale down proportionally.</p>
+    </div>
+  </div>
+
+</div>

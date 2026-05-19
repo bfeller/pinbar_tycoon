@@ -11,7 +11,7 @@ export default function Inventory({
 }) {
   return (
     <div className="inventory-panel" style={{opacity: dayState === 'REPORT' ? 0.5 : 1}}>
-       <h3 style={{ margin: '0 0 10px 0', color: '#94a3b8' }}>Back Room (Storage)</h3>
+       <h3 style={{ margin: '0 0 10px 0', color: '#000000' }}>Back Room (Storage)</h3>
        <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
          <GameGrid
             machines={backroomMachines}
@@ -47,7 +47,7 @@ export default function Inventory({
                  </div>
                </div>
              ))}
-             {backroomMachines.length === 0 && <div style={{color: '#94a3b8', fontStyle: 'italic'}}>Storage empty.</div>}
+             {backroomMachines.length === 0 && <div style={{color: '#444444', fontStyle: 'italic'}}>Storage empty.</div>}
            </div>
          </div>
        </div>

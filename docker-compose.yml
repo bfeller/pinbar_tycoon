@@ -1,0 +1,7 @@
+services:
+  pinbar-tycoon:
+    image: pinbar-tycoon:latest
+    build: .
+    ports:
+      - "3080:80"
+    restart: unless-stopped

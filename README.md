@@ -2,6 +2,8 @@
 
 A web-based tycoon game where you manage a pinball bar. 
 
+Built with claude code for testing capabilities. Very few lines of code hand-written. I don't know react very well but I let Claude make decisions about the architecture.
+
 ## Features
 - Progresses through time starting from 1975
 - Dynamic pricing for pinball machines based on their release year and age

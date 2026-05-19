@@ -1,0 +1,86 @@
+<h2>Design: Section 2 of 2 — Components + Mobile</h2>
+<p class="subtitle">How each piece of the UI transforms. Reply in terminal to approve.</p>
+
+<div class="section">
+  <h3>TopBar</h3>
+  <div style="font-family:monospace;font-size:12px;">
+    <!-- Desktop TopBar -->
+    <div class="label" style="margin-bottom:4px;">Desktop</div>
+    <div style="background:#c0c0c0;border-bottom:2px solid #808080;padding:6px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <strong style="color:#000;font-size:13px;">🎮 Bryan's Pinbar</strong>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;">💰 $4,200</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;">📅 Y1 W2 D3</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;">🔧 2/80%</span>
+      <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:2px 8px;">⭐ 72</span>
+      <span style="flex:1"></span>
+      <button style="background:#000080;color:#fff;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 14px;font-family:monospace;font-size:12px;">▶ Open Bar</button>
+      <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 10px;font-family:monospace;font-size:12px;">💻</button>
+    </div>
+    <!-- Mobile TopBar (two rows) -->
+    <div class="label" style="margin-top:12px;margin-bottom:4px;">Mobile (two rows, max-width 640px)</div>
+    <div style="background:#c0c0c0;border-bottom:2px solid #808080;padding:6px 10px;max-width:320px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <strong style="color:#000;font-size:13px;">🎮 Bryan's Pinbar</strong>
+        <div style="display:flex;gap:5px;">
+          <button style="background:#000080;color:#fff;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:3px 10px;font-family:monospace;font-size:11px;">▶ Open</button>
+          <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:3px 8px;font-family:monospace;font-size:11px;">💻</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;">💰 $4,200</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;">📅 Y1W2D3</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;">🔧 2/80%</span>
+        <span style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:1px 6px;font-size:11px;">⭐ 72</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Modals (StartMenu, ReportModal, WinScreen, BankruptScreen)</h3>
+  <p>All get the Win95 window treatment: <code>.w95-panel</code> body, <code>.w95-titlebar</code> header, <code>.w95-btn</code> buttons. No more rounded corners, blur, or dark backgrounds.</p>
+  <div style="font-family:monospace;font-size:12px;max-width:340px;">
+    <div style="background:linear-gradient(to right,#000080,#1084d0);color:#fff;padding:4px 8px;font-weight:bold;font-size:12px;">📊 End of Day Report</div>
+    <div style="background:#c0c0c0;border-left:2px solid #fff;border-right:2px solid #808080;border-bottom:2px solid #808080;padding:12px;">
+      <div style="background:#c0c0c0;border-top:2px solid #808080;border-left:2px solid #808080;border-bottom:2px solid #fff;border-right:2px solid #fff;padding:8px;font-size:11px;margin-bottom:10px;">
+        Revenue: $1,240<br>Customers served: 18<br>Machines repaired: 2
+      </div>
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:4px 18px;font-family:monospace;font-size:12px;">Next Day</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Event Notification (toast)</h3>
+  <p>Replaces the glassmorphism left-border toast with a Win95 raised panel. Severity shown by icon prefix (⚠️ bad, ✅ good, ℹ️ neutral) instead of a coloured border.</p>
+  <div style="font-family:monospace;font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:320px;">
+    <div style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:8px 12px;">
+      <div style="font-size:10px;font-weight:bold;letter-spacing:0.08em;color:#808080;margin-bottom:2px;">⚠️ MACHINE FAILURE</div>
+      <div style="font-size:12px;color:#000;">Space Invaders is out of order.</div>
+    </div>
+    <div style="background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-bottom:2px solid #808080;border-right:2px solid #808080;padding:8px 12px;">
+      <div style="font-size:10px;font-weight:bold;letter-spacing:0.08em;color:#808080;margin-bottom:2px;">✅ GREAT NIGHT</div>
+      <div style="font-size:12px;color:#000;">Popularity increased by 5.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Mobile grid — scrollable container</h3>
+  <p>On screens narrower than 768px, the <code>.play-area</code> gets <code>overflow: auto</code> and the grid renders at full 750×500px size inside it. TopBar and any fixed overlays stay anchored. No layout changes to the grid itself.</p>
+</div>
+
+<div class="section">
+  <h3>What stays the same</h3>
+  <ul style="font-size:0.9rem;color:#555;margin:0;padding-left:1.2rem;line-height:1.8;">
+    <li>Computer screen (already perfect Win95)</li>
+    <li>DecisionModal (already perfect Win95)</li>
+    <li>Game grid dark floor (bar interior, not a UI element)</li>
+    <li>Customer/machine SVGs</li>
+    <li>All game logic</li>
+  </ul>
+</div>
+
+<p class="subtitle" style="margin-top:1rem;">Does this all look right? Reply in terminal to approve and move to the spec.</p>
