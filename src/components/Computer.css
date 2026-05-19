@@ -21,6 +21,8 @@
 .win95-icons {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
+  max-height: calc(100vh - 50px);
   gap: 20px;
   padding: 20px;
   width: max-content;
