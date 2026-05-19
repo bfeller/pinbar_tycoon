@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { DOOR_POS, DAY_LENGTH_SECONDS } from '../constants';
+import { DOOR_POS, resolveDayLengthSeconds } from '../constants';
 import { buildSpawnNeedPool, rollSpawnNeeds } from '../utils/patronNeeds';
 import { tickCustomers } from '../simulation/customerAI';
 import { tickStaff } from '../simulation/staffAI';
@@ -70,12 +70,13 @@ export default function useGameEngine({
     const macroTick = setInterval(() => {
       if (isPausedRef?.current || dayStateRef.current !== 'RUNNING') return;
 
-      const timer = dayTimerRef.current;
-      setDayTimer(t => t + 1);
+      const dayLen = resolveDayLengthSeconds(upgradeValuesRef.current);
+      const nextTimer = dayTimerRef.current + 1;
+      dayTimerRef.current = nextTimer;
+      setDayTimer(nextTimer);
 
       // ── Day-end: wait for all customers to leave, then run overnight pass ──
-      const dayLen = upgradeValuesRef.current.dayLengthSeconds ?? DAY_LENGTH_SECONDS;
-      if (timer >= dayLen) {
+      if (nextTimer >= dayLen) {
         if (customersRef.current.length === 0) {
           if (upgradeValuesRef.current.repairmanActive) {
             const repairs = [];
@@ -128,7 +129,7 @@ export default function useGameEngine({
 
       // ── Event / decision roll ────────────────────────────────────────────
       const rolled = rollDayEvent({
-        timer,
+        timer: nextTimer,
         time:         timeRef.current,
         machines:     machinesRef.current,
         popularity:   popularityRef.current,
@@ -225,11 +226,14 @@ export default function useGameEngine({
         });
 
         // 2. Advance staff state machine (mutates result.next in-place for drink handoffs)
+        const dayLen = resolveDayLengthSeconds(upgradeValuesRef.current);
+        const barClosed = dayTimerRef.current >= dayLen;
+
         const { nextBartender, nextServers } = tickStaff(
           bartenderRef.current,
           serversRef.current,
           result.next,
-          { machines: machinesRef.current, upgradeValues: upgradeValuesRef.current }
+          { machines: machinesRef.current, upgradeValues: upgradeValuesRef.current, barClosed }
         );
         // Synchronously update refs so the next tick sees current staff state even if
         // React hasn't re-rendered yet (useEffect updates run after paint, not immediately).

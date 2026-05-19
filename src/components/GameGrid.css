@@ -10,6 +10,10 @@
   overflow: auto;
 }
 
+.play-area.grid-mode.computer-open {
+  overflow: hidden;
+}
+
 .bar-grid {
   position: relative;
   background: #1e2a38;

@@ -1,10 +1,12 @@
 import React from 'react';
 import './PlayActions.css';
-import { DAY_LENGTH_SECONDS } from '../constants';
+import { resolveDayLengthSeconds } from '../constants';
 
-function DayClock({ dayTimer }) {
-  const remaining = Math.max(0, DAY_LENGTH_SECONDS - dayTimer);
-  const pct = remaining / DAY_LENGTH_SECONDS;
+function DayClock({ dayTimer, dayLengthSeconds }) {
+  const len = resolveDayLengthSeconds({ dayLengthSeconds });
+  const timer = Number.isFinite(dayTimer) ? dayTimer : 0;
+  const remaining = Math.max(0, len - timer);
+  const pct = Math.min(1, Math.max(0, remaining / len));
   const r = 16;
   const circ = 2 * Math.PI * r;
   const offset = circ * (1 - pct);
@@ -32,7 +34,7 @@ function DayClock({ dayTimer }) {
   );
 }
 
-export default function PlayActions({ dayState, dayTimer, startDay, setIsComputerOpen, unreadEmails }) {
+export default function PlayActions({ dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails }) {
   return (
     <div className="play-actions">
       <button
@@ -46,7 +48,7 @@ export default function PlayActions({ dayState, dayTimer, startDay, setIsCompute
         <span>
           {dayState === 'BUILD' ? 'Start Day' : dayState === 'RUNNING' ? 'Day Running' : 'View Report'}
         </span>
-        {dayState === 'RUNNING' && <DayClock dayTimer={dayTimer} />}
+        {dayState === 'RUNNING' && <DayClock dayTimer={dayTimer} dayLengthSeconds={dayLengthSeconds} />}
       </button>
 
       {dayState === 'BUILD' && (

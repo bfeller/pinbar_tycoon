@@ -11,8 +11,19 @@ export function buildSpawnNeedPool({ hasPinball, hasDrink }) {
 export function rollSpawnNeeds(needPool, rng = Math.random) {
   const needsCount = Math.floor(rng() * 3) + 1;
   const needs = [];
+  let drinkAdded = false;
+  let pinballAdded = false;
   for (let i = 0; i < needsCount; i++) {
-    needs.push(needPool[Math.floor(rng() * needPool.length)]);
+    const available = needPool.filter((n) => {
+      if (n === 'drink' && drinkAdded) return false;
+      if (n === 'pinball' && pinballAdded) return false;
+      return true;
+    });
+    const pool = available.length > 0 ? available : needPool;
+    const pick = pool[Math.floor(rng() * pool.length)];
+    needs.push(pick);
+    if (pick === 'drink') drinkAdded = true;
+    if (pick === 'pinball') pinballAdded = true;
   }
   return needs;
 }

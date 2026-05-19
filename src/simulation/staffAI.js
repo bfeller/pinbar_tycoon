@@ -76,7 +76,7 @@ function findAdjacentApproach(fromX, fromY, machine, machineType, machines, bloc
  *
  * @returns {{ nextBartender, nextServers }}
  */
-export function tickStaff(bartender, servers, updatedCustomers, { machines, upgradeValues }) {
+export function tickStaff(bartender, servers, updatedCustomers, { machines, upgradeValues, barClosed = false }) {
   const station = SERVICE_STATIONS[0];
   // All placed kegerators are usable — each staff member gets their own.
   const stationMachines = machines.filter(m => m.type === station.type && m.x !== null);
@@ -97,11 +97,18 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     }
   }
 
+  // One patron per staff — beingServed alone can desync from targetCustId across ticks.
+  const claimedCustIds = new Set();
+  for (const { entity } of staffUnits) {
+    if (entity?.targetCustId) claimedCustIds.add(entity.targetCustId);
+  }
+
   const staffPositions = new Map();
   const nextStaffEntities = [];
 
   const releaseCustomer = (custId) => {
     if (!custId) return;
+    claimedCustIds.delete(custId);
     const cust = updatedCustomers.find(c => c.id === custId && c.status === 'waiting_for_drink');
     if (cust) cust.beingServed = false;
   };
@@ -141,6 +148,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
         if (next.targetKegeratorId && kegLock.get(next.targetKegeratorId) === id) {
           kegLock.delete(next.targetKegeratorId);
         }
+        releaseCustomer(next.targetCustId);
         next.targetCustId = null;
         next.targetBartopId = null;
         next.targetKegeratorId = null;
@@ -148,10 +156,25 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
       }
     }
 
+    // Bar closed — finish pour/serve already in progress, but cancel queued jobs
+    if (barClosed && next.status === 'queued_for_kegerator') {
+      releaseCustomer(next.targetCustId);
+      if (next.targetKegeratorId && kegLock.get(next.targetKegeratorId) === id) {
+        kegLock.delete(next.targetKegeratorId);
+      }
+      next.targetCustId = null;
+      next.targetBartopId = null;
+      next.targetKegeratorId = null;
+      next.status = 'idle';
+    }
+
     // ── State machine ────────────────────────────────────────────────────────
 
-    if (next.status === 'idle') {
-      const waitingCust = updatedCustomers.find(c => c.status === station.waitStatus && !c.beingServed);
+    if (next.status === 'idle' && !next.targetCustId) {
+      const waitingCust = !barClosed
+        ? updatedCustomers.find(c =>
+            c.status === station.waitStatus && !c.beingServed && !claimedCustIds.has(c.id))
+        : null;
       if (waitingCust) {
         // Pick the closest kegerator not currently locked by another staff member.
         // Immediately reserve it in kegLock so subsequent staff in this tick
@@ -167,6 +190,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
         }
         if (bestKeg) {
           waitingCust.beingServed = true;
+          claimedCustIds.add(waitingCust.id);
           next.targetCustId = waitingCust.id;
           next.targetBartopId = waitingCust.machineId;
           next.targetKegeratorId = bestKeg.id;
@@ -180,7 +204,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     const curKeg = next.targetKegeratorId ? stationMachines.find(m => m.id === next.targetKegeratorId) : null;
     const curPourCell = curKeg ? station.getPourCell(curKeg) : null;
 
-    if (next.status === 'queued_for_kegerator' && next.targetCustId) {
+    if (next.status === 'queued_for_kegerator' && next.targetCustId && !barClosed) {
       if (!curPourCell) {
         // Kegerator was removed — give up this job
         releaseCustomer(next.targetCustId);
@@ -271,8 +295,10 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     } else if (next.status === 'serving') {
       next.timer--;
       if (next.timer <= 0) {
-        const cust = updatedCustomers.find(c => c.id === next.targetCustId && c.status === 'waiting_for_drink');
-        if (cust) { cust.status = 'drinking'; cust.beingServed = false; }
+        const custId = next.targetCustId;
+        const cust = updatedCustomers.find(c => c.id === custId && c.status === 'waiting_for_drink');
+        if (cust) cust.status = 'drinking';
+        releaseCustomer(custId);
         next.status = 'idle';
         next.targetCustId = null;
         next.targetBartopId = null;

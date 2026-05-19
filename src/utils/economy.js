@@ -1,5 +1,15 @@
 import { NEW_MACHINE_PRICE } from '../constants';
 
+export const BAR_SUPPLY_PURCHASE_PRICE = {
+  kegerator: 1000,
+  bartop: 500,
+  bathroom: 2000,
+};
+
+export const BAR_SUPPLY_SELL_RATIO = 0.5;
+
+export const isBarSupply = (type) => type in BAR_SUPPLY_PURCHASE_PRICE;
+
 export const extractYear = (supplementary) => {
   if (!supplementary) return 2020;
   const match = supplementary.match(/\b(19\d{2}|20\d{2})\b/);
@@ -8,7 +18,12 @@ export const extractYear = (supplementary) => {
 
 const LOG_MAX = Math.log1p(1200); // normalise against ~peak observed locationCount
 
-export const calculatePrice = (machineYear, currentYear, durability = 100, locationCount = 0) => {
+export const calculatePrice = (machineYear, currentYear, durability = 100, locationCount = 0, machineType = null) => {
+  if (machineType && isBarSupply(machineType)) {
+    const purchase = BAR_SUPPLY_PURCHASE_PRICE[machineType];
+    return Math.floor(purchase * BAR_SUPPLY_SELL_RATIO * (durability / 100));
+  }
+
   if (machineYear > currentYear) return null;
   const age = Math.max(0, currentYear - machineYear);
   const ageDiscountPct = Math.min(0.25, age * 0.05);

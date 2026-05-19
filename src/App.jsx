@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import './index.css';
 import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS, DAY_LENGTH_SECONDS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
-import { extractYear, calculatePrice } from './utils/economy';
+import { extractYear, calculatePrice, BAR_SUPPLY_PURCHASE_PRICE } from './utils/economy';
 import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
 import { UPGRADE_DEFS } from './data/upgrades';
@@ -49,7 +49,7 @@ function addGameDays({ year, week, day }, days) {
 }
 
 const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0, liquor_licensing: 0 };
-const DEFAULT_BARTENDER = { id: 'bartender', x: null, y: null, status: 'idle', path: [], pathIndex: 0 };
+const DEFAULT_BARTENDER = { id: 'bartender', x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, targetKegeratorId: null, timer: 0 };
 const DEFAULT_STAFF = { server: 0, repairman: false };
 const makeServerEntity = () => ({ id: 'server-' + Date.now() + Math.random(), x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, timer: 0 });
 
@@ -139,7 +139,8 @@ function App() {
     drinkRevenue: staff.server > 0 ? 20 : 15,
     repairmanActive: staff.repairman,
     repairmanCoverage: staff.repairman ? 10 : 0,
-    dayLengthSeconds: DAY_LENGTH_SECONDS + upgrades.liquor_licensing * 5,
+    dayLengthSeconds: DAY_LENGTH_SECONDS + (upgrades.liquor_licensing ?? 0) * 5,
+    liquor_licensing: upgrades.liquor_licensing ?? 0,
   };
 
   // ── Hooks ──
@@ -288,7 +289,7 @@ function App() {
     setCustomers([]);
     setSpendPopups([]);
     setBartender(DEFAULT_BARTENDER);
-    setUpgrades(s.upgrades ?? DEFAULT_UPGRADES);
+    setUpgrades({ ...DEFAULT_UPGRADES, ...(s.upgrades ?? {}) });
     setEnrolledCourses(s.enrolledCourses ?? []);
     setInbox(s.inbox ?? []);
     setFiredArcEventIds(new Set(s.firedArcEventIds ?? []));
@@ -401,9 +402,8 @@ function App() {
 
   const buySupply = (type) => {
     if (dayState === 'REPORT') return false;
-    const priceMap = { kegerator: 1000, bartop: 500, bathroom: 2000 };
     const nameMap = { kegerator: 'Kegerator', bartop: 'Bartop', bathroom: 'Bathroom' };
-    const price = priceMap[type] ?? 500;
+    const price = BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500;
     const name = nameMap[type] ?? type;
     if (cash >= price) {
       // Bathrooms must go in the main room — customers need to reach them
@@ -446,7 +446,7 @@ function App() {
 
   const sellMachine = (m) => {
     if (dayState !== 'BUILD') return;
-    const sellValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0);
+    const sellValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
     if (sellValue) {
       setCash(c => c + sellValue);
       setMachines(prev => prev.filter(machine => machine.id !== m.id));
@@ -887,7 +887,7 @@ function App() {
         />
       )}
 
-      <div className="play-area grid-mode">
+      <div className={`play-area grid-mode${isComputerOpen ? ' computer-open' : ''}`}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div>
             <GameGrid
@@ -910,6 +910,7 @@ function App() {
           <PlayActions
             dayState={dayState}
             dayTimer={dayTimer}
+            dayLengthSeconds={upgradeValues.dayLengthSeconds}
             startDay={startDay}
             setIsComputerOpen={setIsComputerOpen}
             unreadEmails={inbox.filter(e => !e.read).length}

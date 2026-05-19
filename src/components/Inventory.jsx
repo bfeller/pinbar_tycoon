@@ -46,7 +46,7 @@ export default function Inventory({
                         </button>
                       );
                     })()}
-                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0)})</button>
+                    <button className="repair-btn" style={{background: '#ef4444'}} disabled={dayState === 'REPORT'} onClick={() => sellMachine(m)}>Sell (${calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type)})</button>
                  </div>
                </div>
              ))}

@@ -86,6 +86,7 @@ export default function Computer({
   return (
     <div className="computer-overlay">
       <div className="win95-desktop">
+        <div className="win95-icons-wrap">
         <div className="win95-icons">
           <div className="win95-icon" onClick={() => openBrowser('pinball')}>
             <div className="icon-img">💻</div>
@@ -126,6 +127,7 @@ export default function Computer({
             <div className="icon-img">ℹ️</div>
             <span>About</span>
           </div>
+        </div>
         </div>
 
         {activeWindow === 'browser' && (

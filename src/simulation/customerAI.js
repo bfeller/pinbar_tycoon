@@ -1,5 +1,5 @@
 import PF from 'pathfinding';
-import { DOOR_POS, DAY_LENGTH_SECONDS, GRID_COLS, GRID_ROWS } from '../constants';
+import { DOOR_POS, GRID_COLS, GRID_ROWS, resolveDayLengthSeconds } from '../constants';
 import { getPlayCell, getMachineCells } from '../utils/grid';
 import { buildGrid } from '../utils/pathfinding';
 import { maybeQueueBathroomAfterDrink } from '../utils/patronNeeds';
@@ -171,14 +171,41 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
     return false;
   };
 
+  const dayLen = resolveDayLengthSeconds(upgradeValues);
+  const barClosed = dayTimer >= dayLen;
+
   for (const c of prev) {
     const nextC = { ...c, needs: [...(c.needs || [])] };
+
+    // Bar closed — patrons already seated/waiting must leave; in-progress activities finish first
+    if (barClosed && (
+      c.status === 'waiting_for_drink' ||
+      c.status === 'waiting_for_pinball' ||
+      c.status === 'waiting_for_bartop' ||
+      c.status === 'waiting_for_bathroom' ||
+      c.status === 'walking_to_wait_area'
+    )) {
+      nextC.beingServed = false;
+      const reason = c.status === 'waiting_for_drink' || c.status === 'waiting_for_bartop'
+        ? 'bar_closed_drink'
+        : c.status === 'waiting_for_pinball' ? 'bar_closed_pinball'
+        : 'bar_closed_bathroom';
+      if (!tryForgive(nextC)) {
+        unsatisfiedCount++;
+        unsatisfiedReasons[reason] = (unsatisfiedReasons[reason] ?? 0) + 1;
+      }
+      nextC.needs = [];
+      nextC.angry = true;
+      if (!sendToExit(nextC, machines)) continue;
+      updated.push(nextC);
+      continue;
+    }
 
     if (c.status === 'evaluating_needs') {
       if (nextC.needs.length === 0) {
         if (!sendToExit(nextC, machines)) continue;
 
-      } else if (dayTimer >= (upgradeValues.dayLengthSeconds ?? DAY_LENGTH_SECONDS)) {
+      } else if (dayTimer >= dayLen) {
         // Bar closed — customer leaves angry, marking unmet needs
         for (const n of nextC.needs) {
           if (!tryForgive(nextC)) {
