@@ -15,7 +15,7 @@ const UNSATISFIED_REASONS = {
 const LOG_MAX = Math.log1p(1200);
 
 export default function ReportModal({
-  dailyReport, machines, popularity, repairsRemaining, cash, repairMachine, nextDay
+  dailyReport, machines, popularity, repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = []
 }) {
   const machineScore = Math.floor(
     machines
@@ -132,7 +132,31 @@ export default function ReportModal({
              ))}
            </div>
          )}
-         <button className="start-day-btn" onClick={nextDay}>Next Day</button>
+         {upcomingExpenses.length > 0 && (() => {
+           const total = upcomingExpenses.reduce((s, e) => s + e.amount, 0);
+           const cashAfter = cash - total;
+           return (
+             <div style={{ marginTop: '1rem', padding: '0.75rem', borderTop: '2px solid #808080', borderLeft: '2px solid #808080', borderBottom: '2px solid #ffffff', borderRight: '2px solid #ffffff', background: '#ffffff' }}>
+               <div style={{ color: '#cc0000', fontWeight: 'bold', marginBottom: '0.4rem' }}>
+                 ⚠️ Bills Due Tomorrow — <span style={{ fontWeight: 400 }}>-${total.toLocaleString()}</span>
+               </div>
+               {upcomingExpenses.map((e, i) => (
+                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#000000', marginBottom: '0.2rem' }}>
+                   <span>{e.icon} {e.name}</span>
+                   <span style={{ color: '#cc0000' }}>-${e.amount.toLocaleString()}</span>
+                 </div>
+               ))}
+               <div style={{ marginTop: '6px', fontSize: '0.85rem', fontWeight: 'bold', color: cashAfter < 0 ? '#cc0000' : '#006400' }}>
+                 Cash after: ${cashAfter.toLocaleString()} {cashAfter < 0 ? '— You cannot cover these bills.' : ''}
+               </div>
+             </div>
+           );
+         })()}
+         <button className="start-day-btn" onClick={nextDay}>
+           {upcomingExpenses.length > 0 && (cash - upcomingExpenses.reduce((s, e) => s + e.amount, 0)) < 0
+             ? '💀 Go Bankrupt'
+             : 'Next Day'}
+         </button>
          </div>{/* end report-modal-body */}
        </div>
      </div>

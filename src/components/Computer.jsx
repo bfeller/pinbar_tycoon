@@ -116,6 +116,10 @@ export default function Computer({
             <div className="icon-img">📊</div>
             <span>Reports</span>
           </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('credits')}>
+            <div className="icon-img">ℹ️</div>
+            <span>About</span>
+          </div>
         </div>
 
         {activeWindow === 'browser' && (
@@ -473,6 +477,65 @@ export default function Computer({
           );
         })()}
 
+        {activeWindow === 'credits' && (
+          <div className="win95-window">
+            <div className="win95-titlebar">
+              <div className="title">ℹ️ About Pinbar Tycoon</div>
+              <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+            </div>
+            <div className="win95-content">
+              <div className="browser-page">
+                <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                  <img src="/favicon.svg" alt="Pinbar Tycoon" style={{ width: '64px', height: '64px', display: 'block', margin: '0 auto 8px' }} />
+                  <h1 style={{ color: '#000080', textDecoration: 'none', fontSize: '1.3rem', margin: 0 }}>Pinbar Tycoon</h1>
+                  <p style={{ fontSize: '0.8rem', color: '#555', margin: '4px 0 0' }}>The pinball bar management simulation</p>
+                </div>
+                <hr />
+                <h2 style={{ fontSize: '1rem', color: '#000080', marginBottom: '6px' }}>Credits &amp; Attribution</h2>
+                <div className="win95-card" style={{ marginBottom: '12px' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                    🎱 Pinball Machine Data
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
+                    All pinball machine names, manufacturers, release years, and images are sourced from the{' '}
+                    <strong>Open Pinball Database (OPDB)</strong> — a community-maintained registry of pinball machines from around the world.
+                  </p>
+                  <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
+                    This game uses a static snapshot of OPDB data. No API calls are made at runtime.
+                  </p>
+                  <a
+                    href="https://opdb.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '0.85rem', color: '#000080', textDecoration: 'underline', fontWeight: 'bold' }}
+                  >
+                    Visit opdb.org ↗
+                  </a>
+                </div>
+                <div className="win95-card" style={{ marginBottom: '12px' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                    🛠️ Built With
+                  </div>
+                  <ul style={{ fontSize: '0.85rem', color: '#333', margin: 0, paddingLeft: '18px' }}>
+                    <li>React 18 + Vite</li>
+                    <li>Claude Code — most of this was written by AI</li>
+                    <li>OPDB for pinball machine data</li>
+                  </ul>
+                </div>
+                <div className="win95-card">
+                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                    🙏 Thank You
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#333', margin: 0 }}>
+                    A huge thanks to the OPDB contributors and maintainers who keep the pinball database accurate,
+                    comprehensive, and freely available. This game literally could not exist without their work.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeWindow === 'email' && (
           <EmailClient
             emails={inbox}
@@ -498,6 +561,9 @@ export default function Computer({
           )}
           {activeWindow === 'reports' && (
             <div className="taskbar-item active">Performance Reports</div>
+          )}
+          {activeWindow === 'credits' && (
+            <div className="taskbar-item active">About Pinbar Tycoon</div>
           )}
           <div className="taskbar-time">{time.year}</div>
         </div>

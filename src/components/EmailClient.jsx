@@ -72,7 +72,7 @@ export default function EmailClient({ emails, onChoice, onRead, onClose, charact
               </div>
               <hr className="email-divider" />
               <pre className="email-body">{selected.body}</pre>
-              {selected.choices && !selected.choiceMade && (
+              {selected.choices && !selected.choiceMade && !selected.choicesExpired && (
                 <div className="email-choices">
                   {selected.choices.map((c, i) => (
                     <button
@@ -87,6 +87,9 @@ export default function EmailClient({ emails, onChoice, onRead, onClose, charact
               )}
               {selected.choiceMade && (
                 <div className="email-choice-done">— Response sent —</div>
+              )}
+              {selected.choicesExpired && !selected.choiceMade && (
+                <div className="email-choice-done" style={{ color: '#8b0000' }}>— Offer has expired —</div>
               )}
             </>
           ) : (

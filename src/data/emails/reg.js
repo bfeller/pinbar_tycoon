@@ -81,6 +81,7 @@ Reg`,
       { label: "Buy it ($800)", effectId: 'reg_machine' },
       { label: "No thanks",     effectId: null },
     ],
+    expiresAfterDays: 3,
     event: {
       label: 'Offer Received',
       severity: 'neutral',

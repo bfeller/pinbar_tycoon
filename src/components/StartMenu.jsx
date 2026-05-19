@@ -31,7 +31,7 @@ export default function StartMenu({ savedGame, onNewGame, onContinue }) {
         {view === 'main' && (
           <>
             <div className="startmenu-header">
-              <span className="startmenu-icon">🎰</span>
+              <img src="/favicon.svg" alt="Pinbar Tycoon" className="startmenu-icon" style={{width: '64px', height: '64px'}} />
               <div>
                 <h1 className="startmenu-title">Pinbar Tycoon</h1>
                 <p className="startmenu-tagline">1975. You have a space and some machines. Make it work.</p>

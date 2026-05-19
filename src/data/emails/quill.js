@@ -32,7 +32,7 @@ Dr. H. Quill
 Senior Analyst, Temporal Continuity Office
 Dept. 7 — Leisure & Culture`,
     trigger: ({ time, sentIds }) =>
-      lin(time) >= 1 && !sentIds.has('quill_01'),
+      lin(time) >= 0 && !sentIds.has('quill_01'),
     choices: null,
   },
 

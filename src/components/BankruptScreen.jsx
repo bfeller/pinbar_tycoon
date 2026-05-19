@@ -13,7 +13,7 @@ export default function BankruptScreen({ stats, onRestart }) {
           <span>⚠ Notice of Insolvency — {pinbarName}</span>
         </div>
         <div className="bankrupt-body">
-          <div className="bankrupt-icon">📋</div>
+          <img src="/favicon.svg" alt="Pinbar Tycoon" className="bankrupt-icon" style={{width: '56px', height: '56px'}} />
           <h2 className="bankrupt-headline">YOUR BAR HAS CLOSED</h2>
           <p className="bankrupt-message">
             {time.year >= 2020

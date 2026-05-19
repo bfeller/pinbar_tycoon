@@ -11,7 +11,8 @@ export default function WinScreen({ stats, onRestart }) {
         <div className="win-body">
 
         <div className="win-header">
-          <span className="win-game-title">🎰 PINBAR TYCOON</span>
+          <img src="/favicon.svg" alt="Pinbar Tycoon" style={{width: '48px', height: '48px', display: 'block', margin: '0 auto 6px'}} />
+          <span className="win-game-title">PINBAR TYCOON</span>
         </div>
 
         <div className="win-banner">

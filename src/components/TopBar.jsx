@@ -8,7 +8,7 @@ export default function TopBar({
     <div className="topbar">
       <div className="topbar-center">
         <div className="topbar-brand">
-          <i className="fa-solid fa-gamepad" style={{color: '#000080', fontSize: '1.5rem'}}></i>
+          <img src="/favicon.svg" alt="Pinbar Tycoon" style={{width: '28px', height: '28px'}} />
           <div>
             <h2 style={{margin: 0, lineHeight: 1}}>{pinbarName}</h2>
             <span style={{fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase'}}>Pinbar Tycoon</span>

@@ -457,7 +457,10 @@ function App() {
   };
 
   const handleEmailChoice = (emailId, effectId) => {
-    if (effectId === 'reg_machine') {
+    if (effectId === 'reg_spy_end_machine') {
+      // Remove Reg's spy Bally from the bar entirely — player confronted Reg
+      setMachines(prev => prev.filter(m => m.name !== "Reg's Bally (1978)"));
+    } else if (effectId === 'reg_machine') {
       // Reg's dodgy Bally: costs $800, 1978 machine, 65% durability
       if (cash >= 800) {
         setCash(c => c - 800);
@@ -576,6 +579,16 @@ function App() {
     const newTime = { year, week, day };
     const newLinear = toLinearDay(newTime);
 
+    // Expire email offers that have passed their window
+    setInbox(prev => prev.map(e => {
+      if (e.expiresAfterDays && !e.choiceMade && !e.choicesExpired && e.deliveredAt !== undefined) {
+        if (newLinear - e.deliveredAt >= e.expiresAfterDays) {
+          return { ...e, choicesExpired: true };
+        }
+      }
+      return e;
+    }));
+
     // Win condition — reach 2026
     if (newTime.year >= 2026) {
       localStorage.removeItem(SAVE_KEY);
@@ -685,11 +698,12 @@ function App() {
 
     // Check for new emails (read inbox from closure — safe inside a click handler)
     const sentIds = new Set(inbox.map(e => e.id));
-    const emailState = { time: newTime, popularity, cash, machines, sentIds };
+    const completedCourseIds = new Set(justCompleted.map(c => c.id));
+    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
     if (newEmails.length > 0) {
-      setInbox(prev => [...prev, ...newEmails.map(def => ({ ...def, read: false, choiceMade: false }))]);
+      setInbox(prev => [...prev, ...newEmails.map(def => ({ ...def, read: false, choiceMade: false, deliveredAt: toLinearDay(newTime) }))]);
 
       // Fire any events attached to incoming emails
       let emailPopDelta = 0;
@@ -735,6 +749,32 @@ function App() {
   const mainMachines = machines.filter(m => m.room === 'main' || !m.room);
   const backroomMachines = machines.filter(m => m.room === 'backroom');
   const placementMachineType = machines.find(m => m.id === placementMachine)?.type;
+
+  // Preview expenses that would fire when the player clicks "Next Day" from the report
+  const upcomingExpenses = (() => {
+    if (dayState !== 'REPORT') return [];
+    let { year, week, day } = time;
+    day += 1;
+    if (day > 3) { day = 1; week += 1; }
+    if (week > 10) { week = 1; year += 1; }
+    const nextTime = { year, week, day };
+    if (nextTime.day !== 1) return [];
+    const weekNum = (nextTime.year - 1975) * 10 + nextTime.week;
+    const expenses = [];
+    for (const def of EXPENSE_DEFS) {
+      if (def.startYear && nextTime.year < def.startYear) continue;
+      if ((weekNum - 1) % def.frequencyWeeks === 0) {
+        const amount = typeof def.amount === 'function' ? def.amount(nextTime) : def.amount;
+        expenses.push({ id: def.id, name: def.name, icon: def.icon, amount });
+      }
+    }
+    for (const def of STAFF_DEFS) {
+      const val = staff[def.id];
+      const count = typeof val === 'number' ? val : (val ? 1 : 0);
+      if (count > 0) expenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
+    }
+    return expenses;
+  })();
 
   // ── Render ──
   if (screen === 'start') {
@@ -842,6 +882,7 @@ function App() {
             cash={cash}
             repairMachine={repairMachine}
             nextDay={nextDay}
+            upcomingExpenses={upcomingExpenses}
           />
         )}
 

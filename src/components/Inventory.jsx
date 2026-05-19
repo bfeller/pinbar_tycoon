@@ -31,7 +31,10 @@ export default function Inventory({
            <div className="inventory-list" style={{ marginTop: 0 }}>
              {backroomMachines.map(m => (
                <div key={m.id} className="inventory-item" style={{ width: '100%', marginBottom: '10px' }}>
-                 <div style={{fontWeight: 'bold'}}>{m.name}</div>
+                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'}}>
+                   <div style={{fontWeight: 'bold'}}>{m.name}</div>
+                   <a href={`https://opdb.org/machines/${m.id}`} target="_blank" rel="noopener noreferrer" style={{fontSize: '0.72rem', color: '#000080', textDecoration: 'underline'}}>OPDB ↗</a>
+                 </div>
                  <div style={{fontSize: '0.8rem'}}>{m.durability}% Durability</div>
                  <div style={{display: 'flex', gap: '5px', marginTop: '5px'}}>
                     {m.durability < 100 && (() => {
