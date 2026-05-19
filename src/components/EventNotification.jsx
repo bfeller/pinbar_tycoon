@@ -9,7 +9,10 @@ export default function EventNotification({ notification, onDismiss }) {
 
   return (
     <div className={`event-notification event-notification--${notification.severity}`}>
-      <span className="event-notification__label">{notification.label}</span>
+      <span className="event-notification__label">
+        {notification.severity === 'bad' ? '⚠️ ' : notification.severity === 'good' ? '✅ ' : 'ℹ️ '}
+        {notification.label}
+      </span>
       <span className="event-notification__message">{notification.message}</span>
     </div>
   );

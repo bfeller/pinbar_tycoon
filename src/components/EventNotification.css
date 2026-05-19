@@ -1,40 +1,35 @@
 .event-notification {
   position: fixed;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  border-left: 4px solid;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  max-width: 420px;
-  animation: event-slide-in 0.25s ease-out;
+  gap: 2px;
+  padding: 8px 12px;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  box-shadow: 4px 4px 0 #000000;
+  max-width: 380px;
+  min-width: 240px;
+  animation: event-slide-in 0.15s ease-out;
 }
 
 @keyframes event-slide-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-.event-notification--bad {
-  background: rgba(30, 10, 10, 0.85);
-  border-color: #ef4444;
-}
-
-.event-notification--good {
-  background: rgba(10, 25, 15, 0.85);
-  border-color: #10b981;
-}
-
+/* Severity colours removed — icon prefix conveys severity instead */
+.event-notification--bad,
+.event-notification--good,
 .event-notification--neutral {
-  background: rgba(20, 20, 30, 0.85);
-  border-color: #94a3b8;
+  background: #c0c0c0;
 }
 
 .event-notification__label {
@@ -42,14 +37,11 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: #000000;
 }
 
-.event-notification--bad   .event-notification__label { color: #ef4444; }
-.event-notification--good  .event-notification__label { color: #10b981; }
-.event-notification--neutral .event-notification__label { color: #94a3b8; }
-
 .event-notification__message {
-  font-size: 0.9rem;
-  color: #f8fafc;
+  font-size: 0.85rem;
+  color: #000000;
   line-height: 1.4;
 }
