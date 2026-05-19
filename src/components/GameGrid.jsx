@@ -9,7 +9,7 @@ import BathroomSVG from './BathroomSVG';
 import DoorSVG from './DoorSVG';
 
 export default function GameGrid({
-  machines, customers = [], bartender = null, servers = [], hoveredCell, placementMachine, placementRotation,
+  machines, customers = [], spendPopups = [], bartender = null, servers = [], hoveredCell, placementMachine, placementRotation,
   handleCellClick, setHoveredCell, cols = GRID_COLS, rows = GRID_ROWS, showDoor = true,
   gridId = 'main', placementMachineType = null, dayState = 'BUILD'
 }) {
@@ -283,6 +283,20 @@ export default function GameGrid({
           </div>
         );
       })}
+
+      {/* Spend feedback */}
+      {spendPopups.map(pop => (
+        <div key={pop.id}
+          className="spend-popup"
+          style={{
+            left: pop.x * CELL_SIZE + CELL_SIZE / 2,
+            top: pop.y * CELL_SIZE + 6,
+          }}
+        >
+          <i className="fa-solid fa-dollar-sign" />
+          <span>+{pop.amount}</span>
+        </div>
+      ))}
 
       {/* Bartender */}
       {bartender && bartender.x !== null && (

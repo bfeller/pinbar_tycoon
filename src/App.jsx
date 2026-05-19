@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './index.css';
 import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
@@ -11,6 +11,7 @@ import { EMAIL_DEFS } from './data/emails/index';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
 import { EXPENSE_DEFS } from './data/expenses';
 import TopBar from './components/TopBar';
+import PlayActions from './components/PlayActions';
 import GameGrid from './components/GameGrid';
 import Inventory from './components/Inventory';
 import ReportModal from './components/ReportModal';
@@ -69,6 +70,8 @@ function App() {
   const [repairsRemaining, setRepairsRemaining] = useState(5);
   const [machines, setMachines] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [spendPopups, setSpendPopups] = useState([]);
+  const spendPopupIdRef = useRef(0);
   const [bartender, setBartender] = useState({ x: null, y: null, status: 'idle', path: [], pathIndex: 0 });
 
   // ── Upgrades ──
@@ -141,6 +144,14 @@ function App() {
     setActiveDecision({ ...eventDef, message: eventDef.getMessage(ctx) });
   };
 
+  const addSpendPopup = useCallback(({ x, y, amount }) => {
+    const id = ++spendPopupIdRef.current;
+    setSpendPopups(prev => [...prev, { id, x, y, amount }]);
+    setTimeout(() => {
+      setSpendPopups(prev => prev.filter(p => p.id !== id));
+    }, 1200);
+  }, []);
+
   const handleChoice = (choice) => {
     setDecisions(prev => ({ ...prev, [choice.flagId]: true }));
 
@@ -185,6 +196,7 @@ function App() {
     isPausedRef,
     onEvent: handleEvent,
     onDecision: handleDecision,
+    onCustomerSpend: addSpendPopup,
   });
 
   // ── Keyboard: rotate placement ──
@@ -233,6 +245,7 @@ function App() {
     setRepairsRemaining(5);
     setMachines([]);
     setCustomers([]);
+    setSpendPopups([]);
     setBartender(DEFAULT_BARTENDER);
     setUpgrades(DEFAULT_UPGRADES);
     setEnrolledCourses([]);
@@ -261,6 +274,7 @@ function App() {
     setRepairsRemaining(s.repairsRemaining ?? 5);
     setMachines(s.machines ?? []);
     setCustomers([]);
+    setSpendPopups([]);
     setBartender(DEFAULT_BARTENDER);
     setUpgrades(s.upgrades ?? DEFAULT_UPGRADES);
     setEnrolledCourses(s.enrolledCourses ?? []);
@@ -756,10 +770,6 @@ function App() {
         popularity={popularity}
         placementMachine={placementMachine}
         dayState={dayState}
-        dayTimer={dayTimer}
-        startDay={startDay}
-        setIsComputerOpen={setIsComputerOpen}
-        unreadEmails={inbox.filter(e => !e.read).length}
       />
 
       {notification && (
@@ -782,6 +792,7 @@ function App() {
             <GameGrid
               machines={mainMachines}
               customers={customers}
+              spendPopups={spendPopups}
               bartender={bartender}
               servers={servers}
               hoveredCell={hoveredCell}
@@ -794,6 +805,14 @@ function App() {
               dayState={dayState}
             />
           </div>
+
+          <PlayActions
+            dayState={dayState}
+            dayTimer={dayTimer}
+            startDay={startDay}
+            setIsComputerOpen={setIsComputerOpen}
+            unreadEmails={inbox.filter(e => !e.read).length}
+          />
 
           <Inventory
             backroomMachines={backroomMachines}

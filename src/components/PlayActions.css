@@ -1,0 +1,132 @@
+.play-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.start-day-btn {
+  background: #000080;
+  color: #ffffff;
+  border-top: 2px solid #aaaacc;
+  border-left: 2px solid #aaaacc;
+  border-bottom: 2px solid #000040;
+  border-right: 2px solid #000040;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  height: 36px;
+  border-radius: 0;
+}
+
+.start-day-btn:active:not(:disabled) {
+  border-top-color: #000040;
+  border-left-color: #000040;
+  border-bottom-color: #aaaacc;
+  border-right-color: #aaaacc;
+}
+
+.start-day-btn:disabled {
+  background: #808080;
+  border-color: #808080;
+  cursor: not-allowed;
+}
+
+.start-day-btn.running {
+  padding-right: 10px;
+  gap: 10px;
+}
+
+.day-clock {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.day-clock-label {
+  position: absolute;
+  font-size: 0.58rem;
+  font-weight: bold;
+  line-height: 1;
+  pointer-events: none;
+}
+
+@keyframes clock-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+.day-clock.urgent {
+  animation: clock-pulse 0.5s ease-in-out infinite;
+}
+
+.start-day-btn:focus-visible {
+  outline: 2px solid #ffff00;
+  outline-offset: 1px;
+}
+
+.computer-btn {
+  position: relative;
+  background: #c0c0c0;
+  color: #000000;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  height: 36px;
+  padding: 0 14px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: bold;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.computer-btn:active {
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+}
+
+.computer-btn:focus-visible {
+  outline: 2px solid #000080;
+  outline-offset: 1px;
+}
+
+.computer-btn-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: red;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  pointer-events: none;
+}

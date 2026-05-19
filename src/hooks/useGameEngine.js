@@ -62,6 +62,7 @@ export default function useGameEngine({
   isPausedRef,
   onEvent,
   onDecision,
+  onCustomerSpend,
 }) {
   // Refs to access current state inside setInterval closures
   const machinesRef = useRef(machines);
@@ -76,6 +77,7 @@ export default function useGameEngine({
   const popularityRef = useRef(popularity);
   const onEventRef = useRef(onEvent);
   const onDecisionRef = useRef(onDecision);
+  const onCustomerSpendRef = useRef(onCustomerSpend);
   const decisionsRef = useRef(decisions);
   const lastEventDayRef = useRef(-1); // lin-day of last event, prevents >1 per day
 
@@ -91,6 +93,7 @@ export default function useGameEngine({
   useEffect(() => { popularityRef.current = popularity; }, [popularity]);
   useEffect(() => { onEventRef.current = onEvent; }, [onEvent]);
   useEffect(() => { onDecisionRef.current = onDecision; }, [onDecision]);
+  useEffect(() => { onCustomerSpendRef.current = onCustomerSpend; }, [onCustomerSpend]);
   useEffect(() => { decisionsRef.current = decisions; }, [decisions]);
 
   // Helper: try to pathfind a customer to an available target
@@ -570,6 +573,7 @@ export default function useGameEngine({
               nextC.playTicks--;
             } else {
               moneyEarned += 25;
+              onCustomerSpendRef.current?.({ x: nextC.x, y: nextC.y, amount: 25 });
               satisfiedCount++;
               nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               machinesToDegrade.push(c.machineId);
@@ -600,7 +604,9 @@ export default function useGameEngine({
             if (nextC.playTicks > 0) {
               nextC.playTicks--;
             } else {
-              moneyEarned += upgradeValuesRef.current.drinkRevenue ?? 15;
+              const drinkAmount = upgradeValuesRef.current.drinkRevenue ?? 15;
+              moneyEarned += drinkAmount;
+              onCustomerSpendRef.current?.({ x: nextC.x, y: nextC.y, amount: drinkAmount });
               satisfiedCount++;
               nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
               nextC.machineId = null;
