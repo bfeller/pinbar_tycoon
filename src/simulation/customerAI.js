@@ -31,7 +31,7 @@ function tryAssignTarget(nextC, targetType, prev, updated, machines) {
   const isForBathroom = targetType === 'bathroom';
 
   const candidates = machines.filter(m => {
-    if (isForPinball)  return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0;
+    if (isForPinball)  return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0 && (m.room === 'main' || !m.room);
     if (isForBathroom) return m.type === 'bathroom' && m.x !== null && (m.room === 'main' || !m.room);
     return m.type === 'bartop' && m.x !== null;
   });
@@ -84,7 +84,7 @@ function tryAssignTarget(nextC, targetType, prev, updated, machines) {
 function findWaitingSpot(nextC, targetType, prev, updated, machines) {
   const isForPinball = targetType === 'pinball';
   const candidates = machines.filter(m => {
-    if (isForPinball) return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0;
+    if (isForPinball) return (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0 && (m.room === 'main' || !m.room);
     return m.type === targetType && m.x !== null;
   });
   if (candidates.length === 0) return false;

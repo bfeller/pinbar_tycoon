@@ -74,7 +74,7 @@ export default function useGameEngine({
 
     const currentMachines = machinesRef.current;
     const needPool = buildSpawnNeedPool({
-      hasPinball:  currentMachines.some(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0),
+      hasPinball:  currentMachines.some(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0 && (m.room === 'main' || !m.room)),
       hasDrink:    currentMachines.some(m => m.type === 'bartop'    && m.x !== null) &&
                    currentMachines.some(m => m.type === 'kegerator' && m.x !== null),
       hasCocktail: timeRef.current.year >= COCKTAIL_UNLOCK_YEAR &&
