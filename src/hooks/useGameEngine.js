@@ -230,8 +230,16 @@ export default function useGameEngine({
           result.next,
           { machines: machinesRef.current, upgradeValues: upgradeValuesRef.current }
         );
+        // Synchronously update refs so the next tick sees current staff state even if
+        // React hasn't re-rendered yet (useEffect updates run after paint, not immediately).
+        // Without this, a second tick firing before the render can see stale idle state,
+        // overwrite the queued_for_kegerator transition, and leave a patron stuck with
+        // beingServed=true but no staff assigned — causing them to time out unserved.
+        const hadServers = serversRef.current.length > 0;
+        bartenderRef.current = nextBartender;
+        serversRef.current = nextServers;
         setBartender(nextBartender);
-        if (serversRef.current.length > 0) setServers(nextServers);
+        if (hadServers || nextServers.length > 0) setServers(nextServers);
 
         // 3. Accumulate income and satisfaction counts
         const { moneyEarned, satisfiedCount, unsatisfiedCount, unsatisfiedReasons, machinesToDegrade, forgivenCount } = result;
