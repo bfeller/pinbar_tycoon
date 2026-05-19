@@ -35,3 +35,6 @@ pnpm-debug.log*
 
 # Misc
 scratch.js
+
+# Claude Code / superpowers tooling
+.superpowers/
