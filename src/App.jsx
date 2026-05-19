@@ -3,6 +3,7 @@ import './index.css';
 import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS, DAY_LENGTH_SECONDS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
 import { extractYear, calculatePrice, BAR_SUPPLY_PURCHASE_PRICE } from './utils/economy';
+import { calcCustomerPopDelta, calcDailyPopGain } from './utils/popularity';
 import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
 import { UPGRADE_DEFS } from './data/upgrades';
@@ -746,11 +747,18 @@ function App() {
         .filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null)
         .reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 2, 0)
     );
-    const customerDelta = (dailyReport.satisfied ?? 0) - (dailyReport.unsatisfied ?? 0);
+    const customerDelta = calcCustomerPopDelta(
+      dailyReport.satisfied,
+      dailyReport.unsatisfied,
+      popularity,
+    );
     const socialBoost = 1 + newUpgrades.social_media * 0.5;
     setPopularity(p => {
       const arcHit = Math.round(p * arcPopDelta);
-      const dailyGain = Math.round((machineScore + customerDelta) * socialBoost * newGainMult);
+      const dailyGain = calcDailyPopGain(machineScore, customerDelta, {
+        socialBoost,
+        gainMult: newGainMult,
+      });
       const eventDelta = dailyReport.eventPopularityDelta ?? 0;
       return Math.max(0, p + dailyGain + arcHit + eventDelta);
     });
@@ -942,6 +950,7 @@ function App() {
             machines={machines}
             popularity={popularity}
             upgrades={upgrades}
+            popGainMult={popGainMult}
             repairsRemaining={repairsRemaining}
             cash={cash}
             repairMachine={repairMachine}

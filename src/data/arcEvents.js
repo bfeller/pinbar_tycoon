@@ -16,7 +16,7 @@ export const BUMPER_ZONE_MACHINES = [
 ];
 
 // popularityPct: fraction of current popularity added as a one-time hit (negative = loss)
-// setGainMult: replaces the ongoing daily gain multiplier going forward
+// setGainMult: scales only positive daily popularity growth (losses stay full strength)
 // triggerLiquidation: opens the Bumper Zone sale window in the market
 export const ARC_EVENTS = [
   {

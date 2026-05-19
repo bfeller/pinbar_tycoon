@@ -50,7 +50,7 @@ export const DECISION_DEFS = [
     label: 'Live Music Request',
     weight: 2,
     repeatable: false,
-    condition: ({ popularity, time }) => popularity >= 30 && time.year >= 1979,
+    condition: ({ popularity, time }) => popularity >= 300 && time.year >= 1979,
     getMessage: () =>
       `A four-piece called "The Plungers" want to set up in the corner on Friday nights. No cover charge. They'll bring their own PA. One of them is already moving tables.`,
     choices: [
@@ -126,7 +126,7 @@ export const DECISION_DEFS = [
     repeatable: false,
     condition: ({ machines, popularity }) =>
       machines.filter(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0).length >= 3 &&
-      popularity >= 50,
+      popularity >= 500,
     getMessage: () =>
       `A man named Gerald from the Regional Pinball Enthusiasts' Society has written to propose a Friday tournament. He notes in his letter that "a venue of your calibre" would be ideal. Gerald means this sincerely.`,
     choices: [
@@ -164,7 +164,7 @@ export const DECISION_DEFS = [
     label: 'Press Photographer',
     weight: 1,
     repeatable: false,
-    condition: ({ popularity }) => popularity >= 60,
+    condition: ({ popularity }) => popularity >= 600,
     getMessage: () =>
       `A woman with a camera bag wants to photograph the bar for a piece in the Evening Standard. "Local colour," she says. "Very retro." You're not sure if that's a compliment.`,
     choices: [

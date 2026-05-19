@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { DOOR_POS, resolveDayLengthSeconds } from '../constants';
+import { DOOR_POS, POPULARITY_SPAWN_CAP, resolveDayLengthSeconds } from '../constants';
 import { buildSpawnNeedPool, rollSpawnNeeds } from '../utils/patronNeeds';
 import { tickCustomers } from '../simulation/customerAI';
 import { tickStaff } from '../simulation/staffAI';
@@ -79,7 +79,7 @@ export default function useGameEngine({
     });
     if (needPool.length === 0) return false;
 
-    const popFactor = Math.min(1, popularityRef.current / 300);
+    const popFactor = Math.min(1, popularityRef.current / POPULARITY_SPAWN_CAP);
     let spawnThreshold = Math.max(0.15, 0.85 - 0.60 * popFactor) - (upgradeValuesRef.current.spawnBoost ?? 0);
     if (openingRush) spawnThreshold = Math.max(0.05, spawnThreshold - 0.25);
 

@@ -1,5 +1,10 @@
 import React from 'react';
 import './ReportModal.css';
+import {
+  calcCustomerPopDelta,
+  calcDailyPopGain,
+  getUnsatisfiedPopMultiplier,
+} from '../utils/popularity';
 
 const UNSATISFIED_REASONS = {
   patience_pinball:   'Gave up waiting for a machine',
@@ -15,15 +20,25 @@ const UNSATISFIED_REASONS = {
 const LOG_MAX = Math.log1p(1200);
 
 export default function ReportModal({
-  dailyReport, machines, popularity, repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = []
+  dailyReport, machines, popularity, upgrades, popGainMult = 1,
+  repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = [],
 }) {
   const machineScore = Math.floor(
     machines
       .filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null)
       .reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 2, 0)
   );
-  const customerDelta = (dailyReport.satisfied ?? 0) - (dailyReport.unsatisfied ?? 0);
-  const popularityDelta = machineScore + customerDelta;
+  const unsatisfiedMult = getUnsatisfiedPopMultiplier(popularity);
+  const customerDelta = calcCustomerPopDelta(
+    dailyReport.satisfied,
+    dailyReport.unsatisfied,
+    popularity,
+  );
+  const socialBoost = 1 + (upgrades?.social_media ?? 0) * 0.5;
+  const popularityDelta = calcDailyPopGain(machineScore, customerDelta, {
+    socialBoost,
+    gainMult: popGainMult,
+  });
   return (
     <div className="report-modal-overlay">
        <div className="report-modal">
@@ -34,6 +49,11 @@ export default function ReportModal({
            <span style={{color: '#000000'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#006400' : '#cc0000'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
            <span style={{fontSize: '0.85rem', color: '#444444'}}>
              {machineScore} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
+             {unsatisfiedMult > 1 && (dailyReport.unsatisfied ?? 0) > 0 && (
+               <span style={{ color: '#cc0000', marginLeft: '0.35rem' }}>
+                 (each counts ×{unsatisfiedMult})
+               </span>
+             )}
              {(dailyReport.forgiven ?? 0) > 0 && (
                <span style={{color: '#006400', marginLeft: '0.5rem'}}>· {dailyReport.forgiven} forgiven 🤝</span>
              )}

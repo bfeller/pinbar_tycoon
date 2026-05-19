@@ -124,7 +124,7 @@ Dr. Quill
 
 P.S. I looked up Gary in the historical record. He keeps the log for another thirty-one years. I am not going to tell you what it says at the end, but I will say it is quite something.`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= 100 && sentIds.has('quill_03') && !sentIds.has('quill_05'),
+      popularity >= 1000 && sentIds.has('quill_03') && !sentIds.has('quill_05'),
     choices: null,
   },
 

@@ -78,7 +78,7 @@ You can of course disregard this entirely. I will not be offended.
 Bernard Crabtree
 (Environmental Health, but writing this in a personal capacity)`,
     trigger: ({ sentIds, popularity }) =>
-      sentIds.has('flipper_01') && sentIds.has('crabtree_02') && !sentIds.has('crabtree_03') && popularity >= 100,
+      sentIds.has('flipper_01') && sentIds.has('crabtree_02') && !sentIds.has('crabtree_03') && popularity >= 1000,
     choices: null,
   },
 

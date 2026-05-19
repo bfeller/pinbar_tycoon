@@ -20,7 +20,7 @@ Do not let it reach the drain.
 
 — F`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= 50 && !sentIds.has('flipper_01'),
+      popularity >= 500 && !sentIds.has('flipper_01'),
     choices: null,
   },
 
@@ -41,7 +41,7 @@ This is practical advice as well as the other kind.
 
 — F`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= 150 && sentIds.has('flipper_01') && !sentIds.has('flipper_02'),
+      popularity >= 1500 && sentIds.has('flipper_01') && !sentIds.has('flipper_02'),
     choices: null,
   },
 
@@ -68,7 +68,7 @@ Especially after the drain.
 P.S. The one with the knight on it says hello.
       You know which one.`,
     trigger: ({ popularity, sentIds }) =>
-      popularity >= 300 && sentIds.has('flipper_02') && !sentIds.has('flipper_03'),
+      popularity >= 3000 && sentIds.has('flipper_02') && !sentIds.has('flipper_03'),
     choices: null,
   },
 

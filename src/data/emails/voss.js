@@ -28,7 +28,7 @@ I attach my research proposal and ethics clearance documentation.
 With academic regards,
 Dr. Elspeth Voss, BA (Hons), MA, PhD (pending)`,
     trigger: ({ time, popularity, sentIds }) =>
-      (time.year >= 1978 || popularity >= 75) && !sentIds.has('voss_01'),
+      (time.year >= 1978 || popularity >= 750) && !sentIds.has('voss_01'),
     choices: null,
   },
 
