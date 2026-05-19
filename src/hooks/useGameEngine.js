@@ -261,7 +261,7 @@ export default function useGameEngine({
         // Synchronously update refs so the next tick sees current staff state even if
         // React hasn't re-rendered yet (useEffect updates run after paint, not immediately).
         // Without this, a second tick firing before the render can see stale idle state,
-        // overwrite the queued_for_kegerator transition, and leave a patron stuck with
+        // overwrite the queued_for_station transition, and leave a patron stuck with
         // beingServed=true but no staff assigned — causing them to time out unserved.
         bartenderRef.current = nextBartender;
         setBartender(nextBartender);
