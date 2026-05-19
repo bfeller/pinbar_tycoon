@@ -77,10 +77,9 @@ function findAdjacentApproach(fromX, fromY, machine, machineType, machines, bloc
  * @returns {{ nextBartender, nextServers }}
  */
 export function tickStaff(bartender, servers, updatedCustomers, { machines, upgradeValues }) {
-  // Resolve the active service station (first available kegerator for now)
   const station = SERVICE_STATIONS[0];
-  const stationMachine = machines.find(m => m.type === station.type && m.x !== null) ?? null;
-  const pourCell = stationMachine ? station.getPourCell(stationMachine) : null;
+  // All placed kegerators are usable — each staff member gets their own.
+  const stationMachines = machines.filter(m => m.type === station.type && m.x !== null);
   const hasDeliveryTarget = machines.some(m => m.type === 'bartop' && m.x !== null);
 
   const staffUnits = [
@@ -88,10 +87,15 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     ...servers.map(s => ({ id: s.id, entity: s })),
   ];
 
-  // Only one staff member may occupy the pour spot at a time
-  let lockId = staffUnits.find(({ entity }) =>
-    entity && (entity.status === 'walking_to_kegerator' || entity.status === 'pouring')
-  )?.id ?? null;
+  // Per-kegerator lock: kegeratorId → staffId currently walking to or pouring at it.
+  // Prevents two staff from trying to use the same kegerator simultaneously.
+  const kegLock = new Map();
+  for (const { id, entity } of staffUnits) {
+    if (entity && entity.targetKegeratorId &&
+        (entity.status === 'walking_to_kegerator' || entity.status === 'pouring')) {
+      kegLock.set(entity.targetKegeratorId, id);
+    }
+  }
 
   const staffPositions = new Map();
   const nextStaffEntities = [];
@@ -104,7 +108,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
 
   for (const { id, entity } of staffUnits) {
     // No station available — staff idles off-screen
-    if (!entity || !stationMachine || !pourCell || !hasDeliveryTarget) {
+    if (!entity || stationMachines.length === 0 || !hasDeliveryTarget) {
       nextStaffEntities.push(entity);
       continue;
     }
@@ -119,9 +123,11 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     // Reset transient 'waiting_at_kegerator' to queued so the loop below handles it
     if (next.status === 'waiting_at_kegerator') next.status = 'queued_for_kegerator';
 
-    // Initial spawn — place staff near the station
+    // Initial spawn — place staff near the first kegerator
     if (next.x === null) {
-      const approach = findAdjacentApproach(DOOR_POS.x, DOOR_POS.y, stationMachine, station.type, machines, blocked, pourCell);
+      const spawnKeg = stationMachines[0];
+      const spawnPourCell = station.getPourCell(spawnKeg);
+      const approach = findAdjacentApproach(DOOR_POS.x, DOOR_POS.y, spawnKeg, station.type, machines, blocked, spawnPourCell);
       if (approach) { next.x = approach.x; next.y = approach.y; }
       if (next.x !== null) staffPositions.set(id, { x: next.x, y: next.y });
       nextStaffEntities.push(next);
@@ -132,9 +138,12 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     if (next.targetCustId) {
       const stillWaiting = updatedCustomers.some(c => c.id === next.targetCustId && c.status === 'waiting_for_drink');
       if (!stillWaiting) {
-        if (lockId === id) lockId = null;
+        if (next.targetKegeratorId && kegLock.get(next.targetKegeratorId) === id) {
+          kegLock.delete(next.targetKegeratorId);
+        }
         next.targetCustId = null;
         next.targetBartopId = null;
+        next.targetKegeratorId = null;
         next.status = 'idle';
       }
     }
@@ -144,58 +153,86 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     if (next.status === 'idle') {
       const waitingCust = updatedCustomers.find(c => c.status === station.waitStatus && !c.beingServed);
       if (waitingCust) {
-        waitingCust.beingServed = true;
-        next.targetCustId = waitingCust.id;
-        next.targetBartopId = waitingCust.machineId;
-        next.status = 'queued_for_kegerator';
+        // Pick the closest kegerator not currently locked by another staff member.
+        // Immediately reserve it in kegLock so subsequent staff in this tick
+        // see it as taken and choose a different one.
+        let bestKeg = null, bestDist = Infinity;
+        for (const keg of stationMachines) {
+          const holder = kegLock.get(keg.id);
+          if (holder && holder !== id) continue; // locked by someone else
+          const cell = station.getPourCell(keg);
+          if (!cell) continue;
+          const dist = Math.abs(next.x - cell.x) + Math.abs(next.y - cell.y);
+          if (dist < bestDist) { bestDist = dist; bestKeg = keg; }
+        }
+        if (bestKeg) {
+          waitingCust.beingServed = true;
+          next.targetCustId = waitingCust.id;
+          next.targetBartopId = waitingCust.machineId;
+          next.targetKegeratorId = bestKeg.id;
+          next.status = 'queued_for_kegerator';
+          kegLock.set(bestKeg.id, id); // reserve so the next staff member skips it
+        }
       }
     }
 
+    // Resolve this staff member's assigned kegerator (set either above or on a prior tick)
+    const curKeg = next.targetKegeratorId ? stationMachines.find(m => m.id === next.targetKegeratorId) : null;
+    const curPourCell = curKeg ? station.getPourCell(curKeg) : null;
+
     if (next.status === 'queued_for_kegerator' && next.targetCustId) {
-      if (!lockId || lockId === id) {
-        lockId = id;
-        const approach = findDirectApproach(next.x, next.y, pourCell, machines, blocked);
+      if (!curPourCell) {
+        // Kegerator was removed — give up this job
+        releaseCustomer(next.targetCustId);
+        next.targetCustId = null;
+        next.targetBartopId = null;
+        next.targetKegeratorId = null;
+        next.status = 'idle';
+      } else if (!kegLock.has(curKeg.id) || kegLock.get(curKeg.id) === id) {
+        kegLock.set(curKeg.id, id);
+        const approach = findDirectApproach(next.x, next.y, curPourCell, machines, blocked);
         if (approach) {
           next.status = 'walking_to_kegerator';
           next.path = approach.path;
           next.pathIndex = 0;
-        } else if (lockId === id) {
-          lockId = null; // couldn't secure route — release lock so others can try
+        } else {
+          kegLock.delete(curKeg.id); // couldn't secure route — release so others can try
         }
       }
 
     } else if (next.status === 'walking_to_kegerator') {
-      if (lockId !== id) {
-        // Lost the lock to another staff member — give up this job
+      if (!curPourCell || kegLock.get(next.targetKegeratorId) !== id) {
+        // Lost lock or kegerator removed — abandon job
         releaseCustomer(next.targetCustId);
         next.targetCustId = null;
         next.targetBartopId = null;
+        next.targetKegeratorId = null;
         next.status = 'idle';
       } else if (next.pathIndex < next.path.length - 1) {
         next.pathIndex++;
         next.x = next.path[next.pathIndex][0];
         next.y = next.path[next.pathIndex][1];
-      } else if (next.x === pourCell.x && next.y === pourCell.y) {
+      } else if (next.x === curPourCell.x && next.y === curPourCell.y) {
         next.status = 'pouring';
         next.timer = station.pourTime(upgradeValues);
         next.timerMax = next.timer;
       } else {
         // Arrived at end of path but not at pour cell — re-pathfind
-        const approach = findDirectApproach(next.x, next.y, pourCell, machines, blocked);
+        const approach = findDirectApproach(next.x, next.y, curPourCell, machines, blocked);
         if (approach) {
           next.path = approach.path;
           next.pathIndex = 0;
         } else {
-          if (lockId === id) lockId = null;
+          kegLock.delete(curKeg.id);
           next.status = 'queued_for_kegerator';
         }
       }
 
     } else if (next.status === 'pouring') {
-      if (lockId !== id) lockId = id; // re-assert lock while pouring
+      if (curKeg) kegLock.set(curKeg.id, id); // re-assert lock while pouring
       next.timer--;
       if (next.timer <= 0) {
-        if (lockId === id) lockId = null;
+        if (curKeg) kegLock.delete(curKeg.id);
         next.status = 'walking_to_bartop';
         const bartop = machines.find(m => m.id === next.targetBartopId);
         const backCell = bartop ? getBackCell(bartop.type, bartop.x, bartop.y, bartop.orientation) : null;
@@ -208,12 +245,14 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
             releaseCustomer(next.targetCustId);
             next.targetCustId = null;
             next.targetBartopId = null;
+            next.targetKegeratorId = null;
             next.status = 'idle';
           }
         } else {
           releaseCustomer(next.targetCustId);
           next.targetCustId = null;
           next.targetBartopId = null;
+          next.targetKegeratorId = null;
           next.status = 'idle';
         }
       }
@@ -237,6 +276,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
         next.status = 'idle';
         next.targetCustId = null;
         next.targetBartopId = null;
+        next.targetKegeratorId = null;
       }
     }
 
