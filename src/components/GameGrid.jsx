@@ -6,6 +6,7 @@ import PinballMachineSVG from './PinballMachineSVG';
 import BartopSVG from './BartopSVG';
 import KegeratorSVG from './KegeratorSVG';
 import BathroomSVG from './BathroomSVG';
+import SpeedWellSVG from './SpeedWellSVG';
 import DoorSVG from './DoorSVG';
 
 export default function GameGrid({
@@ -116,9 +117,10 @@ export default function GameGrid({
                 </div>
               );
             })()}
-            {type === 'bartop'    && <BartopSVG    orientation={placementRotation} />}
-            {type === 'kegerator' && <KegeratorSVG  orientation={placementRotation} />}
-            {type === 'bathroom'  && <BathroomSVG />}
+            {type === 'bartop'     && <BartopSVG    orientation={placementRotation} />}
+            {type === 'kegerator'  && <KegeratorSVG  orientation={placementRotation} />}
+            {type === 'bathroom'   && <BathroomSVG />}
+            {type === 'speed_well' && <SpeedWellSVG  orientation={placementRotation} />}
           </div>
         )
       })()}
@@ -170,9 +172,10 @@ export default function GameGrid({
             title={m.type === 'bathroom' ? m.name : `${m.name} - ${m.durability}% Durability`}
           >
             {isPinball && <PinballMachineSVG orientation={m.orientation} />}
-            {m.type === 'bartop'    && <BartopSVG    orientation={m.orientation} />}
-            {m.type === 'kegerator' && <KegeratorSVG  orientation={m.orientation} />}
-            {m.type === 'bathroom'  && <BathroomSVG />}
+            {m.type === 'bartop'     && <BartopSVG    orientation={m.orientation} />}
+            {m.type === 'kegerator'  && <KegeratorSVG  orientation={m.orientation} />}
+            {m.type === 'bathroom'   && <BathroomSVG />}
+            {m.type === 'speed_well' && <SpeedWellSVG  orientation={m.orientation} />}
             {(m.type === 'pinball' || !m.type) && m.imageUrl && (() => {
               const imgStyle = {
                 N: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 },
@@ -191,7 +194,7 @@ export default function GameGrid({
                 </div>
               );
             })()}
-            {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && (
+            {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && m.type !== 'speed_well' && (
               isPinball
                 ? <div style={{ position: 'absolute', bottom: 0, left: 0, width: `${m.durability}%`, height: '3px', background: m.durability > 50 ? '#10b981' : '#ef4444', opacity: 0.9, transition: 'width 0.3s' }} />
                 : <div className="durability-mini-bar" style={{ height: `${m.durability}%`, background: m.durability > 50 ? '#10b981' : '#ef4444' }} />

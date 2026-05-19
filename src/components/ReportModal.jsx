@@ -10,11 +10,13 @@ const UNSATISFIED_REASONS = {
   patience_pinball:   'Gave up waiting for a machine',
   patience_bartop:    'Gave up waiting at the bar',
   patience_bathroom:  'Gave up waiting for the bathroom',
-  drink_wait:         'Waited too long for a drink',
-  no_bathroom:        'No bathroom in the bar',
-  bar_closed_pinball: 'Bar closed — still wanted to play',
-  bar_closed_drink:   'Bar closed — still wanted a drink',
-  bar_closed_bathroom:'Bar closed — still needed the bathroom',
+  drink_wait:          'Waited too long for a drink',
+  cocktail_wait:       'Waited too long for a cocktail',
+  no_bathroom:         'No bathroom in the bar',
+  bar_closed_pinball:  'Bar closed — still wanted to play',
+  bar_closed_drink:    'Bar closed — still wanted a drink',
+  bar_closed_cocktail: 'Bar closed — still wanted a cocktail',
+  bar_closed_bathroom: 'Bar closed — still needed the bathroom',
 };
 
 const LOG_MAX = Math.log1p(1200);
