@@ -366,4 +366,49 @@ Pineview Community College and Technical Institute
     choices: null,
   },
 
+  {
+    id: 'uni_liquor_licensing',
+    from: 'Pineview CC — Certificates Office',
+    address: 'certificates@pcced.edu',
+    subject: 'Certificate of Completion: Liquor Licensing',
+    body:
+`Dear Valued Continuing Education Participant,
+
+Congratulations. You have completed BUSI 320: Liquor Licensing.
+
+Your establishment is now, to the best of our knowledge, operating within the parameters described in Module 4. Module 4, you may recall, was the long one. We appreciate your patience with Module 4.
+
+Your licence is in the mail. Please allow 6 to 8 weeks for delivery. We have been advised not to explain what happens if it doesn't arrive. If it doesn't arrive, please do not reply to this email.
+
+Based on your completion profile, we recommend the following for continued compliance:
+
+  • LEGL 215: Zoning Law for the Genuinely Confused
+    A practical course for business owners who received a letter from the city
+    and did not understand it. All modules are titled "What This Means For You."
+    What it means for you varies. The course addresses this.
+
+  • LEGL 330: Fire Code Compliance — What's Actually Required
+    The instructors of this course want you to know that the full fire code
+    is not covered. What is covered is the part that affects you personally.
+    Week nine is an exception. Week nine covers things that affect other people.
+    Students have called it "clarifying."
+
+  • BUSI 285: Extended Hours Operations — A Practical Overview
+    For businesses newly permitted to stay open later. Covers staffing,
+    liability, the emotional labour of closing time, and one week on why
+    the last customer always arrives at the worst moment. This is not a
+    coincidence, the course argues. The data is in week six.
+
+We wish you extended and compliant operating hours.
+
+Warmly,
+The Office of Certificates and Continuing Achievement
+Pineview Community College and Technical Institute
+
+"Learning: It's Ongoing"`,
+    trigger: ({ completedCourseIds, sentIds }) =>
+      completedCourseIds?.has('liquor_licensing') && !sentIds.has('uni_liquor_licensing'),
+    choices: null,
+  },
+
 ];
