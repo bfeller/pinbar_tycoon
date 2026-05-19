@@ -246,6 +246,38 @@ Add a speed well card in the Supplies tab, after the kegerator card:
 
 ---
 
+## Dr. Quill Warning Email
+
+An advance-warning email from Dr. Horatio Quill arrives 2 weeks before cocktails unlock, giving the player time to buy a speed well before demand appears.
+
+**Note:** The user requested "Dr. Quinn" — this is Dr. Horatio Quill from `src/data/emails/quill.js`, the time-travelling analyst who sends all "heads-up about upcoming changes" emails (including the bathroom warning in 1975 week 7). The name is a near-homophone; the email goes in `quill.js`.
+
+### Trigger
+
+```js
+trigger: ({ time, sentIds }) =>
+  (time.year === 1979 && time.week >= 9 || time.year >= 1980) &&
+  !sentIds.has('quill_cocktail'),
+```
+
+Fires at 1979 week 9 — 2 weeks (6 in-game days) before 1980 week 1. The `|| time.year >= 1980` safety net ensures delivery even if the player's save happens to skip the exact window.
+
+### Tone
+
+Same voice as the bathroom email: Dr. Quill is a bureaucrat from the future writing ahead of a known change, mildly apologetic about the subject matter, precise about practical steps. He mentions cocktails specifically, recommends the speed well, and notes the revenue upside without making it sound like a sales pitch. He is not surprised that cocktails are coming. He researched this.
+
+### Fields
+
+| Field | Value |
+|---|---|
+| `id` | `'quill_cocktail'` |
+| `from` | `'Dr. H. Quill, Temporal Continuity Office'` |
+| `address` | `'h.quill@tco.gov.future'` |
+| `subject` | `'Re: Upcoming Changes to Patron Beverage Preferences (1980)'` |
+| `choices` | `null` |
+
+---
+
 ## Files Modified
 
 | File | Change |
@@ -258,5 +290,6 @@ Add a speed well card in the Supplies tab, after the kegerator card:
 | `src/hooks/useGameEngine.js` | `buildSpawnNeedPool` gains `hasCocktail` |
 | `src/App.jsx` | `nameMap`, `upgradeValues.cocktailRevenue` |
 | `src/components/Computer.jsx` | Speed well card in Supplies tab |
+| `src/data/emails/quill.js` | Append `quill_cocktail` warning email |
 
-No new files. No changes to `constants.js`, `upgrades.js`, or the email system.
+No new files. No changes to `constants.js` or `upgrades.js`.
