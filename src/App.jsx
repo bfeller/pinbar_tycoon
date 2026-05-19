@@ -872,8 +872,6 @@ function App() {
         repairsRemaining={repairsRemaining}
         repairCapacity={repairCapacity}
         popularity={popularity}
-        placementMachine={placementMachine}
-        dayState={dayState}
       />
 
       {notification && (
@@ -917,6 +915,7 @@ function App() {
             startDay={startDay}
             setIsComputerOpen={setIsComputerOpen}
             unreadEmails={inbox.filter(e => !e.read).length}
+            placementMachine={placementMachine}
           />
 
           <Inventory

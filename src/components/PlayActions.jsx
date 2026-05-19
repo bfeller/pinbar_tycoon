@@ -34,7 +34,22 @@ function DayClock({ dayTimer, dayLengthSeconds }) {
   );
 }
 
-export default function PlayActions({ dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails }) {
+export default function PlayActions({
+  dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails, placementMachine,
+}) {
+  if (placementMachine) {
+    return (
+      <div className="play-actions">
+        <div className="placement-helper" role="status">
+          <i className="fa-solid fa-arrows-up-down-left-right" aria-hidden="true" />
+          <span>
+            Press <kbd>R</kbd> to rotate — click a tile to place
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="play-actions">
       <button

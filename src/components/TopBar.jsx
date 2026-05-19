@@ -2,7 +2,7 @@ import React from 'react';
 import './TopBar.css';
 
 export default function TopBar({
-  pinbarName, time, cash, repairsRemaining, repairCapacity, popularity, placementMachine, dayState
+  pinbarName, time, cash, repairsRemaining, repairCapacity, popularity,
 }) {
   return (
     <div className="topbar">
@@ -34,13 +34,6 @@ export default function TopBar({
           </div>
         </div>
       </div>
-
-      {placementMachine && dayState !== 'REPORT' && (
-        <div className="placement-indicator">
-          <i className="fa-solid fa-arrows-up-down-left-right"></i>
-          <span>Placing Machine (Press 'R' to Rotate)</span>
-        </div>
-      )}
     </div>
   );
 }
