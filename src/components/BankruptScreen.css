@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  font-family: 'Arial', sans-serif;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
 }
 
 .bankrupt-window {
@@ -118,7 +118,7 @@
   font-weight: bold;
   cursor: pointer;
   letter-spacing: 1px;
-  font-family: 'Arial', sans-serif;
+  font-family: inherit;
 }
 
 .bankrupt-btn:hover {
