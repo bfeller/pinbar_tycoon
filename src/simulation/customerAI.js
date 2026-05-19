@@ -178,7 +178,7 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
       if (nextC.needs.length === 0) {
         if (!sendToExit(nextC, machines)) continue;
 
-      } else if (dayTimer >= DAY_LENGTH_SECONDS) {
+      } else if (dayTimer >= (upgradeValues.dayLengthSeconds ?? DAY_LENGTH_SECONDS)) {
         // Bar closed — customer leaves angry, marking unmet needs
         for (const n of nextC.needs) {
           if (!tryForgive(nextC)) {

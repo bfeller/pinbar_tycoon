@@ -74,7 +74,8 @@ export default function useGameEngine({
       setDayTimer(t => t + 1);
 
       // ── Day-end: wait for all customers to leave, then run overnight pass ──
-      if (timer >= DAY_LENGTH_SECONDS) {
+      const dayLen = upgradeValuesRef.current.dayLengthSeconds ?? DAY_LENGTH_SECONDS;
+      if (timer >= dayLen) {
         if (customersRef.current.length === 0) {
           if (upgradeValuesRef.current.repairmanActive) {
             const repairs = [];

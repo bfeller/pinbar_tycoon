@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './index.css';
-import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS } from './constants';
+import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS, DAY_LENGTH_SECONDS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
 import { extractYear, calculatePrice } from './utils/economy';
 import useMarketplace from './hooks/useMarketplace';
@@ -139,6 +139,7 @@ function App() {
     drinkRevenue: staff.server > 0 ? 20 : 15,
     repairmanActive: staff.repairman,
     repairmanCoverage: staff.repairman ? 10 : 0,
+    dayLengthSeconds: DAY_LENGTH_SECONDS + upgrades.liquor_licensing * 5,
   };
 
   // ── Hooks ──
