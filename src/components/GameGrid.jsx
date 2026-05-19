@@ -3,11 +3,15 @@ import './GameGrid.css';
 import { CELL_SIZE, GRID_COLS, GRID_ROWS, DOOR_POS } from '../constants';
 import { getMachineCells } from '../utils/grid';
 import PinballMachineSVG from './PinballMachineSVG';
+import BartopSVG from './BartopSVG';
+import KegeratorSVG from './KegeratorSVG';
+import BathroomSVG from './BathroomSVG';
+import DoorSVG from './DoorSVG';
 
 export default function GameGrid({
   machines, customers = [], bartender = null, servers = [], hoveredCell, placementMachine, placementRotation,
   handleCellClick, setHoveredCell, cols = GRID_COLS, rows = GRID_ROWS, showDoor = true,
-  gridId = 'main', placementMachineType = null
+  gridId = 'main', placementMachineType = null, dayState = 'BUILD'
 }) {
   const placedMachines = machines.filter(m => m.x !== null && m.y !== null);
 
@@ -29,7 +33,7 @@ export default function GameGrid({
               height: CELL_SIZE 
             }}
           >
-            {isDoor && <div style={{fontSize: '10px', textAlign: 'center', marginTop: '15px'}}>DOOR</div>}
+            {isDoor && <DoorSVG isOpen={dayState === 'RUNNING'} />}
           </div>
         );
       }
@@ -112,16 +116,9 @@ export default function GameGrid({
                 </div>
               );
             })()}
-            {type === 'bartop' && (
-              <div style={{
-                position: 'absolute',
-                bottom: 0, width: '50%', height: '100%',
-                background: 'rgba(255,255,255,0.3)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '10px', color: '#fff'
-              }}>PLAY SIDE</div>
-            )}
-            {type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'1.8rem'}}>🚻</div>}
+            {type === 'bartop'    && <BartopSVG    orientation={placementRotation} />}
+            {type === 'kegerator' && <KegeratorSVG  orientation={placementRotation} />}
+            {type === 'bathroom'  && <BathroomSVG />}
           </div>
         )
       })()}
@@ -138,19 +135,6 @@ export default function GameGrid({
         const isVertical = m.orientation === 'N' || m.orientation === 'S';
 
         const isPinball = !m.type || m.type === 'pinball';
-        const frontSideStyle = {
-          position: 'absolute',
-          [m.orientation === 'N' ? 'bottom' : m.orientation === 'S' ? 'top' : m.orientation === 'E' ? 'left' : 'right']: 0,
-          width: isVertical ? '100%' : '50%',
-          height: isVertical ? '50%' : '100%',
-          background: isPinball ? 'none' : 'rgba(255,255,255,0.15)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '10px',
-          color: '#fff',
-          pointerEvents: 'none'
-        };
 
         // For pinball machines the image sits flush inside the SVG bezel:
         //   N/S: 3px back-cap, 5px side bezels → 40×45px display
@@ -186,7 +170,9 @@ export default function GameGrid({
             title={m.type === 'bathroom' ? m.name : `${m.name} - ${m.durability}% Durability`}
           >
             {isPinball && <PinballMachineSVG orientation={m.orientation} />}
-            {m.type === 'bartop' && <div style={frontSideStyle}>PLAY SIDE</div>}
+            {m.type === 'bartop'    && <BartopSVG    orientation={m.orientation} />}
+            {m.type === 'kegerator' && <KegeratorSVG  orientation={m.orientation} />}
+            {m.type === 'bathroom'  && <BathroomSVG />}
             {(m.type === 'pinball' || !m.type) && m.imageUrl && (() => {
               const imgStyle = {
                 N: { width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 },
@@ -205,7 +191,6 @@ export default function GameGrid({
                 </div>
               );
             })()}
-            {m.type === 'bathroom' && <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',fontSize:'2rem',pointerEvents:'none'}}>🚻</div>}
             {m.type !== 'kegerator' && m.type !== 'bartop' && m.type !== 'bathroom' && (
               isPinball
                 ? <div style={{ position: 'absolute', bottom: 0, left: 0, width: `${m.durability}%`, height: '3px', background: m.durability > 50 ? '#10b981' : '#ef4444', opacity: 0.9, transition: 'width 0.3s' }} />
