@@ -138,6 +138,7 @@ function App() {
     charm: upgrades.charm,
     drinkPatienceMult: staff.server > 0 ? 2 : 1,
     drinkRevenue: staff.server > 0 ? 20 : 15,
+    cocktailRevenue: staff.server > 0 ? 35 : 25,
     repairmanActive: staff.repairman,
     repairmanCoverage: staff.repairman ? 10 : 0,
     dayLengthSeconds: DAY_LENGTH_SECONDS + (upgrades.liquor_licensing ?? 0) * 5,
@@ -406,7 +407,7 @@ function App() {
 
   const buySupply = (type) => {
     if (dayState === 'REPORT') return false;
-    const nameMap = { kegerator: 'Kegerator', bartop: 'Bartop', bathroom: 'Bathroom' };
+    const nameMap = { kegerator: 'Kegerator', bartop: 'Bartop', bathroom: 'Bathroom', speed_well: 'Speed Well' };
     const price = BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500;
     const name = nameMap[type] ?? type;
     if (cash >= price) {

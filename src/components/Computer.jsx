@@ -245,6 +245,18 @@ export default function Computer({
                       </button>
                     </div>
                     <div className="win95-card">
+                      <div><strong>Speed Well</strong></div>
+                      <div style={{fontSize:'0.8rem'}}>Makes cocktails. Slower than beer, but higher revenue. Cocktail demand starts in 1980.</div>
+                      <div style={{marginTop:'0.5rem'}}>Price: $1,500</div>
+                      <button
+                        className="win95-btn"
+                        disabled={cash < 1500 || dayState === 'REPORT'}
+                        onClick={() => handlePurchaseSupply('speed_well')}
+                      >
+                        {purchasedItems['speed_well'] ? 'Purchased!' : 'Order Now'}
+                      </button>
+                    </div>
+                    <div className="win95-card">
                       <div><strong>Bartop</strong></div>
                       <div style={{fontSize:'0.8rem'}}>Where patrons order drinks.</div>
                       <div style={{marginTop:'0.5rem'}}>Price: $500</div>
