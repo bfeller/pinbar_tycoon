@@ -135,7 +135,7 @@ export default function useGameEngine({
               const isMainFloor = (m.room === 'main' || !m.room) && m.x !== null;
               const isPinball   = m.type === 'pinball' || !m.type;
               if (isPinball && isMainFloor && m.durability > 0 && m.durability < 100) {
-                const gain = Math.min(3, 100 - m.durability);
+                const gain = Math.min(upgradeValuesRef.current.repairPower ?? 3, 100 - m.durability);
                 repairs.push({ id: m.id, name: m.name, gain });
                 return { ...m, durability: m.durability + gain };
               }

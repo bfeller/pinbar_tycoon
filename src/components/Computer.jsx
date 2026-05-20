@@ -363,10 +363,13 @@ export default function Computer({
         )}
 
         {activeWindow === 'staff' && (() => {
+          const effectiveSalary = (def) => def.id === 'repairman'
+            ? def.weeklySalary + (upgrades?.tech_training ?? 0) * 100
+            : def.weeklySalary;
           const weeklyPayroll = STAFF_DEFS.reduce((total, d) => {
             const val = staff?.[d.id] ?? 0;
             const count = typeof val === 'number' ? val : (val ? 1 : 0);
-            return total + count * d.weeklySalary;
+            return total + count * effectiveSalary(d);
           }, 0);
           return (
             <div className="win95-window">
@@ -393,7 +396,8 @@ export default function Computer({
                       const hired = isCountable ? count > 0 : (staff?.[def.id] ?? false);
                       const maxCount = def.maxCount ?? 1;
                       const atMax = isCountable ? count >= maxCount : hired;
-                      const weeklyTotal = isCountable ? count * def.weeklySalary : (hired ? def.weeklySalary : 0);
+                      const salary = effectiveSalary(def);
+                      const weeklyTotal = isCountable ? count * salary : (hired ? salary : 0);
                       return (
                         <div key={def.id} className="win95-card" style={{ textAlign: 'left' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
@@ -410,7 +414,7 @@ export default function Computer({
                             {def.effects.map((e, i) => <li key={i}>{e}</li>)}
                           </ul>
                           <div style={{ fontSize: '0.78rem', color: '#555', marginBottom: '8px' }}>
-                            ${def.weeklySalary.toLocaleString()}/week each
+                            ${salary.toLocaleString()}/week each
                             {weeklyTotal > 0 && <span style={{ color: '#c00', marginLeft: '6px' }}>— ${weeklyTotal.toLocaleString()}/week total</span>}
                           </div>
                           <div style={{ display: 'flex', gap: '6px' }}>

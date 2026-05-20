@@ -91,6 +91,16 @@ export const UPGRADE_DEFS = [
     duration: 6,
   },
   {
+    id: 'tech_training',
+    name: 'Advanced Technician Training',
+    icon: '🛠️',
+    flavor: 'Advanced diagnostics, calibration, and repair techniques. A certified tech gets more done each night.',
+    effect: level => `Repairman: +${[3, 4, 5][level]} repair/machine/night, covers ${[10, 15, 25][level]} machines`,
+    maxLevel: 2,
+    costs: [1200, 3500],
+    duration: 6,
+  },
+  {
     id: 'liquor_licensing',
     name: 'Liquor Licensing',
     icon: '📋',

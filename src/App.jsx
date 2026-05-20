@@ -150,8 +150,9 @@ function App() {
     drinkPatienceMult: staff.server > 0 ? 2 : 1,
     drinkRevenue: staff.server > 0 ? 20 : 15,
     cocktailRevenue: staff.server > 0 ? 35 : 25,
+    repairPower: [3, 4, 5][upgrades.tech_training ?? 0],
     repairmanActive: staff.repairman,
-    repairmanCoverage: staff.repairman ? 10 : 0,
+    repairmanCoverage: staff.repairman ? [10, 15, 25][upgrades.tech_training ?? 0] : 0,
     dayLengthSeconds: DAY_LENGTH_SECONDS + (upgrades.liquor_licensing ?? 0) * 5,
     liquor_licensing: upgrades.liquor_licensing ?? 0,
   };
@@ -748,7 +749,12 @@ function App() {
       for (const def of STAFF_DEFS) {
         const val = staff[def.id];
         const count = typeof val === 'number' ? val : (val ? 1 : 0);
-        if (count > 0) weeklyExpenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
+        if (count > 0) {
+          const salaryPerHead = def.id === 'repairman'
+            ? def.weeklySalary + (upgrades.tech_training ?? 0) * 100
+            : def.weeklySalary;
+          weeklyExpenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: salaryPerHead * count });
+        }
       }
       // Loan payment
       if (activeLoan) {
@@ -931,7 +937,12 @@ function App() {
     for (const def of STAFF_DEFS) {
       const val = staff[def.id];
       const count = typeof val === 'number' ? val : (val ? 1 : 0);
-      if (count > 0) expenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: def.weeklySalary * count });
+      if (count > 0) {
+        const salaryPerHead = def.id === 'repairman'
+          ? def.weeklySalary + (upgrades.tech_training ?? 0) * 100
+          : def.weeklySalary;
+        expenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: salaryPerHead * count });
+      }
     }
     if (activeLoan) {
       expenses.push({ id: 'loan_payment', name: 'Loan Payment', icon: '💸', amount: activeLoan.weeklyPayment });
