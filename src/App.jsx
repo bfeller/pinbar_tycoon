@@ -823,7 +823,7 @@ function App() {
               address: 'billing@stagatha-clinic.nhs.uk',
               subject: 'Overdue Invoice — Final Notice',
               body:
-`This is a final notice regarding invoice ${bill.id.replace(/_/g, ' ').replace('medical ', '').toUpperCase()}.
+`This is a final notice regarding invoice ${bill.id.replace(/^medical_/, '').replace(/_w/, '-W').toUpperCase()}.
 
 Original amount: $${bill.originalAmount.toLocaleString()}
 Interest accrued (${weeksUnpaid} weeks at 5%/week): $${(currentAmount - bill.originalAmount).toLocaleString()}
@@ -836,6 +836,7 @@ Please log into the Medical Billing section of your computer to make a payment.
 St. Agatha's Billing Department`,
               read: false,
               choiceMade: false,
+              choices: null,
               deliveredAt: newLinear,
             });
           }
