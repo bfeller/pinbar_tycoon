@@ -768,6 +768,72 @@ function App() {
           setActiveLoan(al => al ? { ...al, weeksRemaining: al.weeksRemaining - 1 } : null);
         }
       }
+
+      // ── Medical billing ─────────────────────────────────────────────────────
+      if (newTime.year >= 2020) {
+        // 1. Create this week's invoice
+        const newBill = {
+          id: `medical_${newTime.year}_w${newTime.week}`,
+          originalAmount: medicalExpenseAmount(newTime),
+          issuedLinearDay: newLinear,
+          paid: false,
+          autoDeducted: false,
+          collectionsSent: false,
+        };
+
+        // 2. Age all existing bills (closure read is safe — new bill has weeksUnpaid=0)
+        const collectionsEmails = [];
+        const updatedBills = [...medicalBills, newBill].map(bill => {
+          if (bill.paid || bill.autoDeducted) return bill;
+          const weeksUnpaid = Math.floor((newLinear - bill.issuedLinearDay) / 3);
+          const currentAmount = Math.round(bill.originalAmount * Math.pow(1.05, weeksUnpaid));
+          const updated = { ...bill };
+
+          if (weeksUnpaid >= 4 && !bill.collectionsSent) {
+            updated.collectionsSent = true;
+            collectionsEmails.push({
+              id: `collections_${bill.id}`,
+              from: "St. Agatha's Billing Dept.",
+              address: 'billing@stagatha-clinic.nhs.uk',
+              subject: 'Overdue Invoice — Final Notice',
+              body:
+`This is a final notice regarding invoice ${bill.id.replace(/_/g, ' ').replace('medical ', '').toUpperCase()}.
+
+Original amount: $${bill.originalAmount.toLocaleString()}
+Interest accrued (${weeksUnpaid} weeks at 5%/week): $${(currentAmount - bill.originalAmount).toLocaleString()}
+Total now due: $${currentAmount.toLocaleString()}
+
+If this invoice is not paid within one week, the outstanding balance will be deducted automatically from your account.
+
+Please log into the Medical Billing section of your computer to make a payment.
+
+St. Agatha's Billing Department`,
+              read: false,
+              choiceMade: false,
+              deliveredAt: newLinear,
+            });
+          }
+
+          if (weeksUnpaid >= 5) {
+            updated.autoDeducted = true;
+            weeklyExpenses.push({
+              id: `medical_auto_${bill.id}`,
+              name: `Medical Bill (Auto-collected, ${weeksUnpaid} wks overdue)`,
+              icon: '⚕',
+              amount: currentAmount,
+            });
+          }
+
+          return updated;
+        });
+
+        setMedicalBills(updatedBills);
+        if (collectionsEmails.length > 0) {
+          setInbox(prev => [...prev, ...collectionsEmails]);
+        }
+      }
+      // ────────────────────────────────────────────────────────────────────────
+
       const totalExpenses = weeklyExpenses.reduce((sum, e) => sum + e.amount, 0);
       if (investmentPayout > 0 || totalExpenses > 0) {
         const newCash = cash + investmentPayout - totalExpenses;
