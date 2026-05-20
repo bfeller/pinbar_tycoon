@@ -700,6 +700,32 @@ function App() {
     }
   };
 
+  const payMedicalBill = (id) => {
+    if (dayState === 'REPORT') return;
+    const bill = medicalBills.find(b => b.id === id);
+    if (!bill || bill.paid || bill.autoDeducted) return;
+    const weeksUnpaid = Math.floor((toLinearDay(time) - bill.issuedLinearDay) / 3);
+    const currentAmount = Math.round(bill.originalAmount * Math.pow(1.05, weeksUnpaid));
+    if (cash < currentAmount) return;
+    setCash(c => c - currentAmount);
+    setMedicalBills(prev => prev.map(b => b.id === id ? { ...b, paid: true } : b));
+  };
+
+  const payAllMedicalBills = () => {
+    if (dayState === 'REPORT') return;
+    const linearNow = toLinearDay(time);
+    const unpaid = medicalBills.filter(b => !b.paid && !b.autoDeducted);
+    const total = unpaid.reduce((sum, bill) => {
+      const weeksUnpaid = Math.floor((linearNow - bill.issuedLinearDay) / 3);
+      return sum + Math.round(bill.originalAmount * Math.pow(1.05, weeksUnpaid));
+    }, 0);
+    if (total === 0 || cash < total) return;
+    setCash(c => c - total);
+    setMedicalBills(prev => prev.map(b =>
+      (!b.paid && !b.autoDeducted) ? { ...b, paid: true } : b
+    ));
+  };
+
   const nextDay = () => {
     // Advance time
     let { year, week, day } = time;
@@ -1183,6 +1209,9 @@ St. Agatha's Billing Department`,
             fastForward={fastForward}
             setFastForward={setFastForward}
             closeComputer={() => setIsComputerOpen(false)}
+            medicalBills={medicalBills}
+            onPayMedicalBill={payMedicalBill}
+            onPayAllMedicalBills={payAllMedicalBills}
           />
         )}
       </div>
