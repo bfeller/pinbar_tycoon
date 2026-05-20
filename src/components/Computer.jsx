@@ -155,7 +155,8 @@ export default function Computer({
                         <h2 className="market-section-heading new-machines-heading">✦ New Machines</h2>
                         <div className="marketplace-grid">
                           {dailyMarket.filter(m => m.parsedYear === time.year).map(machine => {
-                            const price = calculatePrice(machine.parsedYear, time.year, 100);
+                            const rawPrice = calculatePrice(machine.parsedYear, time.year, 100);
+                            const price = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
                             const isSoldOut = soldOutIds?.has(machine.id);
                             return (
                               <MachineCard
@@ -180,7 +181,8 @@ export default function Computer({
                         <h2 className="market-section-heading used-machines-heading">◈ Used Machines</h2>
                         <div className="marketplace-grid">
                           {dailyMarket.filter(m => m.parsedYear < time.year).map(machine => {
-                            const price = calculatePrice(machine.parsedYear, time.year, machine.durability ?? 100, machine.locationCount ?? 0);
+                            const rawPrice = calculatePrice(machine.parsedYear, time.year, machine.durability ?? 100, machine.locationCount ?? 0);
+                            const price = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
                             const isSoldOut = soldOutIds?.has(machine.id);
                             return (
                               <MachineCard
