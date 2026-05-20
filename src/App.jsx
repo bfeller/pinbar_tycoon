@@ -10,7 +10,7 @@ import { UPGRADE_DEFS } from './data/upgrades';
 import { STAFF_DEFS } from './data/staff';
 import { EMAIL_DEFS } from './data/emails/index';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
-import { EXPENSE_DEFS } from './data/expenses';
+import { EXPENSE_DEFS, medicalExpenseAmount } from './data/expenses';
 import { INVESTMENT_DEFS } from './data/banking';
 import TopBar from './components/TopBar';
 import PlayActions from './components/PlayActions';
@@ -109,6 +109,7 @@ function App() {
   // { defId, productName, amount, depositedAt, maturesAt, returnAmount }
   const [activeLoan, setActiveLoan] = useState(null);
   // { amount, weeklyPayment, weeksRemaining }
+  const [medicalBills, setMedicalBills] = useState([]);
 
   // ── Decision events ──
   const [activeDecision, setActiveDecision] = useState(null); // resolved { ...def, message }
@@ -253,7 +254,7 @@ function App() {
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
       financialHistory, decisions,
-      activeInvestment, activeLoan,
+      activeInvestment, activeLoan, medicalBills,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
   }, [time]); // intentionally only fires on day advance
@@ -287,6 +288,7 @@ function App() {
     setDecisions({});
     setActiveInvestment(null);
     setActiveLoan(null);
+    setMedicalBills([]);
     setScreen('game');
   };
 
@@ -324,6 +326,7 @@ function App() {
     setDecisions(s.decisions ?? {});
     setActiveInvestment(s.activeInvestment ?? null);
     setActiveLoan(s.activeLoan ?? null);
+    setMedicalBills(s.medicalBills ?? []);
     setScreen('game');
   };
 
