@@ -29,6 +29,7 @@ export default function useGameEngine({
   upgradeValues = {},
   decisions = {},
   isPausedRef,
+  fastForward = false,
   onEvent,
   onDecision,
   onCustomerSpend,
@@ -232,9 +233,9 @@ export default function useGameEngine({
         id: event.id, label: event.label, severity: event.severity,
         message, effect: event.effect, effectValue: event.effectValue,
       });
-    }, 1000);
+    }, fastForward ? 500 : 1000);
     return () => clearInterval(macroTick);
-  }, []);
+  }, [fastForward]);
 
   // ── Micro Loop: customer AI · staff AI · damage · income ─────────────────
   useEffect(() => {
@@ -334,7 +335,7 @@ export default function useGameEngine({
 
         return result.next;
       });
-    }, 200);
+    }, fastForward ? 100 : 200);
     return () => clearInterval(moveTick);
-  }, []);
+  }, [fastForward]);
 }

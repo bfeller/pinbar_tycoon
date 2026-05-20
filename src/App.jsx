@@ -126,6 +126,7 @@ function App() {
   const [placementRotation, setPlacementRotation] = useState('N');
   const [hoveredCell, setHoveredCell] = useState(null);
   const [isComputerOpen, setIsComputerOpen] = useState(false);
+  const [fastForward, setFastForward] = useState(false);
 
   // ── Derived upgrade values ──
   const repairCapacity = 5 + upgrades.electronics * 2;
@@ -207,6 +208,7 @@ function App() {
     upgradeValues,
     decisions,
     isPausedRef,
+    fastForward,
     onEvent: handleEvent,
     onDecision: handleDecision,
     onCustomerSpend: addSpendPopup,
@@ -995,6 +997,8 @@ function App() {
             activeLoan={activeLoan}
             onInvest={handleInvest}
             onTakeLoan={handleTakeLoan}
+            fastForward={fastForward}
+            setFastForward={setFastForward}
             closeComputer={() => setIsComputerOpen(false)}
           />
         )}

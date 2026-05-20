@@ -30,6 +30,7 @@ export default function Computer({
   staff, onHireStaff, onFireStaff,
   financialHistory = [],
   activeInvestment, activeLoan, onInvest, onTakeLoan,
+  fastForward, setFastForward,
   closeComputer
 }) {
   const [booting, setBooting] = useState(true);
@@ -126,6 +127,10 @@ export default function Computer({
           <div className="win95-icon" onClick={() => setActiveWindow('credits')}>
             <div className="icon-img">ℹ️</div>
             <span>About</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('settings')}>
+            <div className="icon-img">⚙️</div>
+            <span>Settings</span>
           </div>
         </div>
         </div>
@@ -569,6 +574,29 @@ export default function Computer({
           </div>
         )}
 
+        {activeWindow === 'settings' && (
+          <div className="win95-window">
+            <div className="win95-titlebar">
+              <div className="title">⚙️ Settings</div>
+              <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+            </div>
+            <div className="win95-content">
+              <div className="win95-card">
+                <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '10px' }}>Gameplay</div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={fastForward}
+                    onChange={e => setFastForward(e.target.checked)}
+                    style={{ width: '14px', height: '14px', cursor: 'pointer' }}
+                  />
+                  <span>Fast Forward — day runs at 2× speed</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeWindow === 'email' && (
           <EmailClient
             emails={inbox}
@@ -600,6 +628,9 @@ export default function Computer({
           )}
           {activeWindow === 'credits' && (
             <div className="taskbar-item active">About Pinbar Tycoon</div>
+          )}
+          {activeWindow === 'settings' && (
+            <div className="taskbar-item active">Settings</div>
           )}
           <div className="taskbar-tray">
             <div className="taskbar-cash">${cash.toLocaleString()}</div>
