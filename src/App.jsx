@@ -491,7 +491,8 @@ function App() {
         imageUrl: machine.imageUrl ?? null,
         x: placeCoords.x, y: placeCoords.y,
         room: assignedRoom,
-        orientation: 'N'
+        orientation: 'N',
+        purchasePrice: price
       }]);
       return true;
     }
@@ -544,7 +545,8 @@ function App() {
 
   const sellMachine = (m) => {
     if (dayState !== 'BUILD') return;
-    const sellValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
+    const marketValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
+    const sellValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
     if (sellValue) {
       setCash(c => c + sellValue);
       setMachines(prev => prev.filter(machine => machine.id !== m.id));
@@ -655,6 +657,7 @@ function App() {
         x: placeCoords.x, y: placeCoords.y,
         room: assignedRoom,
         orientation: 'N',
+        purchasePrice: price,
       }]);
       return true;
     }
