@@ -5,6 +5,13 @@
 //
 // To add a new expense, append an entry here — no other files need to change.
 
+// Medical bill amount for a given time. Used by the invoice system (not EXPENSE_DEFS).
+// Grows at 8.5% per game-week from 2020-W1. By 2025-W10 (week 59) ~$37,000 — deliberately brutal.
+export function medicalExpenseAmount(time) {
+  const weeksFrom2020 = (time.year - 2020) * 10 + (time.week - 1);
+  return Math.round(Math.pow(1.085, weeksFrom2020) * 300 / 10) * 10;
+}
+
 export const EXPENSE_DEFS = [
   {
     id: 'rent',
@@ -18,20 +25,6 @@ export const EXPENSE_DEFS = [
       if (time.year < 2000) return 550;
       if (time.year < 2010) return 800;
       return 1100;
-    },
-  },
-  {
-    id: 'medical',
-    name: 'Medical Treatment',
-    icon: '🏥',
-    description: 'Ongoing treatment costs',
-    frequencyWeeks: 1,
-    startYear: 2020, // checked in App.jsx before firing
-    amount: (time) => {
-      // Weeks elapsed since 2020 W1. Grows at 8.5% per game-week (10 weeks/year).
-      // By 2025 W10 (week 59) this reaches ~$37,000 — deliberately brutal.
-      const weeksFrom2020 = (time.year - 2020) * 10 + (time.week - 1);
-      return Math.round(Math.pow(1.085, weeksFrom2020) * 300 / 10) * 10;
     },
   },
 ];
