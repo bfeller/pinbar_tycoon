@@ -16,7 +16,7 @@ export function rollDayEvent({ timer, time, machines, popularity, cash, decision
   const today = toLinDay(time);
   if (timer < 3 || lastEventDay === today) return null;
 
-  const placed = machines.filter(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0);
+  const placed = machines.filter(m => (m.type === 'pinball' || !m.type) && m.x !== null && m.durability > 0 && (m.room === 'main' || !m.room));
   const machineName = placed.length > 0
     ? placed[Math.floor(Math.random() * placed.length)].name
     : 'a machine';
