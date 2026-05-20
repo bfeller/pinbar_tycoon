@@ -35,9 +35,8 @@ function DayClock({ dayTimer, dayLengthSeconds }) {
 }
 
 export default function PlayActions({
-  dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails, placementMachine,
-  onRotate, placementRotation,
-  autoRunCount, setAutoRunCount, autoRunRemaining, autoRunTotal,
+  dayState, dayTimer, dayLengthSeconds, startDay, startWeek, setIsComputerOpen, unreadEmails,
+  placementMachine, onRotate, placementRotation, autoRunRemaining, autoRunTotal,
 }) {
   if (placementMachine) {
     return (
@@ -76,22 +75,18 @@ export default function PlayActions({
       </button>
 
       {dayState === 'BUILD' && (
-        <div className="auto-run-controls">
-          <input
-            type="number"
-            min="1"
-            max="99"
-            value={autoRunCount}
-            onChange={e => setAutoRunCount(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
-            className="auto-run-input"
-            title="Number of days to run automatically"
-          />
-          <span className="auto-run-label">day{autoRunCount !== 1 ? 's' : ''}</span>
-        </div>
+        <button
+          className="start-week-btn"
+          onClick={startWeek}
+          title="Run 3 days automatically and view a week report"
+        >
+          <i className="fa-solid fa-calendar-week" />
+          <span>Start Week</span>
+        </button>
       )}
 
       {dayState === 'RUNNING' && isAutoRunning && (
-        <span className="auto-run-progress">{currentDay}/{autoRunTotal}</span>
+        <span className="auto-run-progress">Day {currentDay}/{autoRunTotal}</span>
       )}
 
       {dayState === 'BUILD' && (

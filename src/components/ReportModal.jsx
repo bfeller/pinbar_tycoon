@@ -24,6 +24,7 @@ const LOG_MAX = Math.log1p(1200);
 export default function ReportModal({
   dailyReport, machines, popularity, upgrades, popGainMult = 1,
   repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = [],
+  title = '📊 End of Day Report',
 }) {
   const placedPinball = machines.filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null);
   const machineEquivalents = Math.floor(
@@ -38,14 +39,13 @@ export default function ReportModal({
     popularity,
   );
   const socialBoost = 1 + (upgrades?.social_media ?? 0) * 0.5;
-  const popularityDelta = calcDailyPopGain(machineScore, customerDelta, {
-    socialBoost,
-    gainMult: popGainMult,
-  });
+  const popularityDelta = dailyReport.popularityDelta !== undefined
+    ? dailyReport.popularityDelta
+    : calcDailyPopGain(machineScore, customerDelta, { socialBoost, gainMult: popGainMult });
   return (
     <div className="report-modal-overlay">
        <div className="report-modal">
-         <div className="report-modal-titlebar">📊 End of Day Report</div>
+         <div className="report-modal-titlebar">{title}</div>
          <div className="report-modal-body">
          <p style={{fontSize: '1.2rem', color: '#006400'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
          <div style={{marginTop: '0.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap'}}>
@@ -178,7 +178,7 @@ export default function ReportModal({
          <button className="start-day-btn" onClick={nextDay}>
            {upcomingExpenses.length > 0 && (cash - upcomingExpenses.reduce((s, e) => s + e.amount, 0)) < 0
              ? '💀 Go Bankrupt'
-             : 'Next Day'}
+             : dailyReport.popularityDelta !== undefined ? 'Close' : 'Next Day'}
          </button>
          </div>{/* end report-modal-body */}
        </div>

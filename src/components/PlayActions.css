@@ -194,6 +194,40 @@
   text-align: center;
 }
 
+.start-week-btn {
+  background: #004080;
+  color: #ffffff;
+  border-top: 2px solid #6699cc;
+  border-left: 2px solid #6699cc;
+  border-bottom: 2px solid #001840;
+  border-right: 2px solid #001840;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  height: 36px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
+.start-week-btn:active {
+  border-top-color: #001840;
+  border-left-color: #001840;
+  border-bottom-color: #6699cc;
+  border-right-color: #6699cc;
+}
+
+.start-week-btn:focus-visible {
+  outline: 2px solid #ffff00;
+  outline-offset: 1px;
+}
+
 .auto-run-controls {
   display: flex;
   align-items: center;

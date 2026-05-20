@@ -128,8 +128,7 @@ function App() {
   const [isComputerOpen, setIsComputerOpen] = useState(false);
   const [fastForward, setFastForward] = useState(false);
 
-  // ── Auto-run ──
-  const [autoRunCount, setAutoRunCount] = useState(1);
+  // ── Week run ──
   const [autoRunTotal, setAutoRunTotal] = useState(null);
   const [autoRunRemaining, setAutoRunRemaining] = useState(null);
   const [autoRunSummary, setAutoRunSummary] = useState(null);
@@ -330,16 +329,25 @@ function App() {
   // ── Actions ──
   const startDay = () => {
     if (dayState === 'BUILD') {
-      if (autoRunCount >= 2 && autoRunRemaining === null) {
-        setAutoRunTotal(autoRunCount);
-        setAutoRunRemaining(autoRunCount);
-        autoRunRemainingRef.current = autoRunCount;
-        setAutoRunSummary({ income: 0, satisfied: 0, unsatisfied: 0, forgiven: 0, daysRun: 0 });
-        setAutoRunStartPop(popularity);
-      }
       setDayTimer(0);
       setDayState('RUNNING');
     }
+  };
+
+  const WEEK_DAYS = 3;
+  const startWeek = () => {
+    if (dayState !== 'BUILD') return;
+    setAutoRunTotal(WEEK_DAYS);
+    setAutoRunRemaining(WEEK_DAYS);
+    autoRunRemainingRef.current = WEEK_DAYS;
+    setAutoRunSummary({
+      income: 0, damage: [], satisfied: 0, unsatisfied: 0, forgiven: 0,
+      unsatisfiedReasons: {}, events: [], completedCourses: [],
+      expenses: [], repairmanRepairs: [], daysRun: 0,
+    });
+    setAutoRunStartPop(popularity);
+    setDayTimer(0);
+    setDayState('RUNNING');
   };
 
   // Keep ref in sync so the dayState effect always reads the current remaining count.
@@ -349,13 +357,40 @@ function App() {
     if (dayState === 'REPORT') {
       const remaining = autoRunRemainingRef.current;
       if (remaining === null || remaining <= 0) return;
-      setAutoRunSummary(prev => ({
-        income:      (prev?.income      ?? 0) + dailyReport.income,
-        satisfied:   (prev?.satisfied   ?? 0) + (dailyReport.satisfied   ?? 0),
-        unsatisfied: (prev?.unsatisfied ?? 0) + (dailyReport.unsatisfied ?? 0),
-        forgiven:    (prev?.forgiven    ?? 0) + (dailyReport.forgiven    ?? 0),
-        daysRun:     (prev?.daysRun     ?? 0) + 1,
-      }));
+      setAutoRunSummary(prev => {
+        // Merge damage by machine ID, keeping highest damageTaken and final durability
+        const damageMap = new Map((prev?.damage ?? []).map(d => [d.id, { ...d }]));
+        for (const d of dailyReport.damage ?? []) {
+          const entry = damageMap.get(d.id);
+          if (entry) { entry.damageTaken += d.damageTaken; entry.currentDurability = d.currentDurability; }
+          else damageMap.set(d.id, { ...d });
+        }
+        // Merge repairman repairs by machine ID
+        const repairMap = new Map((prev?.repairmanRepairs ?? []).map(r => [r.id, { ...r }]));
+        for (const r of dailyReport.repairmanRepairs ?? []) {
+          const entry = repairMap.get(r.id);
+          if (entry) entry.gain += r.gain;
+          else repairMap.set(r.id, { ...r });
+        }
+        // Merge unsatisfied reasons
+        const reasons = { ...(prev?.unsatisfiedReasons ?? {}) };
+        for (const [k, v] of Object.entries(dailyReport.unsatisfiedReasons ?? {})) {
+          reasons[k] = (reasons[k] ?? 0) + v;
+        }
+        return {
+          income:             (prev?.income      ?? 0) + dailyReport.income,
+          damage:             Array.from(damageMap.values()),
+          satisfied:          (prev?.satisfied   ?? 0) + (dailyReport.satisfied   ?? 0),
+          unsatisfied:        (prev?.unsatisfied ?? 0) + (dailyReport.unsatisfied ?? 0),
+          forgiven:           (prev?.forgiven    ?? 0) + (dailyReport.forgiven    ?? 0),
+          unsatisfiedReasons: reasons,
+          events:             [...(prev?.events ?? []), ...(dailyReport.events ?? [])],
+          completedCourses:   [...(prev?.completedCourses ?? []), ...(dailyReport.completedCourses ?? [])],
+          expenses:           [...(prev?.expenses ?? []), ...(dailyReport.expenses ?? [])],
+          repairmanRepairs:   Array.from(repairMap.values()),
+          daysRun:            (prev?.daysRun ?? 0) + 1,
+        };
+      });
       const next = remaining - 1;
       autoRunRemainingRef.current = next;
       setAutoRunRemaining(next);
@@ -877,7 +912,7 @@ function App() {
 
   // Preview expenses that would fire when the player clicks "Next Day" from the report
   const upcomingExpenses = (() => {
-    if (dayState !== 'REPORT') return [];
+    if (dayState !== 'REPORT' && !showAutoRunSummary) return [];
     let { year, week, day } = time;
     day += 1;
     if (day > 3) { day = 1; week += 1; }
@@ -982,8 +1017,7 @@ function App() {
             placementMachine={placementMachine}
             onRotate={rotatePlacement}
             placementRotation={placementRotation}
-            autoRunCount={autoRunCount}
-            setAutoRunCount={setAutoRunCount}
+            startWeek={startWeek}
             autoRunRemaining={autoRunRemaining}
             autoRunTotal={autoRunTotal}
           />
@@ -1022,52 +1056,19 @@ function App() {
         )}
 
         {showAutoRunSummary && autoRunSummary && (
-          <div className="report-modal-overlay">
-            <div className="report-modal">
-              <div className="report-modal-titlebar">
-                📊 {autoRunSummary.daysRun}-Day Run Complete
-              </div>
-              <div className="report-modal-body">
-                <div style={{ marginBottom: '12px' }}>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '4px' }}>
-                    +${autoRunSummary.income.toLocaleString()} total income
-                  </div>
-                  <div style={{ fontSize: '0.85rem', color: '#555' }}>
-                    Avg ${Math.round(autoRunSummary.income / autoRunSummary.daysRun).toLocaleString()} / day
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '0.9rem' }}>
-                  <div>
-                    <span style={{ color: '#006400', fontWeight: 'bold' }}>{autoRunSummary.satisfied}</span>
-                    {' '}satisfied
-                  </div>
-                  <div>
-                    <span style={{ color: '#b71c1c', fontWeight: 'bold' }}>{autoRunSummary.unsatisfied}</span>
-                    {' '}unsatisfied
-                  </div>
-                  {autoRunSummary.forgiven > 0 && (
-                    <div>
-                      <span style={{ fontWeight: 'bold' }}>{autoRunSummary.forgiven}</span>
-                      {' '}forgiven
-                    </div>
-                  )}
-                </div>
-                <div style={{ fontSize: '0.9rem', marginBottom: '12px' }}>
-                  Popularity: {popularity}
-                  {' '}
-                  <span style={{ color: popularity - autoRunStartPop >= 0 ? '#006400' : '#b71c1c' }}>
-                    ({popularity - autoRunStartPop >= 0 ? '+' : ''}{popularity - autoRunStartPop})
-                  </span>
-                </div>
-                <button
-                  className="start-day-btn"
-                  onClick={() => { setShowAutoRunSummary(false); setAutoRunSummary(null); setAutoRunTotal(null); }}
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
+          <ReportModal
+            title={`📊 ${autoRunSummary.daysRun}-Day Week Report`}
+            dailyReport={{ ...autoRunSummary, popularityDelta: popularity - autoRunStartPop }}
+            machines={machines}
+            popularity={popularity}
+            upgrades={upgrades}
+            popGainMult={popGainMult}
+            repairsRemaining={repairsRemaining}
+            cash={cash}
+            repairMachine={repairMachine}
+            nextDay={() => { setShowAutoRunSummary(false); setAutoRunSummary(null); setAutoRunTotal(null); }}
+            upcomingExpenses={upcomingExpenses}
+          />
         )}
 
         {isComputerOpen && (
