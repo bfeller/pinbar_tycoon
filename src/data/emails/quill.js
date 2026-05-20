@@ -421,4 +421,34 @@ P.S. I know this is a lot to absorb. Please do not let it affect your machine ma
     },
   },
 
+  {
+    id: 'quill_medical_billing',
+    from: 'Dr. H. Quill',
+    address: 'horatio.quill@temporalcontinuity.gov',
+    subject: 'Regarding Your Medical Bills — Practical Information',
+    body:
+`Following my previous note about your health: I want to give you the practical information I withheld, because I think you have absorbed the other part and it is time.
+
+The bills are going to arrive through your computer. There is a section called Medical — you will find the icon on the desktop. It connects to something called St. Agatha's Billing Department, which in your timeline will not exist for several more decades but which I have had to, for reasons I cannot fully explain without forms, instantiate in advance.
+
+Here is how it works.
+
+Each week, starting in 2020, an invoice will appear in that section. If you pay it immediately, you pay the stated amount. If you do not pay it, five percent interest is added to that invoice each week it remains outstanding. The invoices are individual — each one ages on its own. You can pay them one at a time or all at once.
+
+If an invoice reaches four weeks without payment, you will receive a formal notice from the billing department. This is not a threat. It is a notice. The threat — and I am sorry to use that word but I want to be accurate — is what happens at week five: if an invoice is still unpaid at that point, the amount is taken automatically from your account, with the accumulated interest.
+
+I want to be transparent with you: the amounts grow. Considerably. The treatment costs more as time goes on, at a rate I found difficult to look at when I first ran the projections. The best strategy, if you can manage it, is to pay each invoice promptly. Interest is not your friend in this situation.
+
+The bar needs to be able to sustain this. That is not a metaphor. That is arithmetic.
+
+I am sorry the situation requires a spreadsheet.
+
+Dr. Quill`,
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('quill_illness') &&
+      !sentIds.has('quill_medical_billing') &&
+      ((time.year === 2019 && time.week >= 9) || time.year >= 2020),
+    choices: null,
+  },
+
 ];
