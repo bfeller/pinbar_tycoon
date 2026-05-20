@@ -31,7 +31,10 @@ export default function Computer({
   financialHistory = [],
   activeInvestment, activeLoan, onInvest, onTakeLoan,
   fastForward, setFastForward,
-  closeComputer
+  closeComputer,
+  medicalBills = [],
+  onPayMedicalBill,
+  onPayAllMedicalBills,
 }) {
   const [booting, setBooting] = useState(true);
   const [activeWindow, setActiveWindow] = useState(null); // 'browser' | 'university' | 'email' | 'bank' | null
@@ -123,6 +126,15 @@ export default function Computer({
           <div className="win95-icon" onClick={() => setActiveWindow('bank')}>
             <div className="icon-img">🏦</div>
             <span>Bank</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('medical')}>
+            <div className="icon-img" style={{ position: 'relative' }}>
+              ⚕
+              {medicalBills.some(b => !b.paid && !b.autoDeducted && Math.floor((toLinearDay(time) - b.issuedLinearDay) / 3) >= 4) && (
+                <span style={{ position: 'absolute', top: '-4px', right: '-4px', background: 'red', color: '#fff', borderRadius: '50%', fontSize: '0.6rem', width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>!</span>
+              )}
+            </div>
+            <span>Medical</span>
           </div>
           <div className="win95-icon" onClick={() => setActiveWindow('credits')}>
             <div className="icon-img">ℹ️</div>
@@ -508,6 +520,119 @@ export default function Computer({
           );
         })()}
 
+        {activeWindow === 'medical' && (() => {
+          const linearNow = toLinearDay(time);
+          const unpaidBills = medicalBills.filter(b => !b.paid && !b.autoDeducted);
+          const billsWithAmounts = unpaidBills.map(bill => {
+            const weeksUnpaid = Math.floor((linearNow - bill.issuedLinearDay) / 3);
+            const currentAmount = Math.round(bill.originalAmount * Math.pow(1.05, weeksUnpaid));
+            const inCollections = weeksUnpaid >= 4;
+            return { ...bill, weeksUnpaid, currentAmount, inCollections };
+          });
+          const totalDue = billsWithAmounts.reduce((s, b) => s + b.currentAmount, 0);
+          const collectionsCount = billsWithAmounts.filter(b => b.inCollections).length;
+          const canPayAll = totalDue > 0 && cash >= totalDue && dayState !== 'REPORT';
+
+          return (
+            <div className="win95-window">
+              <div className="win95-titlebar">
+                <div className="title">⚕ Medical Billing — St. Agatha's Clinic</div>
+                <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+              </div>
+              <div className="win95-toolbar">
+                <span>Address: http://www.stagatha-billing.nhs.uk</span>
+              </div>
+              <div className="win95-content">
+                <div className="browser-page">
+                  {time.year < 2020 ? (
+                    <p style={{ color: '#555', fontStyle: 'italic' }}>Medical billing begins in 2020. No invoices yet.</p>
+                  ) : billsWithAmounts.length === 0 ? (
+                    <p style={{ color: '#006600' }}>✓ No outstanding invoices. You're all caught up.</p>
+                  ) : (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '8px' }}>
+                        <div>
+                          <strong>Outstanding Invoices</strong>
+                          {collectionsCount > 0 && (
+                            <div style={{ color: '#800000', fontSize: '0.8rem', marginTop: '2px' }}>
+                              ⚠ {collectionsCount} invoice{collectionsCount > 1 ? 's' : ''} in collections
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '0.8rem' }}>Total outstanding: <strong>${totalDue.toLocaleString()}</strong></div>
+                          <button
+                            className="win95-btn"
+                            disabled={!canPayAll}
+                            onClick={onPayAllMedicalBills}
+                            style={{ marginTop: '4px', fontSize: '0.75rem' }}
+                          >
+                            Pay All (${totalDue.toLocaleString()})
+                          </button>
+                        </div>
+                      </div>
+
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+                        <thead>
+                          <tr style={{ background: '#000080', color: 'white' }}>
+                            <th style={{ padding: '3px 6px', textAlign: 'left' }}>Invoice</th>
+                            <th style={{ padding: '3px 6px', textAlign: 'right' }}>Original</th>
+                            <th style={{ padding: '3px 6px', textAlign: 'right' }}>Due Now</th>
+                            <th style={{ padding: '3px 6px', textAlign: 'left' }}>Status</th>
+                            <th style={{ padding: '3px 6px' }}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {billsWithAmounts.map(bill => {
+                            const canPay = cash >= bill.currentAmount && dayState !== 'REPORT';
+                            const label = bill.id.replace(/^medical_/, '').replace(/_w/, '-W').toUpperCase();
+                            let statusEl;
+                            if (bill.inCollections) {
+                              statusEl = <span style={{ color: '#800000', fontWeight: 'bold' }}>🚨 Collections</span>;
+                            } else if (bill.weeksUnpaid === 0) {
+                              statusEl = <span style={{ color: '#006600' }}>✓ New</span>;
+                            } else {
+                              statusEl = <span style={{ color: '#555' }}>{bill.weeksUnpaid} wk{bill.weeksUnpaid > 1 ? 's' : ''} old</span>;
+                            }
+                            return (
+                              <tr
+                                key={bill.id}
+                                style={{ background: bill.inCollections ? '#fff0f0' : 'white', borderBottom: '1px solid #ddd' }}
+                              >
+                                <td style={{ padding: '4px 6px' }}><strong>{label}</strong></td>
+                                <td style={{ padding: '4px 6px', textAlign: 'right' }}>${bill.originalAmount.toLocaleString()}</td>
+                                <td style={{ padding: '4px 6px', textAlign: 'right' }}>
+                                  <strong style={{ color: bill.inCollections ? '#800000' : 'inherit' }}>
+                                    ${bill.currentAmount.toLocaleString()}
+                                  </strong>
+                                </td>
+                                <td style={{ padding: '4px 6px' }}>{statusEl}</td>
+                                <td style={{ padding: '4px 6px', textAlign: 'right' }}>
+                                  <button
+                                    className="win95-btn"
+                                    disabled={!canPay}
+                                    onClick={() => onPayMedicalBill(bill.id)}
+                                    style={{ fontSize: '0.75rem', padding: '1px 6px' }}
+                                  >
+                                    Pay
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                      <div style={{ fontSize: '0.72rem', color: '#555', marginTop: '6px', fontStyle: 'italic' }}>
+                        Interest: 5% per week unpaid · Auto-collected after 5 weeks
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {activeWindow === 'bank' && (
           <BankWindow
             cash={cash}
@@ -631,6 +756,9 @@ export default function Computer({
           )}
           {activeWindow === 'bank' && (
             <div className="taskbar-item active">First Pinbar Bank</div>
+          )}
+          {activeWindow === 'medical' && (
+            <div className="taskbar-item active">St. Agatha's Billing</div>
           )}
           {activeWindow === 'credits' && (
             <div className="taskbar-item active">About Pinbar Tycoon</div>
