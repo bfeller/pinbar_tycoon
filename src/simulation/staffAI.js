@@ -115,7 +115,8 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
     const next = { ...entity };
     if (next.status === 'waiting_at_station') next.status = 'queued_for_station';
 
-    // Initial spawn — place near the first available station machine
+    // Initial spawn — place near the first available station machine.
+    // Falls back to the door if no reachable adjacent cell exists (e.g. machine in a corner).
     if (next.x === null) {
       for (const station of SERVICE_STATIONS) {
         const mList = stationMachinesByType.get(station.type) ?? [];
@@ -125,7 +126,8 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
         const approach = findAdjacentApproach(DOOR_POS.x, DOOR_POS.y, spawnMachine, station.type, machines, blocked, spawnPourCell);
         if (approach) { next.x = approach.x; next.y = approach.y; break; }
       }
-      if (next.x !== null) staffPositions.set(id, { x: next.x, y: next.y });
+      if (next.x === null) { next.x = DOOR_POS.x; next.y = DOOR_POS.y; }
+      staffPositions.set(id, { x: next.x, y: next.y });
       nextStaffEntities.push(next);
       continue;
     }
