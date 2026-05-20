@@ -128,6 +128,16 @@ function App() {
   const [isComputerOpen, setIsComputerOpen] = useState(false);
   const [fastForward, setFastForward] = useState(false);
 
+  // ── Auto-run ──
+  const [autoRunCount, setAutoRunCount] = useState(1);
+  const [autoRunTotal, setAutoRunTotal] = useState(null);
+  const [autoRunRemaining, setAutoRunRemaining] = useState(null);
+  const [autoRunSummary, setAutoRunSummary] = useState(null);
+  const [showAutoRunSummary, setShowAutoRunSummary] = useState(false);
+  const [autoRunStartPop, setAutoRunStartPop] = useState(0);
+  const autoRunRemainingRef = useRef(null);
+  const autoRunPendingStartRef = useRef(false);
+
   // ── Derived upgrade values ──
   const repairCapacity = 5 + upgrades.electronics * 2;
   const backroomRows = BACKROOM_ROWS + upgrades.quantum;
@@ -320,10 +330,49 @@ function App() {
   // ── Actions ──
   const startDay = () => {
     if (dayState === 'BUILD') {
+      if (autoRunCount >= 2 && autoRunRemaining === null) {
+        setAutoRunTotal(autoRunCount);
+        setAutoRunRemaining(autoRunCount);
+        autoRunRemainingRef.current = autoRunCount;
+        setAutoRunSummary({ income: 0, satisfied: 0, unsatisfied: 0, forgiven: 0, daysRun: 0 });
+        setAutoRunStartPop(popularity);
+      }
       setDayTimer(0);
       setDayState('RUNNING');
     }
   };
+
+  // Keep ref in sync so the dayState effect always reads the current remaining count.
+  useEffect(() => { autoRunRemainingRef.current = autoRunRemaining; }, [autoRunRemaining]);
+
+  useEffect(() => {
+    if (dayState === 'REPORT') {
+      const remaining = autoRunRemainingRef.current;
+      if (remaining === null || remaining <= 0) return;
+      setAutoRunSummary(prev => ({
+        income:      (prev?.income      ?? 0) + dailyReport.income,
+        satisfied:   (prev?.satisfied   ?? 0) + (dailyReport.satisfied   ?? 0),
+        unsatisfied: (prev?.unsatisfied ?? 0) + (dailyReport.unsatisfied ?? 0),
+        forgiven:    (prev?.forgiven    ?? 0) + (dailyReport.forgiven    ?? 0),
+        daysRun:     (prev?.daysRun     ?? 0) + 1,
+      }));
+      const next = remaining - 1;
+      autoRunRemainingRef.current = next;
+      setAutoRunRemaining(next);
+      nextDay();
+      if (next > 0) {
+        autoRunPendingStartRef.current = true;
+      } else {
+        setAutoRunRemaining(null);
+        autoRunRemainingRef.current = null;
+        setShowAutoRunSummary(true);
+      }
+    }
+    if (dayState === 'BUILD' && autoRunPendingStartRef.current) {
+      autoRunPendingStartRef.current = false;
+      startDay();
+    }
+  }, [dayState]); // eslint-disable-line
 
   const purchaseUpgrade = (id, cost) => {
     if (cash < cost || dayState === 'REPORT') return false;
@@ -933,6 +982,10 @@ function App() {
             placementMachine={placementMachine}
             onRotate={rotatePlacement}
             placementRotation={placementRotation}
+            autoRunCount={autoRunCount}
+            setAutoRunCount={setAutoRunCount}
+            autoRunRemaining={autoRunRemaining}
+            autoRunTotal={autoRunTotal}
           />
 
           <Inventory
@@ -953,7 +1006,7 @@ function App() {
           />
         </div>
 
-        {dayState === 'REPORT' && (
+        {dayState === 'REPORT' && autoRunRemaining === null && (
           <ReportModal
             dailyReport={dailyReport}
             machines={machines}
@@ -966,6 +1019,55 @@ function App() {
             nextDay={nextDay}
             upcomingExpenses={upcomingExpenses}
           />
+        )}
+
+        {showAutoRunSummary && autoRunSummary && (
+          <div className="report-modal-overlay">
+            <div className="report-modal">
+              <div className="report-modal-titlebar">
+                📊 {autoRunSummary.daysRun}-Day Run Complete
+              </div>
+              <div className="report-modal-body">
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '4px' }}>
+                    +${autoRunSummary.income.toLocaleString()} total income
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#555' }}>
+                    Avg ${Math.round(autoRunSummary.income / autoRunSummary.daysRun).toLocaleString()} / day
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '0.9rem' }}>
+                  <div>
+                    <span style={{ color: '#006400', fontWeight: 'bold' }}>{autoRunSummary.satisfied}</span>
+                    {' '}satisfied
+                  </div>
+                  <div>
+                    <span style={{ color: '#b71c1c', fontWeight: 'bold' }}>{autoRunSummary.unsatisfied}</span>
+                    {' '}unsatisfied
+                  </div>
+                  {autoRunSummary.forgiven > 0 && (
+                    <div>
+                      <span style={{ fontWeight: 'bold' }}>{autoRunSummary.forgiven}</span>
+                      {' '}forgiven
+                    </div>
+                  )}
+                </div>
+                <div style={{ fontSize: '0.9rem', marginBottom: '12px' }}>
+                  Popularity: {popularity}
+                  {' '}
+                  <span style={{ color: popularity - autoRunStartPop >= 0 ? '#006400' : '#b71c1c' }}>
+                    ({popularity - autoRunStartPop >= 0 ? '+' : ''}{popularity - autoRunStartPop})
+                  </span>
+                </div>
+                <button
+                  className="start-day-btn"
+                  onClick={() => { setShowAutoRunSummary(false); setAutoRunSummary(null); setAutoRunTotal(null); }}
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {isComputerOpen && (

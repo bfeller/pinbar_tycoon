@@ -37,6 +37,7 @@ function DayClock({ dayTimer, dayLengthSeconds }) {
 export default function PlayActions({
   dayState, dayTimer, dayLengthSeconds, startDay, setIsComputerOpen, unreadEmails, placementMachine,
   onRotate, placementRotation,
+  autoRunCount, setAutoRunCount, autoRunRemaining, autoRunTotal,
 }) {
   if (placementMachine) {
     return (
@@ -55,6 +56,9 @@ export default function PlayActions({
     );
   }
 
+  const isAutoRunning = autoRunRemaining !== null;
+  const currentDay = isAutoRunning && autoRunTotal ? autoRunTotal - autoRunRemaining + 1 : null;
+
   return (
     <div className="play-actions">
       <button
@@ -70,6 +74,25 @@ export default function PlayActions({
         </span>
         {dayState === 'RUNNING' && <DayClock dayTimer={dayTimer} dayLengthSeconds={dayLengthSeconds} />}
       </button>
+
+      {dayState === 'BUILD' && (
+        <div className="auto-run-controls">
+          <input
+            type="number"
+            min="1"
+            max="99"
+            value={autoRunCount}
+            onChange={e => setAutoRunCount(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
+            className="auto-run-input"
+            title="Number of days to run automatically"
+          />
+          <span className="auto-run-label">day{autoRunCount !== 1 ? 's' : ''}</span>
+        </div>
+      )}
+
+      {dayState === 'RUNNING' && isAutoRunning && (
+        <span className="auto-run-progress">{currentDay}/{autoRunTotal}</span>
+      )}
 
       {dayState === 'BUILD' && (
         <button

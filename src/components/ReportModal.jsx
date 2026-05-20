@@ -25,11 +25,12 @@ export default function ReportModal({
   dailyReport, machines, popularity, upgrades, popGainMult = 1,
   repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = [],
 }) {
-  const machineScore = Math.floor(
-    machines
-      .filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null)
-      .reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 2, 0)
+  const placedPinball = machines.filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null);
+  const machineEquivalents = Math.floor(
+    placedPinball.reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 4, 0)
   );
+  const machineExpectation = Math.floor(popularity / 100);
+  const machineScore = machineEquivalents - machineExpectation;
   const unsatisfiedMult = getUnsatisfiedPopMultiplier(popularity);
   const customerDelta = calcCustomerPopDelta(
     dailyReport.satisfied,
@@ -50,7 +51,7 @@ export default function ReportModal({
          <div style={{marginTop: '0.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap'}}>
            <span style={{color: '#000000'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#006400' : '#cc0000'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
            <span style={{fontSize: '0.85rem', color: '#444444'}}>
-             {machineScore} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
+             {placedPinball.length} machines · {dailyReport.satisfied ?? 0} satisfied · {dailyReport.unsatisfied ?? 0} unsatisfied
              {unsatisfiedMult > 1 && (dailyReport.unsatisfied ?? 0) > 0 && (
                <span style={{ color: '#cc0000', marginLeft: '0.35rem' }}>
                  (each counts ×{unsatisfiedMult})
