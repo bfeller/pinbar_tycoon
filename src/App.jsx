@@ -71,6 +71,7 @@ function App() {
   const [popularity, setPopularity] = useState(0);
   const [cash, setCash] = useState(25000);
   const [repairsRemaining, setRepairsRemaining] = useState(5);
+  const [hasStockedParts, setHasStockedParts] = useState(false);
   const [machines, setMachines] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [spendPopups, setSpendPopups] = useState([]);
@@ -249,7 +250,7 @@ function App() {
     const save = {
       version: 1,
       pinbarName, characterName, time, cash, machines, popularity,
-      repairsRemaining, upgrades, enrolledCourses, inbox,
+      repairsRemaining, hasStockedParts, upgrades, enrolledCourses, inbox,
       firedArcEventIds: [...firedArcEventIds],
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
@@ -304,6 +305,7 @@ function App() {
     setPopularity(s.popularity ?? 0);
     setCash(s.cash ?? 25000);
     setRepairsRemaining(s.repairsRemaining ?? 5);
+    setHasStockedParts(s.hasStockedParts ?? false);
     setMachines(s.machines ?? []);
     setCustomers([]);
     setSpendPopups([]);
