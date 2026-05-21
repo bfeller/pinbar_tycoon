@@ -18,6 +18,9 @@ import { crabtreeEmails }  from './crabtree';
 import { vossEmails }      from './voss';
 import { corporateEmails }  from './corporate';
 import { universityEmails } from './university';
+import { terryEmails }     from './terry';
+import { mickEmails }      from './mick';
+import { cassEmails }      from './cass';
 
 export const EMAIL_DEFS = [
   ...quillEmails,
@@ -29,4 +32,7 @@ export const EMAIL_DEFS = [
   ...vossEmails,
   ...corporateEmails,
   ...universityEmails,
+  ...terryEmails,
+  ...mickEmails,
+  ...cassEmails,
 ];
