@@ -623,6 +623,7 @@ function App() {
             year: 1976,
             durability: 70,
             locationCount: 0,
+            purchasePrice: 900,
             x: placeCoords.x, y: placeCoords.y,
             room: assignedRoom,
             orientation: 'N',
