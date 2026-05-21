@@ -603,6 +603,38 @@ function App() {
           }]);
         }
       }
+    } else if (effectId === 'terry_machine') {
+      // Terry's Spirit of '76: costs $900, solid-state machine at 70% durability
+      if (cash >= 900) {
+        setCash(c => c - 900);
+        const backroomMachines = machines.filter(m => m.room === 'backroom');
+        let placeCoords = findFreeSpace('pinball', 'N', backroomMachines, BACKROOM_COLS, backroomRows);
+        let assignedRoom = 'backroom';
+        if (!placeCoords) {
+          const mainMachines = machines.filter(m => m.room === 'main' || !m.room);
+          placeCoords = findFreeSpace('pinball', 'N', mainMachines, GRID_COLS, GRID_ROWS, DOOR_POS);
+          assignedRoom = 'main';
+        }
+        if (placeCoords) {
+          setMachines(prev => [...prev, {
+            id: 'terry_spirit76-' + Date.now(),
+            type: 'pinball',
+            name: 'Spirit of 76',
+            year: 1976,
+            durability: 70,
+            locationCount: 0,
+            x: placeCoords.x, y: placeCoords.y,
+            room: assignedRoom,
+            orientation: 'N',
+          }]);
+        }
+      }
+    } else if (effectId === 'mick_stockpile') {
+      // Mick's parts run: costs $400, next manual repair is free
+      if (cash >= 400) {
+        setCash(c => c - 400);
+        setHasStockedParts(true);
+      }
     }
     setInbox(prev => prev.map(e => e.id === emailId ? { ...e, read: true, choiceMade: true } : e));
   };
