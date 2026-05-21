@@ -196,4 +196,60 @@ Sent from my computer (it is the same one, but slower now)`,
     choices: null,
   },
 
+  {
+    id: 'gary_gorgar',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'the machine that speaks',
+    body:
+`Hi.
+
+I wanted to mention something about the new machine. The one that talks.
+
+I have now played it three times and I want to be clear that I am not unsettled by it. I am simply observant. The observation is: it says things. Mid-game. Unprompted. I was not expecting this and I have noted my reaction to it in the log under "notable moments," which is a new section.
+
+Two other customers left while I was there. One of them said something to the bartender that I couldn't hear but his expression was not positive. The bartender looked, I would say, conflicted.
+
+Dave has a theory about why a machine would be built to speak. I have noted the theory in the log but I want to be clear that I do not endorse it.
+
+I will be in on Thursday as usual.
+
+Gary
+
+--
+Sent from my computer (it is new)`,
+    trigger: ({ time, sentIds }) =>
+      time.year >= 1979 && sentIds.has('gary_03') && !sentIds.has('gary_gorgar'),
+    choices: null,
+  },
+
+  {
+    id: 'gary_addams',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'a data observation (re: The Addams Family)',
+    body:
+`Hi.
+
+I have updated the spreadsheet.
+
+I have been tracking Tuesday-night revenue for some time now, as you may be aware. I want to share a finding.
+
+The Addams Family machine is generating more in quarters on Tuesday nights than the bar makes selling beer on Tuesday nights. I have the figures. I have also made a graph. It is a bar chart, which I appreciate is slightly ironic in this context.
+
+I showed my wife. She asked why I have a graph about a pinball machine's beer-to-quarter ratio. I told her it was for "contextual analysis." She said "of course it is, Gary."
+
+I am not sure what you should do with this information. I just felt you should have it.
+
+The log entry is quite long.
+
+Gary
+
+--
+Sent from my computer (it is new)`,
+    trigger: ({ time, sentIds }) =>
+      time.year >= 1992 && sentIds.has('gary_gorgar') && !sentIds.has('gary_addams'),
+    choices: null,
+  },
+
 ];
