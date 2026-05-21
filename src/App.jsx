@@ -563,10 +563,11 @@ function App() {
 
     const damageToFix = Math.min(repairsRemaining, 100 - m.durability);
     if (damageToFix <= 0) return;
-    const cost = damageToFix * 10;
+    const cost = hasStockedParts ? 0 : damageToFix * 10;
 
     if (cash >= cost) {
       setCash(c => c - cost);
+      if (hasStockedParts) setHasStockedParts(false);
       setRepairsRemaining(r => r - damageToFix);
       setMachines(prev => prev.map(mac => mac.id === id ? { ...mac, durability: mac.durability + damageToFix } : mac));
     }
