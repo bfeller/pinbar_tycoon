@@ -200,7 +200,7 @@ Sent from my computer (it is the same one, but slower now)`,
     id: 'gary_gorgar',
     from: 'Gary Kowalski',
     address: 'garykowalski77@aol.com',
-    subject: 'the machine that speaks',
+    subject: 'a thing about the new machine',
     body:
 `Hi.
 
@@ -208,9 +208,9 @@ I wanted to mention something about the new machine. The one that talks.
 
 I have now played it three times and I want to be clear that I am not unsettled by it. I am simply observant. The observation is: it says things. Mid-game. Unprompted. I was not expecting this and I have noted my reaction to it in the log under "notable moments," which is a new section.
 
-Two other customers left while I was there. One of them said something to the bartender that I couldn't hear but his expression was not positive. The bartender looked, I would say, conflicted.
+Two other customers left while I was there on Tuesday. The bartender mentioned to me, unprompted, that the machine is somewhat loud during closing. He used a word I won't write down. I have noted his assessment in the log.
 
-Dave has a theory about why a machine would be built to speak. I have noted the theory in the log but I want to be clear that I do not endorse it.
+Dave has a theory about why a machine would be built to speak. I have noted the theory in the log but I want to be clear that I do not endorse it. The log entry is longer than usual.
 
 I will be in on Thursday as usual.
 

@@ -1,6 +1,6 @@
 // ── Mick Darrow — M.D. Amusements Repair ─────────────────────────────────────
 // The bar's repairman. Gruff, practical, bills by the hour.
-// Arc: young and annoyed (1980) → veteran and grim (1999).
+// Arc: young and annoyed (1980) → veteran and grim (1998).
 // Emails only fire after the repairman has been hired (staff.repairman === true).
 
 export const mickEmails = [

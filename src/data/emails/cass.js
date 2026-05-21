@@ -16,7 +16,7 @@ Cass here, Pinball Collective. I think we met at the operator meetup? Either way
 
 Have you seen The Wizard of Oz? Jersey Jack. Twenty-six inch LCD screen, full RGB lighting, completely programmable. It is a completely different category of machine. Not better or worse than your classics, just — different. The authentic experience is still the authentic experience, but this is what the new generation is coming in for.
 
-The barcade thing is real. I know people have been saying it for two years but now it's actually real. Chicago, Austin, Brooklyn — full bars built around games. Not arcade bars. Barcades. Different vibe, different spend, different crowd.
+The barcade thing is real. I know people have been saying it for two years but now it's actually real. Chicago, Austin, Brooklyn — full bars built around games. Not arcade bars. Barcades. Different vibe, different spend, different crowd. People talk about "the space" now. That's a sentence that means something.
 
 I'd love to talk about the venue rebrand conversation if you're open to it. I've put together a mood board. I'll send it over separately.
 
