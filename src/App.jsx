@@ -964,7 +964,7 @@ St. Agatha's Billing Department`,
     // Check for new emails (read inbox from closure — safe inside a click handler)
     const sentIds = new Set(inbox.map(e => e.id));
     const completedCourseIds = new Set(justCompleted.map(c => c.id));
-    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds };
+    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
     if (newEmails.length > 0) {
