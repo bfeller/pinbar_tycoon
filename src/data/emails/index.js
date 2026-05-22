@@ -22,6 +22,7 @@ import { universityEmails } from './university';
 import { terryEmails }     from './terry';
 import { mickEmails }      from './mick';
 import { cassEmails }      from './cass';
+import { dannyEmails }     from './danny';
 
 export const EMAIL_DEFS = [
   ...quillEmails,
@@ -36,4 +37,5 @@ export const EMAIL_DEFS = [
   ...terryEmails,
   ...mickEmails,
   ...cassEmails,
+  ...dannyEmails,
 ];
