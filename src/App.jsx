@@ -573,7 +573,7 @@ function App() {
     }
   };
 
-  const handleEmailChoice = (emailId, effectId) => {
+  const handleEmailChoice = (emailId, effectId, decisionsFlag) => {
     if (effectId === 'reg_spy_end_machine') {
       // Remove Reg's spy Bally from the bar entirely — player confronted Reg
       setMachines(prev => prev.filter(m => m.name !== "Reg's Bally (1978)"));
@@ -636,6 +636,9 @@ function App() {
         setCash(c => c - 400);
         setHasStockedParts(true);
       }
+    }
+    if (decisionsFlag) {
+      setDecisions(prev => ({ ...prev, [decisionsFlag]: true }));
     }
     setInbox(prev => prev.map(e => e.id === emailId ? { ...e, read: true, choiceMade: true } : e));
   };

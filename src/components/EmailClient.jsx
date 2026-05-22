@@ -78,7 +78,7 @@ export default function EmailClient({ emails, onChoice, onRead, onClose, charact
                     <button
                       key={i}
                       className="win95-btn email-choice-btn"
-                      onClick={() => onChoice(selected.id, c.effectId)}
+                      onClick={() => onChoice(selected.id, c.effectId, c.decisionsFlag)}
                     >
                       {c.label}
                     </button>
