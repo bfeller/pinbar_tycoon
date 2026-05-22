@@ -267,4 +267,143 @@ export const DECISION_DEFS = [
     ],
   },
 
+  {
+    id: 'danny_first_visit',
+    label: 'The Kid',
+    weight: 10,
+    repeatable: false,
+    condition: ({ time, decisions }) =>
+      time.year >= 1976 && time.week >= 5 &&
+      !decisions.danny_welcomed && !decisions.danny_turned_away,
+    getMessage: () =>
+      `A boy — can't be more than fourteen — has been at one of the machines since early evening. He hasn't bought a drink. He hasn't looked up. It's last orders and he's still playing.`,
+    choices: [
+      {
+        id: 'danny_welcome',
+        label: 'He can stay till close',
+        hint: 'arc begins',
+        flagId: 'danny_welcomed',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: 'He played for another hour without speaking. On the way out he said "thanks." That was it.',
+        },
+      },
+      {
+        id: 'danny_turn_away',
+        label: "Bar's closing, son",
+        hint: 'arc may still continue',
+        flagId: 'danny_turned_away',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: 'He packed up without a word. You noticed Gary watching from the back.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'danny_journalist',
+    label: 'The Journalist',
+    weight: 3,
+    repeatable: false,
+    condition: ({ time, decisions, popularity }) =>
+      time.year >= 1977 && popularity >= 400 &&
+      !decisions.danny_journalist_featured && !decisions.danny_journalist_declined &&
+      (decisions.danny_welcomed || decisions.danny_turned_away),
+    getMessage: () =>
+      `A woman from the Evening Standard wants to write about "the pinball prodigy." The piece would mention the bar by name. She's already spoken to Gary, who apparently gave her eleven pages of notes and a graph.`,
+    choices: [
+      {
+        id: 'journalist_feature',
+        label: 'Feature him — good for both of us',
+        hint: '+25 popularity',
+        flagId: 'danny_journalist_featured',
+        effect: 'popularity_delta',
+        effectValue: 25,
+        resolution: {
+          severity: 'good',
+          message: "The piece ran Thursday. Eight new faces on the following Tuesday. Gary kept count.",
+        },
+      },
+      {
+        id: 'journalist_decline',
+        label: 'Keep him out of the papers',
+        hint: 'no effect',
+        flagId: 'danny_journalist_declined',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: 'Gary told her the graph was private. She apparently understood.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'danny_big_night',
+    label: 'The Big Night',
+    weight: 10,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      time.year >= 1979 && time.week >= 4 &&
+      sentIds.has('danny_letter_01') && sentIds.has('crabtree_02') &&
+      !decisions.danny_slipped_out && !decisions.danny_stayed_for_run && !decisions.crabtree_distracted,
+    getMessage: ({ decisions = {} }) => {
+      let text = `It's a Friday. Danny Chen has been at machine three for an hour and a half. The bar is packed — people came to watch. And Crabtree has just walked in with his clipboard.`;
+      if (decisions.danny_journalist_featured) {
+        text += `\n\nCrabtree has a clipping from the Evening Standard in his clipboard.`;
+      }
+      if (decisions.chen_invited) {
+        text += `\n\nMr. Chen is in his usual corner, watching.`;
+      }
+      if (decisions.danny_watched_repairs) {
+        text += `\n\nMick is at the bar tonight — he came to tune machine three.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'danny_slip_out',
+        label: 'Quietly get Danny out the side door',
+        hint: 'score lost',
+        flagId: 'danny_slipped_out',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "Danny went quietly. Crabtree inspected an ordinary bar. No incident. Gary watched Danny leave.",
+        },
+      },
+      {
+        id: 'danny_stay',
+        label: 'Let it play out',
+        hint: '−10 popularity',
+        flagId: 'danny_stayed_for_run',
+        effect: 'popularity_delta',
+        effectValue: -10,
+        resolution: {
+          severity: 'bad',
+          message: "Crabtree noted the age. It's in the logbook now. Danny finished the run.",
+        },
+      },
+      {
+        id: 'danny_distract_crabtree',
+        label: 'Get Crabtree a drink and find something to discuss',
+        hint: '−$200',
+        flagId: 'crabtree_distracted',
+        effect: 'income_delta',
+        effectValue: -200,
+        resolution: {
+          severity: 'good',
+          message: "Crabtree stayed forty minutes. He talked mostly about metaphors. Danny finished the run. Gary wrote about it.",
+        },
+      },
+    ],
+  },
+
 ];
