@@ -1,5 +1,3 @@
-import { lin } from './utils';
-
 // ── The Kid Arc (1976–1979) ───────────────────────────────────────────────────
 // Danny Chen, age 14, arrives on a Tuesday. This file contains all emails
 // that belong to his arc: Gary's observations, Danny's letters, Mr. Chen's
