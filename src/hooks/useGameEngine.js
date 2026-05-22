@@ -28,6 +28,7 @@ export default function useGameEngine({
   popularity,
   upgradeValues = {},
   decisions = {},
+  inbox = [],
   isPausedRef,
   fastForward = false,
   onEvent,
@@ -50,6 +51,7 @@ export default function useGameEngine({
   const onDecisionRef      = useRef(onDecision);
   const onCustomerSpendRef = useRef(onCustomerSpend);
   const decisionsRef       = useRef(decisions);
+  const sentIdsRef         = useRef(new Set(inbox.map(e => e.id)));
   const lastEventDayRef    = useRef(-1); // lin-day of last fired event, prevents >1 per day
   const prevDayStateRef    = useRef(dayState);
 
@@ -69,6 +71,7 @@ export default function useGameEngine({
   useEffect(() => { onDecisionRef.current      = onDecision;     }, [onDecision]);
   useEffect(() => { onCustomerSpendRef.current = onCustomerSpend;}, [onCustomerSpend]);
   useEffect(() => { decisionsRef.current       = decisions;      }, [decisions]);
+  useEffect(() => { sentIdsRef.current = new Set(inbox.map(e => e.id)); }, [inbox]);
 
   trySpawnPatronRef.current = ({ guaranteed = false, openingRush = false } = {}) => {
     if (isPausedRef?.current || dayStateRef.current !== 'RUNNING') return false;
@@ -162,6 +165,7 @@ export default function useGameEngine({
         popularity:   popularityRef.current,
         cash:         cashRef.current,
         decisions:    decisionsRef.current,
+        sentIds:      sentIdsRef.current,
         lastEventDay: lastEventDayRef.current,
       });
 
@@ -171,7 +175,7 @@ export default function useGameEngine({
       if (rolled.type === 'decision') {
         const { decision, machineName } = rolled.payload;
         if (isPausedRef) isPausedRef.current = true;
-        onDecisionRef.current?.(decision, { machineName });
+        onDecisionRef.current?.(decision, { machineName, decisions: decisionsRef.current });
         return;
       }
 

@@ -219,6 +219,7 @@ function App() {
     popularity,
     upgradeValues,
     decisions,
+    inbox,
     isPausedRef,
     fastForward,
     onEvent: handleEvent,
