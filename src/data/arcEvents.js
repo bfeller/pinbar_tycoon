@@ -20,6 +20,12 @@ export const BUMPER_ZONE_MACHINES = [
 // triggerLiquidation: opens the Bumper Zone sale window in the market
 export const ARC_EVENTS = [
   {
+    id: 'arc_danny_fame',
+    popularityPct: 0.12,
+    trigger: ({ time, firedIds, sentIds }) =>
+      sentIds.has('danny_letter_01') && time.year >= 1977 && time.week >= 4 && !firedIds.has('arc_danny_fame'),
+  },
+  {
     id: 'arc_competition',
     popularityPct: -0.15,
     trigger: ({ time, firedIds }) =>
