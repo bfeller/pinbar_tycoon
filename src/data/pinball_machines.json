@@ -136,14 +136,6 @@
     "locationCount": 4
   },
   {
-    "id": "G8lxD-M0ow9",
-    "name": "Crystal-Ball",
-    "supplementary": "Automaticos",
-    "parsedYear": 1970,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Grx1z-MOE9x",
     "name": "Dipsy Doodle",
     "supplementary": "Williams",
@@ -528,14 +520,6 @@
     "locationCount": 2
   },
   {
-    "id": "G5W6N-MLe6V",
-    "name": "Magic Wizard",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1971,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4jBk-MDlw8",
     "name": "Mariner",
     "supplementary": "Bally",
@@ -680,14 +664,6 @@
     "locationCount": 0
   },
   {
-    "id": "G5W6N-MLe6V-A9Y63",
-    "name": "Wizard",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1971,
-    "imageUrl": null,
-    "locationCount": 5
-  },
-  {
     "id": "GR987-MQrrP",
     "name": "Yukon",
     "supplementary": "Williams",
@@ -710,14 +686,6 @@
     "parsedYear": 1971,
     "imageUrl": "https://img.opdb.org/68ab20ea-e03a-4afe-bdec-ee698506ba36-small.jpg",
     "locationCount": 2
-  },
-  {
-    "id": "G4dyP-MJ2OZ",
-    "name": "All Stars",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GRV2y-MQPdw",
@@ -784,30 +752,6 @@
     "locationCount": 10
   },
   {
-    "id": "GrEEy-MQ5pv",
-    "name": "Fortune",
-    "supplementary": "Petaco",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GPBdK-M0o99",
-    "name": "Granada",
-    "supplementary": "Williams",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 4
-  },
-  {
-    "id": "G43j1-MJj12",
-    "name": "Grand Slam",
-    "supplementary": "Petaco",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G43j1-M9R0y",
     "name": "Grand Slam",
     "supplementary": "Gottlieb",
@@ -822,22 +766,6 @@
     "parsedYear": 1972,
     "imageUrl": "https://img.opdb.org/3e0940b1-fccf-41e9-b1ca-33fc03826e80-small.jpg",
     "locationCount": 6
-  },
-  {
-    "id": "G5pOY-MDbRK",
-    "name": "Icarus",
-    "supplementary": "Petaco",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G4dyP-Ml9EY",
-    "name": "Jump Shot",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1972,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5B0y-ML0xb",
@@ -1040,14 +968,6 @@
     "locationCount": 0
   },
   {
-    "id": "GRb1z-MDz73",
-    "name": "Geisha",
-    "supplementary": "Playmatic",
-    "parsedYear": 1973,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4EJB-MJdE1",
     "name": "Gulfstream",
     "supplementary": "Williams",
@@ -1094,14 +1014,6 @@
     "parsedYear": 1973,
     "imageUrl": "https://img.opdb.org/b0a8122f-0b6c-4ad3-87de-c85342c1b614-small.jpg",
     "locationCount": 8
-  },
-  {
-    "id": "G18KO-MdE9K",
-    "name": "Jarama",
-    "supplementary": "Centro Matic",
-    "parsedYear": 1973,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gr3J1-MDB07",
@@ -1384,14 +1296,6 @@
     "locationCount": 3
   },
   {
-    "id": "Gxvv7-MdE0z",
-    "name": "Challenge Round",
-    "supplementary": "Hispamatic",
-    "parsedYear": 1974,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GrZNL-MOE2r",
     "name": "Champ",
     "supplementary": "Bally",
@@ -1470,14 +1374,6 @@
     "parsedYear": 1974,
     "imageUrl": "https://img.opdb.org/f9aae4ab-cc69-45b8-ad92-b1a364bcbf40-small.jpg",
     "locationCount": 1
-  },
-  {
-    "id": "GPBdK-MjBlR",
-    "name": "Granada",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1974,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G4EJB-MDxW8",
@@ -1582,14 +1478,6 @@
     "parsedYear": 1974,
     "imageUrl": "https://img.opdb.org/45e7e3e4-664b-47a8-8bab-89453cfbfdb9-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "Gr8Q6-ML1Ke-ARZnW",
-    "name": "Robin Hood",
-    "supplementary": "Playmatic",
-    "parsedYear": 1974,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G4JND-MDR6K",
@@ -1888,14 +1776,6 @@
     "locationCount": 27
   },
   {
-    "id": "GEL0v-M9ROz",
-    "name": "Cabaret",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1975,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "Grl0P-MQ705",
     "name": "Caddie",
     "supplementary": "Playmatic",
@@ -1925,14 +1805,6 @@
     "supplementary": "Recel",
     "parsedYear": 1975,
     "imageUrl": "https://img.opdb.org/c281fd61-f1a6-47f5-986f-0f3614c7fa3f-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "GRBOy-MDb6y-A1B4b",
-    "name": "Check Mate",
-    "supplementary": "Taito",
-    "parsedYear": 1975,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -2078,22 +1950,6 @@
     "parsedYear": 1975,
     "imageUrl": "https://img.opdb.org/e04dce66-39d6-4457-817c-3c931a04491e-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "G4xnz-M619P",
-    "name": "Impact",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1975,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GvBBX-MKNyd",
-    "name": "Impacto",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1975,
-    "imageUrl": null,
-    "locationCount": 2
   },
   {
     "id": "GRzed-MDBl4",
@@ -2504,14 +2360,6 @@
     "locationCount": 0
   },
   {
-    "id": "G5BE9-MW9PV",
-    "name": "Cherokis",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1976,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Grj7K-MOEXv",
     "name": "Cinema",
     "supplementary": "Chicago Coin",
@@ -2704,35 +2552,11 @@
     "locationCount": 0
   },
   {
-    "id": "G6ldP-MvB8p",
-    "name": "Jackpot",
-    "supplementary": "Bigliardini Elettronici Milano",
-    "parsedYear": 1976,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G56xZ-MLx84",
-    "name": "Jalisco",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1976,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G5Qnx-MJYek",
     "name": "Juke Box",
     "supplementary": "Chicago Coin",
     "parsedYear": 1976,
     "imageUrl": "https://img.opdb.org/12462473-9773-4f8e-8185-a8e63f0f5145-small.jpg",
-    "locationCount": 1
-  },
-  {
-    "id": "GR70j-MDyVW",
-    "name": "Keops",
-    "supplementary": "Inder",
-    "parsedYear": 1976,
-    "imageUrl": null,
     "locationCount": 1
   },
   {
@@ -3072,14 +2896,6 @@
     "locationCount": 0
   },
   {
-    "id": "G5By3-ML0Xe",
-    "name": "Wood's Queen (2P)",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1976,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G5By3-MJw55",
     "name": "Wood's Queen (4P)",
     "supplementary": "Zaccaria",
@@ -3216,14 +3032,6 @@
     "locationCount": 0
   },
   {
-    "id": "GV89W-MNENN",
-    "name": "Carnaval no Rio",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRBv9-MLXlL",
     "name": "Carnival",
     "supplementary": "Playmatic",
@@ -3334,22 +3142,6 @@
     "parsedYear": 1977,
     "imageUrl": "https://img.opdb.org/9a8504c1-8d40-4e53-864a-e81c4c7f3208-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "Gj6Dj-MOE0d-AO6Dp",
-    "name": "Full",
-    "supplementary": "Interflip",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "Gj6Dj-MOE0d",
-    "name": "Full",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "G4jzK-MRjN0",
@@ -3486,14 +3278,6 @@
     "parsedYear": 1977,
     "imageUrl": "https://img.opdb.org/29063d3b-7104-4f09-9a68-13a5b63c32d9-small.jpg",
     "locationCount": 5
-  },
-  {
-    "id": "G5D3O-Ml9xp",
-    "name": "Lucky Seven",
-    "supplementary": "Williams",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 2
   },
   {
     "id": "Gr89x-Mp4nB",
@@ -3760,14 +3544,6 @@
     "locationCount": 0
   },
   {
-    "id": "GBLYO-Mq1rN",
-    "name": "Tally Hoo!!",
-    "supplementary": "Peyper",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
     "id": "GRpZ2-MDO9d",
     "name": "Team One",
     "supplementary": "Gottlieb",
@@ -3825,7 +3601,7 @@
   },
   {
     "id": "G5Q19-MDEy0",
-    "name": "Volèe",
+    "name": "Vol\u00e8e",
     "supplementary": "Europlay",
     "parsedYear": 1977,
     "imageUrl": "https://img.opdb.org/538ff331-e0a1-4c44-9154-d1fa3de51194-small.jpg",
@@ -3840,28 +3616,12 @@
     "locationCount": 14
   },
   {
-    "id": "G9z9p-MYeN2",
-    "name": "Warrior Sea",
-    "supplementary": "Electromatic Brasil",
-    "parsedYear": 1977,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4jzL-MwN5n",
     "name": "Wild Card",
     "supplementary": "Williams",
     "parsedYear": 1977,
     "imageUrl": "https://img.opdb.org/466ee7c2-5927-4c54-9303-995e561eb2ac-small.jpg",
     "locationCount": 1
-  },
-  {
-    "id": "G42zD-M85KY",
-    "name": "Alaska",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G42zD-Mb5YB",
@@ -3872,28 +3632,12 @@
     "locationCount": 0
   },
   {
-    "id": "G42zD-M85KY-A1BWl",
-    "name": "Alaska (EM)",
-    "supplementary": "Interflip",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G5zjW-MLe7k",
     "name": "Alive",
     "supplementary": "Brunswick",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/d90b833d-527b-471b-b6b2-9ee66ff883ad-small.jpg",
     "locationCount": 2
-  },
-  {
-    "id": "GRVoX-MZe0y",
-    "name": "Apache!",
-    "supplementary": "Taito",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5w1Z-MDb8x",
@@ -3961,7 +3705,7 @@
   },
   {
     "id": "G5Woz-MKNq6",
-    "name": "Charlie’s Angels",
+    "name": "Charlie\u2019s Angels",
     "supplementary": "Gottlieb",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/d4ba18a4-4317-4f4b-897b-bdc274f812c1-small.jpg",
@@ -3969,19 +3713,11 @@
   },
   {
     "id": "G5Woz-MwNP3",
-    "name": "Charlie’s Angels (EM)",
+    "name": "Charlie\u2019s Angels (EM)",
     "supplementary": "Gottlieb",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/163802f9-396e-4fa2-adfa-32aaa347f78a-small.jpg",
     "locationCount": 3
-  },
-  {
-    "id": "G5BE9-MDlVp-AR0WK",
-    "name": "Cherokee",
-    "supplementary": "Interflip",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GRKWZ-MQYWB",
@@ -3997,22 +3733,6 @@
     "supplementary": "Game Plan",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/f0e20419-f334-4b20-9b06-8a8990b3ada8-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "G57dv-MQ20p",
-    "name": "Circus Circus",
-    "supplementary": "Cisco",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G4qzZ-MQpoP-A9pdL",
-    "name": "City Ship",
-    "supplementary": "J. Esteban",
-    "parsedYear": 1978,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -4102,14 +3822,6 @@
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/42dee215-08a4-467e-b5d5-538253cc0eef-small.jpg",
     "locationCount": 5
-  },
-  {
-    "id": "GR6pk-MDX16",
-    "name": "Fabulous 50's",
-    "supplementary": "Viza Manufacturing",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GRLnp-M3dZR",
@@ -4256,14 +3968,6 @@
     "locationCount": 0
   },
   {
-    "id": "GLWke-M1rEr",
-    "name": "Lady Luck",
-    "supplementary": "Taito",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRzKW-MQ6er",
     "name": "Last Lap",
     "supplementary": "Playmatic",
@@ -4309,14 +4013,6 @@
     "supplementary": "C.E.A.",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/107b5921-50af-41d9-b6a4-f31f8e1428a2-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "G5n1Q-M5RWp",
-    "name": "Lucky Strike",
-    "supplementary": "Taito",
-    "parsedYear": 1978,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -4448,28 +4144,12 @@
     "locationCount": 0
   },
   {
-    "id": "GrJy1-MDEbO",
-    "name": "Rio",
-    "supplementary": "Game Plan",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRbD8-MLWx0",
     "name": "Rock Star",
     "supplementary": "Gottlieb",
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/8499f5b9-dd39-429b-b240-d041e578cd55-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "G2L2p-M4oY4",
-    "name": "Roman Victory",
-    "supplementary": "Taito",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G4lnB-MeP1y",
@@ -4496,14 +4176,6 @@
     "locationCount": 1
   },
   {
-    "id": "GrXKb-MJ4ww-A1oXp",
-    "name": "Sherokee",
-    "supplementary": "Rowamet",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRD2P-MDX5b",
     "name": "Silverball Mania",
     "supplementary": "Bally",
@@ -4518,14 +4190,6 @@
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/751081bd-9f13-4813-8cb4-a86a516fad8f-small.jpg",
     "locationCount": 54
-  },
-  {
-    "id": "G4xqN-ML3o5-A9y5D",
-    "name": "Sinbad",
-    "supplementary": "Electromatic Brasil",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G4xqN-ML3o5",
@@ -4566,14 +4230,6 @@
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/93820d7c-630e-43e3-ab92-b6d9980cc925-small.jpg",
     "locationCount": 2
-  },
-  {
-    "id": "GN6zD-M3d2z",
-    "name": "Space Patrol",
-    "supplementary": "Taito",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GrdzE-MQ2E6",
@@ -4662,14 +4318,6 @@
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/433e3398-9440-404a-a5b0-395758c71d98-small.jpg",
     "locationCount": 9
-  },
-  {
-    "id": "G5Q19-MLeEN-A18jJ",
-    "name": "Wimbledon",
-    "supplementary": "Electromatic Brasil",
-    "parsedYear": 1978,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GrxWp-MDvrD",
@@ -4808,14 +4456,6 @@
     "locationCount": 2
   },
   {
-    "id": "G5WP2-MjBZB-AOEDx",
-    "name": "Don Quijote",
-    "supplementary": "Recel",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G5WP2-MjBZB",
     "name": "Don Quijote",
     "supplementary": "Petaco",
@@ -4830,14 +4470,6 @@
     "parsedYear": 1979,
     "imageUrl": "https://img.opdb.org/5aff4d4e-4d28-4b68-9d14-faf84d30d22c-small.jpg",
     "locationCount": 25
-  },
-  {
-    "id": "G5zd6-MJVo4-ARN3r",
-    "name": "Drakor",
-    "supplementary": "Taito",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "G5LOx-MD1p8",
@@ -4862,14 +4494,6 @@
     "parsedYear": 1979,
     "imageUrl": "https://img.opdb.org/027ac0f9-4d23-443c-81c4-72d877111be7-small.jpg",
     "locationCount": 57
-  },
-  {
-    "id": "GrNqO-MRjzl-A9pwZ",
-    "name": "Football",
-    "supplementary": "Taito",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5Dbo-M3dv6",
@@ -5096,14 +4720,6 @@
     "locationCount": 13
   },
   {
-    "id": "Grypn-MQdbe-A947p",
-    "name": "Shock",
-    "supplementary": "Taito",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G41oq-MQVR1",
     "name": "Shooting the Rapids",
     "supplementary": "Zaccaria",
@@ -5134,14 +4750,6 @@
     "parsedYear": 1979,
     "imageUrl": "https://img.opdb.org/2d54adca-04be-4d97-a06c-70a862ce7bda-small.jpg",
     "locationCount": 20
-  },
-  {
-    "id": "GRDqo-MQ7k2-A9Lzp",
-    "name": "Solar Ride",
-    "supplementary": "Electromatic Brasil",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GRDqo-MQ7k2",
@@ -5205,14 +4813,6 @@
     "supplementary": "Segasa",
     "parsedYear": 1979,
     "imageUrl": "https://img.opdb.org/069a5d3a-4469-4d00-b964-c00fdf29cc41-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "G4xqN-MD1Rj-AO3dd",
-    "name": "Sultan",
-    "supplementary": "Taito",
-    "parsedYear": 1979,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -5304,14 +4904,6 @@
     "locationCount": 19
   },
   {
-    "id": "G5YDN-M2YB0",
-    "name": "Totem",
-    "supplementary": "Electromatic Brasil",
-    "parsedYear": 1979,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GrxNK-MLEzY",
     "name": "Tri Zone",
     "supplementary": "Williams",
@@ -5333,14 +4925,6 @@
     "supplementary": "Game Plan",
     "parsedYear": 1979,
     "imageUrl": "https://img.opdb.org/f9e97a5b-34b6-4443-a641-36ad55ff1be9-small.jpg",
-    "locationCount": 1
-  },
-  {
-    "id": "GLWke-MwNqK",
-    "name": "Vegas",
-    "supplementary": "Taito",
-    "parsedYear": 1979,
-    "imageUrl": null,
     "locationCount": 1
   },
   {
@@ -5424,27 +5008,11 @@
     "locationCount": 103
   },
   {
-    "id": "GryXn-MQkl5-A1Wz8",
-    "name": "Black Magic",
-    "supplementary": "Recel",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GryXn-MQkl5",
     "name": "Black Magic",
     "supplementary": "Petaco",
     "parsedYear": 1980,
     "imageUrl": "https://img.opdb.org/328a9ee6-b956-46ee-9b9e-039c6a5b153b-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "GryXn-MYeE2",
-    "name": "Black Magic 4",
-    "supplementary": "Recel",
-    "parsedYear": 1980,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -5520,22 +5088,6 @@
     "locationCount": 2
   },
   {
-    "id": "GR6bk-MyN6E",
-    "name": "Farwest",
-    "supplementary": "Fliperbol",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G5VDd-MJpqO-A1WVv",
-    "name": "Fire Action",
-    "supplementary": "Taito",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G4E9p-MDOrl",
     "name": "Fire Mountain",
     "supplementary": "Zaccaria",
@@ -5608,44 +5160,12 @@
     "locationCount": 1
   },
   {
-    "id": "G2LEp-MZeYx-AObZq",
-    "name": "Hell's Queen",
-    "supplementary": "Mondialmatic",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "Gpeb0-Mx0R8",
-    "name": "Hustler",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G5ow6-MQNYn",
-    "name": "Invader Ball",
-    "supplementary": "Red Baron Amusements",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4PXJ-MQPlw",
     "name": "James Bond 007",
     "supplementary": "Gottlieb",
     "parsedYear": 1980,
     "imageUrl": "https://img.opdb.org/e395d9d2-5fef-469b-888c-51973836d574-small.jpg",
     "locationCount": 6
-  },
-  {
-    "id": "GllV2-Mp4bZ",
-    "name": "Martian Queen",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5Qx7-MLnbP",
@@ -5856,14 +5376,6 @@
     "locationCount": 13
   },
   {
-    "id": "GrNqO-MRjzl-A9y5r",
-    "name": "Volley",
-    "supplementary": "Taito",
-    "parsedYear": 1980,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G509D-M9RzK",
     "name": "White Shark",
     "supplementary": "Bell Coin Matic",
@@ -5936,14 +5448,6 @@
     "locationCount": 12
   },
   {
-    "id": "GrO7w-M9R03-AO6Be",
-    "name": "Cavaleiro Negro",
-    "supplementary": "Taito",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
     "id": "GrX7q-MLWkn",
     "name": "Centaur",
     "supplementary": "Bally",
@@ -5960,52 +5464,12 @@
     "locationCount": 0
   },
   {
-    "id": "GrN7J-MJ78q-A947Y",
-    "name": "Challenger I",
-    "supplementary": "Professional Pinball",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G59wx-MLnZ3-A1lJd",
-    "name": "Challenger II",
-    "supplementary": "Professional Pinball",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4en0-MJ5vB-ARevr",
     "name": "Challenger III",
     "supplementary": "Professional Pinball",
     "parsedYear": 1981,
     "imageUrl": "https://img.opdb.org/c53ba937-f2c3-428b-bdeb-d6a0a66340da-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "GrleW-MYeod-AO3dY",
-    "name": "Challenger IV",
-    "supplementary": "Professional Pinball",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GRVnd-MQZzx-AOjJv",
-    "name": "Challenger V",
-    "supplementary": "Professional Pinball",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GR96Q-MNEnx",
-    "name": "Earth Wind Fire",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 2
   },
   {
     "id": "G5KXk-MLB9V",
@@ -6192,14 +5656,6 @@
     "locationCount": 11
   },
   {
-    "id": "G5KXk-MLB9V-AOjJb",
-    "name": "Sure Shot",
-    "supplementary": "Taito",
-    "parsedYear": 1981,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G486B-MrRwE",
     "name": "Vector",
     "supplementary": "Bally",
@@ -6230,14 +5686,6 @@
     "parsedYear": 1982,
     "imageUrl": "https://img.opdb.org/cdf1fe81-2057-40c0-bc56-6c26a915ba56-small.jpg",
     "locationCount": 70
-  },
-  {
-    "id": "GRwYo-MvBnV",
-    "name": "Black Hole",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "G48NB-MD384",
@@ -6304,14 +5752,6 @@
     "locationCount": 14
   },
   {
-    "id": "GrNnr-MW92V",
-    "name": "Diana",
-    "supplementary": "Rowamet",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRQkJ-MDxpK",
     "name": "Dragonfist",
     "supplementary": "Stern Electronics",
@@ -6342,14 +5782,6 @@
     "parsedYear": 1982,
     "imageUrl": "https://img.opdb.org/959360d9-ced4-4f20-9a46-ee7ad80c12cc-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "GrX7q-Mx0Z8",
-    "name": "Gemini 2000",
-    "supplementary": "Taito",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 2
   },
   {
     "id": "GV8EW-MrRe5",
@@ -6432,28 +5864,12 @@
     "locationCount": 3
   },
   {
-    "id": "G6lvP-M7Zj5",
-    "name": "Snake Machine",
-    "supplementary": "Taito",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "GR0VJ-MDnEy",
     "name": "Soccer Kings",
     "supplementary": "Zaccaria",
     "parsedYear": 1982,
     "imageUrl": "https://img.opdb.org/e6670a2d-7083-4057-9947-45ca56f54920-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "G4yen-MXrYj",
-    "name": "Space Poker",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "G4Zo1-MQV0j",
@@ -6478,14 +5894,6 @@
     "parsedYear": 1982,
     "imageUrl": "https://img.opdb.org/2ab0bf04-2234-4eca-80f9-043cc940e25c-small.jpg",
     "locationCount": 15
-  },
-  {
-    "id": "G486B-MrRwE-ARev2",
-    "name": "Speed Test",
-    "supplementary": "Taito",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Grl9W-MLvOj",
@@ -6544,36 +5952,12 @@
     "locationCount": 5
   },
   {
-    "id": "GRoDo-Ml9Kj",
-    "name": "Vulcan IV",
-    "supplementary": "Rowamet",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G5z2e-MJ2lR",
     "name": "Warlok",
     "supplementary": "Williams",
     "parsedYear": 1982,
     "imageUrl": "https://img.opdb.org/0c47c693-44b5-4e2f-83d5-ad78b9287358-small.jpg",
     "locationCount": 2
-  },
-  {
-    "id": "G42Pk-MZe2e-A9djJ",
-    "name": "Zarza",
-    "supplementary": "Taito",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
-    "id": "G42Pk-MZe2e-A976b",
-    "name": "Zephy",
-    "supplementary": "LTD do Brasil",
-    "parsedYear": 1982,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "G59VQ-MLBVl",
@@ -6608,28 +5992,12 @@
     "locationCount": 15
   },
   {
-    "id": "GRWYk-Mb5OV-ARXp5",
-    "name": "Fire Action De Luxe",
-    "supplementary": "Taito",
-    "parsedYear": 1983,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "GRWYk-Mb5OV",
     "name": "Firepower II",
     "supplementary": "Williams",
     "parsedYear": 1983,
     "imageUrl": "https://img.opdb.org/3087d9c8-356d-4abf-be9e-025ee7d4b9dc-small.jpg",
     "locationCount": 22
-  },
-  {
-    "id": "GnPPP-M7ZBR",
-    "name": "Goin' Nuts",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1983,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "Grjlx-MQkz3",
@@ -6648,28 +6016,12 @@
     "locationCount": 5
   },
   {
-    "id": "GrPO3-Mx0Pb",
-    "name": "Hawkman",
-    "supplementary": "Taito",
-    "parsedYear": 1983,
-    "imageUrl": null,
-    "locationCount": 3
-  },
-  {
     "id": "G4den-MLRYK",
     "name": "Joust",
     "supplementary": "Williams",
     "parsedYear": 1983,
     "imageUrl": "https://img.opdb.org/121a99e7-5eb1-4288-810f-b5693005ef68-small.jpg",
     "locationCount": 11
-  },
-  {
-    "id": "GV881-MBRNV",
-    "name": "Krull",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1983,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G417e-MJkoe",
@@ -6750,14 +6102,6 @@
     "parsedYear": 1983,
     "imageUrl": "https://img.opdb.org/676f550a-d0fb-4093-93ae-d91cfb2d8795-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "GRD2P-Mx03K",
-    "name": "Sexy Girl (Delux)",
-    "supplementary": "Arkon",
-    "parsedYear": 1983,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gr8KB-MLqYW",
@@ -6984,14 +6328,6 @@
     "locationCount": 1
   },
   {
-    "id": "GyVV1-M9Rlp",
-    "name": "Petaco",
-    "supplementary": "Juegos Populares",
-    "parsedYear": 1984,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
     "id": "G4xqN-MDvw2",
     "name": "Sahara Love",
     "supplementary": "K.C. Tabart",
@@ -7006,14 +6342,6 @@
     "parsedYear": 1984,
     "imageUrl": "https://img.opdb.org/7fa4c627-5b26-4ff1-94af-d62159a36652-small.jpg",
     "locationCount": 73
-  },
-  {
-    "id": "G4q3L-MKN50-A1lJo",
-    "name": "Space Shuttle",
-    "supplementary": "Taito",
-    "parsedYear": 1984,
-    "imageUrl": null,
-    "locationCount": 1
   },
   {
     "id": "GRwl7-MJ45o",
@@ -7216,14 +6544,6 @@
     "locationCount": 20
   },
   {
-    "id": "GrPdq-MnKwO",
-    "name": "Flesh and Blood",
-    "supplementary": "Pinball Shop",
-    "parsedYear": 1985,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GRLXd-MDbdq",
     "name": "Fly High",
     "supplementary": "Komplett",
@@ -7320,22 +6640,6 @@
     "locationCount": 0
   },
   {
-    "id": "GJ2d8-M9RWW",
-    "name": "Odin",
-    "supplementary": "Peyper",
-    "parsedYear": 1985,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
-    "id": "GJ2d8-M9RWW-AOQ7w",
-    "name": "Odin Deluxe",
-    "supplementary": "Segasa",
-    "parsedYear": 1985,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
     "id": "G4jex-MLly8",
     "name": "Pool Champion",
     "supplementary": "Zaccaria",
@@ -7349,14 +6653,6 @@
     "supplementary": "Barni",
     "parsedYear": 1985,
     "imageUrl": "https://img.opdb.org/38972e84-0971-4cdc-9540-48bda294b620-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "G59wx-MJ92p",
-    "name": "Road Racer",
-    "supplementary": "Komplett",
-    "parsedYear": 1985,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -7398,14 +6694,6 @@
     "parsedYear": 1985,
     "imageUrl": "https://img.opdb.org/8016de3e-c263-48d5-b77b-826a9748738e-small.jpg",
     "locationCount": 50
-  },
-  {
-    "id": "GrN7J-MQjXy",
-    "name": "Space Wars",
-    "supplementary": "Komplett",
-    "parsedYear": 1985,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5nOY-ML1yo",
@@ -7664,14 +6952,6 @@
     "locationCount": 2
   },
   {
-    "id": "GzyBx-M0ow2",
-    "name": "Olympus",
-    "supplementary": "Juegos Populares",
-    "parsedYear": 1986,
-    "imageUrl": null,
-    "locationCount": 1
-  },
-  {
     "id": "G41N8-MNEEk",
     "name": "Out Law",
     "supplementary": "Hanilamatic",
@@ -7798,14 +7078,6 @@
     "parsedYear": 1986,
     "imageUrl": "https://img.opdb.org/050dd42a-00b7-48ac-afaa-2628061cc9c3-small.jpg",
     "locationCount": 24
-  },
-  {
-    "id": "G3EL3-MjBnR",
-    "name": "Super Star",
-    "supplementary": "Recreativos Franco",
-    "parsedYear": 1986,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5Yyo-MQdNz",
@@ -8040,15 +7312,6 @@
     "locationCount": 3
   },
   {
-    "id": "G5VYY-MRjqd",
-    "name": "New Star's Phoenix",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1987,
-    "imageUrl": null,
-    "description": "Identical ROMs to Star Phoenix, but removes a flipper and standup from the original game.",
-    "locationCount": 0
-  },
-  {
     "id": "G5DKQ-M0o3R",
     "name": "Odisea Paris Dakar",
     "supplementary": "Peyper",
@@ -8063,14 +7326,6 @@
     "parsedYear": 1987,
     "imageUrl": "https://img.opdb.org/f8649f00-1471-41ca-aaad-309cfdaa0060-small.jpg",
     "locationCount": 19
-  },
-  {
-    "id": "Gd26q-MP3lX",
-    "name": "Quijote",
-    "supplementary": "Juegos Populares",
-    "parsedYear": 1987,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5p8V-MD0op",
@@ -8119,14 +7374,6 @@
     "parsedYear": 1987,
     "imageUrl": "https://img.opdb.org/a0be0139-34b1-43e6-a412-e54ecc5ca4f3-small.jpg",
     "locationCount": 3
-  },
-  {
-    "id": "G5VYY-MJ9V1",
-    "name": "Star's Phoenix",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1987,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G4X1D-M2Yy1",
@@ -8214,14 +7461,6 @@
     "supplementary": "Unidesa",
     "parsedYear": 1988,
     "imageUrl": "https://img.opdb.org/9ea4079b-4657-4cb8-a884-694f374b4ed5-small.jpg",
-    "locationCount": 1
-  },
-  {
-    "id": "G9zz0-MP3VK",
-    "name": "Clown",
-    "supplementary": "Inder",
-    "parsedYear": 1988,
-    "imageUrl": null,
     "locationCount": 1
   },
   {
@@ -9017,14 +8256,6 @@
     "locationCount": 253
   },
   {
-    "id": "G5wxv-MP3k9",
-    "name": "U.S.A. Football",
-    "supplementary": "Alvin G. & Co",
-    "parsedYear": 1992,
-    "imageUrl": null,
-    "locationCount": 3
-  },
-  {
     "id": "G5vnL-MJP3y",
     "name": "Adventures of Rocky and Bullwinkle and Friends",
     "supplementary": "Data East",
@@ -9394,7 +8625,7 @@
   },
   {
     "id": "GRKOX-MLyrW",
-    "name": "Jack•Bot",
+    "name": "Jack\u2022Bot",
     "supplementary": "Williams",
     "parsedYear": 1995,
     "imageUrl": "https://img.opdb.org/5bbfbce9-885b-44a3-bcb6-0151e157e60f-small.jpg",
@@ -10185,14 +9416,6 @@
     "locationCount": 0
   },
   {
-    "id": "GRnPz-Mx0XO-ARzL1",
-    "name": "Transformers Decepticon Violet (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2011,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G43W4-MrRpw-A1B7O",
     "name": "AC/DC (Back In Black LE)",
     "supplementary": "Stern",
@@ -10239,14 +9462,6 @@
     "parsedYear": 2012,
     "imageUrl": "https://img.opdb.org/655289e1-3860-4e9e-af09-b318c267e91f-small.jpg",
     "locationCount": 394
-  },
-  {
-    "id": "GWyyq-MwNK5-AObnw",
-    "name": "Legends of Valhalla (Deluxe LE)",
-    "supplementary": "American Pinball",
-    "parsedYear": 2012,
-    "imageUrl": null,
-    "locationCount": 62
   },
   {
     "id": "GRzNR-MLlEj",
@@ -10369,37 +9584,12 @@
     "locationCount": 420
   },
   {
-    "id": "GRw0r-Mo1V7",
-    "name": "Metallica (Retheme)",
-    "supplementary": "Williams",
-    "parsedYear": 2013,
-    "imageUrl": null,
-    "description": "Rethemed \"Earthshaker\"",
-    "locationCount": 0
-  },
-  {
     "id": "GRBE4-MOE4l-A1KQR",
     "name": "Metallica Master of Puppets (LE)",
     "supplementary": "Stern",
     "parsedYear": 2013,
     "imageUrl": "https://img.opdb.org/0acd2d70-c7b4-4916-a632-4235c8dac714-small.jpg",
     "locationCount": 420
-  },
-  {
-    "id": "GRBE4-MJ9rE-ARZYO",
-    "name": "Metallica Monsters (Premium)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": null,
-    "locationCount": 420
-  },
-  {
-    "id": "GRBE4-MJ9rE-AObzO",
-    "name": "Metallica Road Case (Premium)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G8llZ-Mx0wb",
@@ -10442,30 +9632,6 @@
     "locationCount": 99
   },
   {
-    "id": "G4xyR-MJ2v0-AO62D",
-    "name": "The Wizard of Oz (Emerald City)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2013,
-    "imageUrl": null,
-    "locationCount": 99
-  },
-  {
-    "id": "G4xyR-MJ2v0-AOPQQ",
-    "name": "The Wizard of Oz (LE)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2013,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G43W4-MKNW0-AOENR",
-    "name": "AC/DC (Pro LED)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G4ELZ-MQ27w",
     "name": "America's Most Haunted",
     "supplementary": "Spooky Pinball",
@@ -10488,14 +9654,6 @@
     "parsedYear": 2014,
     "imageUrl": "https://img.opdb.org/2c2f3f12-bc87-41b4-821a-81a8d68ca835-small.jpg",
     "locationCount": 229
-  },
-  {
-    "id": "GRBE4-MQK1Z-A9Yn1",
-    "name": "Metallica (Pro LED)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GrPOR-MLq5x",
@@ -10544,22 +9702,6 @@
     "parsedYear": 2014,
     "imageUrl": "https://img.opdb.org/3a57dde7-8ad4-459b-a2d6-9738ea53fb6c-small.jpg",
     "locationCount": 433
-  },
-  {
-    "id": "G4xyR-MJ2v0-A1BY7",
-    "name": "The Wizard of Oz (75th Anniversary)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2014,
-    "imageUrl": null,
-    "locationCount": 99
-  },
-  {
-    "id": "GWyB8-MKNEK",
-    "name": "Captain Nemo",
-    "supplementary": "Quetzal Pinball",
-    "parsedYear": 2015,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "G5V8q-MQYZ6",
@@ -10658,22 +9800,6 @@
     "locationCount": 73
   },
   {
-    "id": "G5bYr-MLezO-ARePO",
-    "name": "The Hobbit (Black Arrow)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2015,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G5bYr-MLezO-AO3J1",
-    "name": "The Hobbit (Smaug Gold)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2015,
-    "imageUrl": null,
-    "locationCount": 73
-  },
-  {
     "id": "G5nz5-M7Z94",
     "name": "The Walking Dead (Premium)",
     "supplementary": "Stern",
@@ -10714,27 +9840,11 @@
     "locationCount": 65
   },
   {
-    "id": "GRoz4-MrRPw",
-    "name": "Batman 66 (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2016,
-    "imageUrl": null,
-    "locationCount": 215
-  },
-  {
     "id": "GRoz4-MjBV6",
     "name": "Batman 66 (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2016,
     "imageUrl": "https://img.opdb.org/438ac4d5-b945-4d1b-849a-aa0c6169b8da-small.jpg",
-    "locationCount": 215
-  },
-  {
-    "id": "GRoz4-MrRPw-A97X1",
-    "name": "Batman 66 (Super LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2016,
-    "imageUrl": null,
     "locationCount": 215
   },
   {
@@ -10810,36 +9920,12 @@
     "locationCount": 16
   },
   {
-    "id": "G2Ld3-MnKE5",
-    "name": "Spider-Man (Home Edition)",
-    "supplementary": "Stern",
-    "parsedYear": 2016,
-    "imageUrl": null,
-    "locationCount": 369
-  },
-  {
     "id": "G5D94-M3d5w",
     "name": "Spider-Man (Vault Edition)",
     "supplementary": "Stern",
     "parsedYear": 2016,
     "imageUrl": "https://img.opdb.org/34f85ff0-04ad-4690-b4a8-660817d85ec9-small.jpg",
     "locationCount": 369
-  },
-  {
-    "id": "G5bYr-MLezO-A9dNe",
-    "name": "The Hobbit (LE)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2016,
-    "imageUrl": null,
-    "locationCount": 73
-  },
-  {
-    "id": "G5bYr-MLezO-A97xX",
-    "name": "The Hobbit (Motion Picture Trilogy)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2016,
-    "imageUrl": null,
-    "locationCount": 73
   },
   {
     "id": "G43W4-MdEjy",
@@ -10983,14 +10069,6 @@
     "supplementary": "American Pinball",
     "parsedYear": 2017,
     "imageUrl": "https://img.opdb.org/58985e83-4d9c-4cda-891c-2ea1e9dfcd5d-small.jpg",
-    "locationCount": 76
-  },
-  {
-    "id": "GvBQX-M0ody-A9Y23",
-    "name": "Houdini: Master of Mystery (Deluxe)",
-    "supplementary": "American Pinball",
-    "parsedYear": 2017,
-    "imageUrl": null,
     "locationCount": 76
   },
   {
@@ -11146,14 +10224,6 @@
     "locationCount": 405
   },
   {
-    "id": "Gr3EW-MXryE",
-    "name": "Monster Bash (Remake Special)",
-    "supplementary": "Chicago Gaming",
-    "parsedYear": 2018,
-    "imageUrl": null,
-    "locationCount": 405
-  },
-  {
     "id": "Gr3EW-M3dBn",
     "name": "Monster Bash (Remake)",
     "supplementary": "Chicago Gaming",
@@ -11175,14 +10245,6 @@
     "supplementary": "Jersey Jack Pinball",
     "parsedYear": 2018,
     "imageUrl": "https://img.opdb.org/36ad6234-9594-4e3d-84a3-c5049b27b762-small.jpg",
-    "locationCount": 42
-  },
-  {
-    "id": "GRbPY-MBR24",
-    "name": "Pirates of the Caribbean (CE)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2018,
-    "imageUrl": null,
     "locationCount": 42
   },
   {
@@ -11330,14 +10392,6 @@
     "locationCount": 320
   },
   {
-    "id": "GZVOd-MwNxZ",
-    "name": "Elvira's House of Horrors (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GZVOd-MwNxZ-ARove",
     "name": "Elvira's House of Horrors (Signature)",
     "supplementary": "Stern",
@@ -11368,14 +10422,6 @@
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/076433ba-52f0-47cf-9dda-f78bbeb752aa-small.jpg",
     "locationCount": 1083
-  },
-  {
-    "id": "GK17D-MKNKd",
-    "name": "Jurassic Park (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GK17D-MdEqz",
@@ -11450,14 +10496,6 @@
     "locationCount": 925
   },
   {
-    "id": "Gzy89-M0oPy",
-    "name": "Stranger Things (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Gzy89-MNEeO",
     "name": "Stranger Things (Pro)",
     "supplementary": "Stern",
@@ -11466,28 +10504,12 @@
     "locationCount": 925
   },
   {
-    "id": "GLWLl-MRjee",
-    "name": "Super Canasta",
-    "supplementary": "Quetzal Pinball",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GLWLl-MRjee-A1BYb",
     "name": "Super Hoop",
     "supplementary": "Quetzal Pinball",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/ae9589ec-645e-44da-bbc3-e0faa7941428-small.jpg",
     "locationCount": 3
-  },
-  {
-    "id": "G7Zjz-Mx0jK",
-    "name": "Super Panic Ball",
-    "supplementary": "Bandai Namco",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 2
   },
   {
     "id": "GvBB8-MYex1",
@@ -11515,28 +10537,12 @@
     "locationCount": 480
   },
   {
-    "id": "GbPde-Mp43l",
-    "name": "The Munsters (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GbPde-M5Rkv",
     "name": "The Munsters (Pro)",
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/273afc51-2c46-4e54-97ee-d5cc2b605d9f-small.jpg",
     "locationCount": 480
-  },
-  {
-    "id": "G4xyR-MJ2v0-ARNw3",
-    "name": "The Wizard of Oz (Yellow Brick Road)",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2019,
-    "imageUrl": null,
-    "locationCount": 99
   },
   {
     "id": "GnP9y-MOEWd",
@@ -11585,14 +10591,6 @@
     "parsedYear": 2020,
     "imageUrl": "https://img.opdb.org/c06933ee-e37a-45e2-b6c0-bad5daca7c59-small.jpg",
     "locationCount": 630
-  },
-  {
-    "id": "Gj66P-MXr0E",
-    "name": "Avengers: Infinity Quest (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gj66P-M3dxn",
@@ -11683,14 +10681,6 @@
     "locationCount": 415
   },
   {
-    "id": "Gweel-ME0pP",
-    "name": "Led Zeppelin (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Gweel-M9Rk0",
     "name": "Led Zeppelin (Pro)",
     "supplementary": "Stern",
@@ -11739,14 +10729,6 @@
     "locationCount": 0
   },
   {
-    "id": "GpePX-MnKq5-A1Jkz",
-    "name": "Star Wars Comic Art (Home Edition)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": null,
-    "locationCount": 18
-  },
-  {
     "id": "Gd2Xb-MRjpZ-A92v0",
     "name": "Teenage Mutant Ninja Turtles (LE)",
     "supplementary": "Stern",
@@ -11761,14 +10743,6 @@
     "parsedYear": 2020,
     "imageUrl": "https://img.opdb.org/201ff094-5151-4342-be31-b67ca536ac01-small.jpg",
     "locationCount": 609
-  },
-  {
-    "id": "Gd2Xb-MRjpZ",
-    "name": "Teenage Mutant Ninja Turtles (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gd2Xb-Mq1qv",
@@ -11843,14 +10817,6 @@
     "locationCount": 1544
   },
   {
-    "id": "GweeP-Ml9pZ",
-    "name": "Godzilla (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GweeP-MW95j",
     "name": "Godzilla (Pro)",
     "supplementary": "Stern",
@@ -11907,14 +10873,6 @@
     "locationCount": 62
   },
   {
-    "id": "GWyyq-MwNK5",
-    "name": "Legends of Valhalla (Classic/Deluxe)",
-    "supplementary": "American Pinball",
-    "parsedYear": 2021,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GWyyq-MwNK5-AO3QJ",
     "name": "Legends of Valhalla (Deluxe)",
     "supplementary": "American Pinball",
@@ -11939,14 +10897,6 @@
     "locationCount": 0
   },
   {
-    "id": "G8llL-MyNwq",
-    "name": "Sorcerer's Apprentice",
-    "supplementary": "Multimorphic",
-    "parsedYear": 2021,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GBLLP-MW900-A1KoQ",
     "name": "The Mandalorian (LE)",
     "supplementary": "Stern",
@@ -11961,14 +10911,6 @@
     "parsedYear": 2021,
     "imageUrl": "https://img.opdb.org/c8acdac1-a7fe-4125-92dc-006836d902ed-small.jpg",
     "locationCount": 886
-  },
-  {
-    "id": "GBLLP-MW900",
-    "name": "The Mandalorian (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GBLLP-MkPpr",
@@ -12068,28 +11010,12 @@
     "locationCount": 743
   },
   {
-    "id": "GQKyP-MP3OK",
-    "name": "James Bond 007 (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GQKyP-Mx0O4",
     "name": "James Bond 007 (Pro)",
     "supplementary": "Stern",
     "parsedYear": 2022,
     "imageUrl": "https://img.opdb.org/696f28f7-443e-4bab-97a6-69d2ec333005-small.jpg",
     "locationCount": 743
-  },
-  {
-    "id": "GELkO-Ml9zZ",
-    "name": "Queen",
-    "supplementary": "Pinball Brothers",
-    "parsedYear": 2022,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GELkO-Ml9zZ-AO3yd",
@@ -12124,14 +11050,6 @@
     "locationCount": 503
   },
   {
-    "id": "G2Lkd-M0ope",
-    "name": "Rush (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G2Lkd-MNEdK",
     "name": "Rush (Pro)",
     "supplementary": "Stern",
@@ -12140,28 +11058,12 @@
     "locationCount": 503
   },
   {
-    "id": "GWyoZ-MOEqX",
-    "name": "This is Spinal Tap",
-    "supplementary": "Homepin",
-    "parsedYear": 2022,
-    "imageUrl": null,
-    "locationCount": 3
-  },
-  {
     "id": "GRD79-M0odk-AObBw",
     "name": "Total Nuclear Annihilation (CE)",
     "supplementary": "Spooky Pinball",
     "parsedYear": 2022,
     "imageUrl": "https://img.opdb.org/ea7348dc-6bbe-457b-b9b6-f56afd7acd23-small.jpg",
     "locationCount": 85
-  },
-  {
-    "id": "GJ2o0-MrRye",
-    "name": "Toy Story 4",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2022,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GJ2o0-MrRye-AO62p",
@@ -12185,14 +11087,6 @@
     "supplementary": "Multimorphic",
     "parsedYear": 2022,
     "imageUrl": "https://img.opdb.org/acadf190-8599-4a50-93a6-c63a72220587-small.jpg",
-    "locationCount": 8
-  },
-  {
-    "id": "GN6WW-MnKPq-AOPQq",
-    "name": "Weird Al's Museum of Natural Hilarity (LE)",
-    "supplementary": "Multimorphic",
-    "parsedYear": 2022,
-    "imageUrl": null,
     "locationCount": 8
   },
   {
@@ -12226,14 +11120,6 @@
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/44d55a8e-fefa-4bab-9d05-65851d0979d8-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "G2LWd-M4o3Y",
-    "name": "Elton John",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 113
   },
   {
     "id": "G2LWd-M4o3Y-AOwoL",
@@ -12282,14 +11168,6 @@
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/7f351600-3de4-45d5-8729-6857bb0d420d-small.jpg",
     "locationCount": 856
-  },
-  {
-    "id": "GpeoL-MkPz1",
-    "name": "Foo Fighters (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GpeoL-MyNPq",
@@ -12348,14 +11226,6 @@
     "locationCount": 1083
   },
   {
-    "id": "GoEkx-MdEzN",
-    "name": "Pulp Fiction",
-    "supplementary": "Chicago Gaming",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GoEkx-MdEzN-AR50E",
     "name": "Pulp Fiction (LE)",
     "supplementary": "Chicago Gaming",
@@ -12378,14 +11248,6 @@
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/840e0d51-34b5-4ad1-8dd3-8a91c8399afb-small.jpg",
     "locationCount": 2
-  },
-  {
-    "id": "G8lwL-MjBXp-A1r7z",
-    "name": "Punny Factory (Engraved)",
-    "supplementary": "Pinball Adventures",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GllPz-MBRrV-ARZo2",
@@ -12420,14 +11282,6 @@
     "locationCount": 2
   },
   {
-    "id": "Gd2ox-MW9qj",
-    "name": "The Godfather",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Gd2ox-MW9qj-A1loo",
     "name": "The Godfather (CE)",
     "supplementary": "Jersey Jack Pinball",
@@ -12460,14 +11314,6 @@
     "locationCount": 668
   },
   {
-    "id": "G3EBl-MRj6e",
-    "name": "Venom (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G3EBl-Mq1zy",
     "name": "Venom (Pro)",
     "supplementary": "Stern",
@@ -12482,14 +11328,6 @@
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/521b540b-4286-4e2f-9186-4854114f63f1-small.jpg",
     "locationCount": 147
-  },
-  {
-    "id": "Ge1py-MkPj1",
-    "name": "ABBA",
-    "supplementary": "Pinball Brothers",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Ge1py-MkPj1-AOppL",
@@ -12508,14 +11346,6 @@
     "locationCount": 11
   },
   {
-    "id": "GbPxB-MkPol",
-    "name": "Avatar: The Battle for Pandora",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GbPxB-MkPol-A9j2b",
     "name": "Avatar: The Battle for Pandora (CE)",
     "supplementary": "Jersey Jack Pinball",
@@ -12532,14 +11362,6 @@
     "locationCount": 75
   },
   {
-    "id": "GK1Kv-ME0E0",
-    "name": "Barry O's Barbecue Challenge",
-    "supplementary": "American Pinball",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GK1Kv-ME0E0-A9PJq",
     "name": "Barry O's Barbecue Challenge (CE)",
     "supplementary": "American Pinball",
@@ -12554,14 +11376,6 @@
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/a90cfbb5-6cd2-4831-953d-cff81cc9a616-small.jpg",
     "locationCount": 18
-  },
-  {
-    "id": "GPBzy-Mo1KX",
-    "name": "Blood Bank Billiards",
-    "supplementary": "Ian Harrower Games",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GLWze-Mp4oz",
@@ -12596,14 +11410,6 @@
     "locationCount": 48
   },
   {
-    "id": "G5Dz7-MdEod",
-    "name": "Funhouse (Remake)",
-    "supplementary": "Pedretti Gaming",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GweeP-Ml9pZ-AOvNL",
     "name": "Godzilla (70th Anniversary)",
     "supplementary": "Stern",
@@ -12628,14 +11434,6 @@
     "locationCount": 1098
   },
   {
-    "id": "GLWll-M1r8O",
-    "name": "JAWS (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GLWll-MXr4N",
     "name": "JAWS (Pro)",
     "supplementary": "Stern",
@@ -12658,14 +11456,6 @@
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/5f6a2daa-c083-45cd-8aa6-ef646e0208f8-small.jpg",
     "locationCount": 553
-  },
-  {
-    "id": "GQK1P-Ml95Z",
-    "name": "John Wick (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GQK1P-MW9pj",
@@ -12714,22 +11504,6 @@
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/c938188f-e622-45a3-b558-0d6b03e6e6e8-small.jpg",
     "locationCount": 286
-  },
-  {
-    "id": "GO0q3-MOEy8",
-    "name": "Metallica Remastered (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GZVXY-MyNOq",
-    "name": "Ninja Eclipse",
-    "supplementary": "Turner Pinball",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GZVXY-MyNOq-A1NeE",
@@ -12820,14 +11594,6 @@
     "locationCount": 614
   },
   {
-    "id": "G7ZEz-MyN3K",
-    "name": "The Uncanny X-Men (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G7ZEz-MBRYn",
     "name": "The Uncanny X-Men (Pro)",
     "supplementary": "Stern",
@@ -12861,22 +11627,6 @@
     "locationCount": 59
   },
   {
-    "id": "GkBZD-Mb5oy",
-    "name": "Blues Brothers",
-    "supplementary": "Homepin",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 2
-  },
-  {
-    "id": "G4835-M2YPK-ARkb7",
-    "name": "Cactus Canyon (Lyman Upgrade)",
-    "supplementary": "Chicago Gaming",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 394
-  },
-  {
     "id": "Gd266-ME0l7",
     "name": "Dune",
     "supplementary": "Barrels of Fun",
@@ -12901,28 +11651,12 @@
     "locationCount": 663
   },
   {
-    "id": "GK1Ej-MePok",
-    "name": "Dungeons & Dragons: The Tyrant's Eye (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GK1Ej-MwNZr",
     "name": "Dungeons & Dragons: The Tyrant's Eye (Pro)",
     "supplementary": "Stern",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/593fd16d-2e6a-4f82-b81e-1fb2f95e565e-small.jpg",
     "locationCount": 663
-  },
-  {
-    "id": "GWyBj-MdEbK",
-    "name": "Harry Potter",
-    "supplementary": "Jersey Jack Pinball",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "GWyBj-MdEbK-A9dEy",
@@ -12981,14 +11715,6 @@
     "locationCount": 669
   },
   {
-    "id": "GEL0V-MyN8E",
-    "name": "King Kong: Myth of Terror Island (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GEL0V-MBRyb",
     "name": "King Kong: Myth of Terror Island (Pro)",
     "supplementary": "Stern",
@@ -12997,28 +11723,12 @@
     "locationCount": 669
   },
   {
-    "id": "GV8j1-M0oZe-A1r2W",
-    "name": "Louis Vuitton",
-    "supplementary": "HEXA Pinball",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "G5pe4-MrRrv",
     "name": "Medieval Madness (Remake Merlin Edition)",
     "supplementary": "Chicago Gaming",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/edc16790-8540-46bb-913b-3af1d4bfa551-small.jpg",
     "locationCount": 60
-  },
-  {
-    "id": "GllVX-MnKrl",
-    "name": "Merlin's Arcade (Arcade Edition)",
-    "supplementary": "Turner Pinball",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 16
   },
   {
     "id": "GllVX-MjBnk",
@@ -13042,14 +11752,6 @@
     "supplementary": "Vector Pinball",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/56fe443b-107e-42f3-820a-29a102edc642-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "Ge1O1-MYeEB",
-    "name": "Peter Brock / Holden",
-    "supplementary": "Vector Pinball",
-    "parsedYear": 2025,
-    "imageUrl": null,
     "locationCount": 0
   },
   {
@@ -13077,22 +11779,6 @@
     "locationCount": 23
   },
   {
-    "id": "Gwe3B-MnKrO-AOw2o",
-    "name": "Predator (Trophy Edition)",
-    "supplementary": "Pinball Brothers",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 23
-  },
-  {
-    "id": "GQKXy-MNENE",
-    "name": "Road Trip",
-    "supplementary": "Ramp's Pinball",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "Gxv81-Mo1rp-A9Qew",
     "name": "Star Wars: Fall of the Empire (LE)",
     "supplementary": "Stern",
@@ -13107,14 +11793,6 @@
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/ac52fae6-ce94-41b5-9a05-e21736cebbfe-small.jpg",
     "locationCount": 416
-  },
-  {
-    "id": "Gxv81-Mo1rp",
-    "name": "Star Wars: Fall of the Empire (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gxv81-M610r",
@@ -13141,14 +11819,6 @@
     "locationCount": 82
   },
   {
-    "id": "Gj6DE-MePEz",
-    "name": "The Walking Dead Remastered (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GvBzO-Mz2r7",
     "name": "Winchester Mystery House",
     "supplementary": "Barrels of Fun",
@@ -13157,16 +11827,8 @@
     "locationCount": 23
   },
   {
-    "id": "GvBQX-M0ody-A1kee",
-    "name": "Houdini: Master of Mystery (100th Anniversary)",
-    "supplementary": "American Pinball",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 76
-  },
-  {
     "id": "GV8wB-MRjKd-ARz2r",
-    "name": "Pokémon (LE)",
+    "name": "Pok\u00e9mon (LE)",
     "supplementary": "Stern",
     "parsedYear": 2026,
     "imageUrl": "https://img.opdb.org/6760f322-aac9-4d6e-85e0-8998e29aa53f-small.jpg",
@@ -13174,43 +11836,19 @@
   },
   {
     "id": "GV8wB-MRjKd-AOVy7",
-    "name": "Pokémon (Premium)",
+    "name": "Pok\u00e9mon (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2026,
     "imageUrl": "https://img.opdb.org/54d0e2d4-7cbf-49e5-b378-6a573ce82f28-small.jpg",
     "locationCount": 715
   },
   {
-    "id": "GV8wB-MRjKd",
-    "name": "Pokémon (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
     "id": "GV8wB-Mq12N",
-    "name": "Pokémon (Pro)",
+    "name": "Pok\u00e9mon (Pro)",
     "supplementary": "Stern",
     "parsedYear": 2026,
     "imageUrl": "https://img.opdb.org/fd10f07d-ffdf-4a45-a8e1-32546e3e4b52-small.jpg",
     "locationCount": 715
-  },
-  {
-    "id": "G4llj-M3dyz",
-    "name": "Tales of the Arabian Nights (Remake)",
-    "supplementary": "Pedretti Gaming",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 89
-  },
-  {
-    "id": "Gwej3-MrRYv",
-    "name": "The 3 Musketeers",
-    "supplementary": "HEXA Pinball",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
   },
   {
     "id": "Gwej3-MrRYv-AOx2j",
@@ -13218,46 +11856,6 @@
     "supplementary": "HEXA Pinball",
     "parsedYear": 2026,
     "imageUrl": "https://img.opdb.org/5fddd911-d9cc-4c87-b6ad-e4ff4dd38856-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "GBLzz-M4ok4-ARnwo",
-    "name": "Transformers: More Than Meets the Eye (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GBLzz-M4ok4-AO2XW",
-    "name": "Transformers: More Than Meets the Eye (Premium)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GBLzz-M4ok4",
-    "name": "Transformers: More Than Meets the Eye (Premium/LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "GBLzz-M7Zd5",
-    "name": "Transformers: More Than Meets the Eye (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": null,
-    "locationCount": 0
-  },
-  {
-    "id": "G3EYo-Mo1ep",
-    "name": "Yukon Yeti",
-    "supplementary": "Turner Pinball",
-    "parsedYear": 2026,
-    "imageUrl": null,
     "locationCount": 0
   }
 ]
