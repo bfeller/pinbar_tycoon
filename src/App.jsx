@@ -1000,11 +1000,18 @@ St. Agatha's Billing Department`,
     // Check for new emails (read inbox from closure — safe inside a click handler)
     const sentIds = new Set(inbox.map(e => e.id));
     const completedCourseIds = new Set(justCompleted.map(c => c.id));
-    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff };
+    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
     if (newEmails.length > 0) {
-      setInbox(prev => [...prev, ...newEmails.map(def => ({ ...def, read: false, choiceMade: false, deliveredAt: toLinearDay(newTime) }))]);
+      setInbox(prev => [...prev, ...newEmails.map(def => ({
+  ...def,
+  body: typeof def.body === 'function' ? def.body(emailState) : def.body,
+  read: false,
+  choiceMade: false,
+  deliveredAt: toLinearDay(newTime),
+}))]);
+
 
       // Fire any events attached to incoming emails
       let emailPopDelta = 0;
