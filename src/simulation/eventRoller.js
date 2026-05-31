@@ -12,7 +12,7 @@ function toLinDay({ year, week, day }) {
  *
  * @returns {{ type: 'decision'|'event', payload, today }} or null
  */
-export function rollDayEvent({ timer, time, machines, popularity, cash, decisions, sentIds = new Set(), lastEventDay }) {
+export function rollDayEvent({ timer, time, machines, popularity, cash, decisions, franchises = [], sentIds = new Set(), lastEventDay }) {
   const today = toLinDay(time);
   if (timer < 3 || lastEventDay === today) return null;
 
@@ -23,7 +23,7 @@ export function rollDayEvent({ timer, time, machines, popularity, cash, decision
 
   // Decision roll (takes priority)
   if (Math.random() < 0.025) {
-    const ctx = { machines, decisions, popularity, cash, time, sentIds };
+    const ctx = { machines, decisions, popularity, cash, time, sentIds, franchises };
     const eligible = DECISION_DEFS.filter(d => {
       const alreadyFired = !d.repeatable && d.choices.some(c => decisions[c.flagId]);
       return !alreadyFired && d.condition(ctx);

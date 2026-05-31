@@ -235,6 +235,7 @@ function App() {
     popularity,
     upgradeValues,
     decisions,
+    franchises,
     inbox,
     isPausedRef,
     fastForward,
@@ -572,15 +573,10 @@ function App() {
   const handleOpenFranchise = () => {
     const cost = Math.floor(franchiseTotalEquipCost * (1 + FRANCHISE_SETUP_FEE));
     if (franchiseTotalEquipCost === 0 || cash < cost) return;
-    const last6 = financialHistory.slice(-6);
-    const avgIncome = last6.length
-      ? Math.round(last6.reduce((s, r) => s + r.income, 0) / last6.length)
-      : 0;
     setFranchises(prev => [...prev, {
       id: `franchise-${Date.now()}`,
       name: `${pinbarName} #${prev.length + 2}`,
       openedAt: { year: time.year, week: time.week },
-      templateDailyIncome: avgIncome,
       openingCost: cost,
       machineCount: machines.filter(m => m.x !== null && (m.room === 'main' || !m.room)).length,
     }]);
@@ -598,7 +594,9 @@ function App() {
   const sellMachine = (m) => {
     if (dayState !== 'BUILD') return;
     const marketValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
-    const sellValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
+    const baseValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
+    const isPinball = m.type === 'pinball' || !m.type;
+    const sellValue = isPinball ? Math.floor(baseValue * (pinballPopularity / 100)) : baseValue;
     if (sellValue) {
       setCash(c => c + sellValue);
       setMachines(prev => prev.filter(machine => machine.id !== m.id));
@@ -980,7 +978,7 @@ St. Agatha's Billing Department`,
 
     // Record this day's financials before resetting dailyReport
     const expenseTotal = weeklyExpenses.reduce((s, e) => s + e.amount, 0);
-    const franchiseIncome = franchises.reduce((s, f) => s + f.templateDailyIncome, 0);
+    const franchiseIncome = dailyReport.income * franchises.length;
     if (franchiseIncome > 0) setCash(c => c + franchiseIncome);
     setFinancialHistory(prev => [...prev, {
       year: time.year,
@@ -1256,6 +1254,7 @@ St. Agatha's Billing Department`,
             setHoveredCell={setHoveredCell}
             repairMachine={repairMachine}
             sellMachine={sellMachine}
+            pinballPopularity={pinballPopularity}
             placementMachineType={placementMachineType}
           />
         </div>

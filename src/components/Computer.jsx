@@ -739,13 +739,13 @@ export default function Computer({
 
         {activeWindow === 'franchises' && (() => {
           const last6 = financialHistory.slice(-6);
-          const avgDailyIncome = last6.length
+          const recentDailyIncome = last6.length
             ? Math.round(last6.reduce((s, r) => s + r.income, 0) / last6.length)
             : 0;
           const setupFee = Math.floor(franchiseTotalEquipCost * franchiseSetupFee);
           const franchiseCost = franchiseTotalEquipCost + setupFee;
-          const totalPassiveIncome = franchises.reduce((s, f) => s + f.templateDailyIncome, 0);
           const canOpen = franchiseTotalEquipCost > 0 && cash >= franchiseCost;
+          const projectedFranchiseIncome = recentDailyIncome * franchises.length;
           return (
             <div className="win95-window">
               <div className="win95-titlebar">
@@ -753,6 +753,25 @@ export default function Computer({
                 <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
               </div>
               <div className="win95-content" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto' }}>
+
+                {franchises.length > 0 && (
+                  <div className="win95-panel">
+                    <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Network Overview</div>
+                    <div style={{ fontSize: '0.85rem' }}>
+                      <div>Locations: <strong>{franchiseMultiplier}</strong> (flagship + {franchises.length} franchise{franchises.length !== 1 ? 's' : ''})</div>
+                      <div style={{ marginTop: '3px' }}>
+                        Bar earned last 6 days avg: <strong>${recentDailyIncome.toLocaleString()}/day</strong>
+                      </div>
+                      <div style={{ marginTop: '3px' }}>
+                        Franchise income today: <strong>${recentDailyIncome.toLocaleString()} × {franchises.length} = ${projectedFranchiseIncome.toLocaleString()}</strong>
+                      </div>
+                      <div style={{ marginTop: '3px', color: '#555' }}>
+                        Pinball popularity: <strong style={{ color: pinballPopularity >= 70 ? '#006400' : pinballPopularity >= 40 ? '#b35900' : '#8b0000' }}>{pinballPopularity}%</strong>
+                        {' '}— all locations move together
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="win95-panel">
                   <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Open New Franchise</div>
@@ -764,8 +783,8 @@ export default function Computer({
                       <div style={{ fontSize: '0.85rem' }}>Setup fee (20%): ${setupFee.toLocaleString()}</div>
                       <div style={{ marginTop: '4px' }}>Total cost: <strong>${franchiseCost.toLocaleString()}</strong></div>
                       <div style={{ fontSize: '0.8rem', color: '#555', margin: '4px 0 6px' }}>
-                        New franchise will earn ${avgDailyIncome.toLocaleString()}/day based on current bar performance.
-                        All future machine purchases will cost ×{franchiseMultiplier + 1} (equipping {franchiseMultiplier + 1} locations).
+                        Each franchise mirrors the flagship. Improve the bar and all locations benefit.
+                        Machine purchases will cost ×{franchiseMultiplier + 1} (equipping {franchiseMultiplier + 1} locations).
                       </div>
                       <button
                         className="win95-btn"
@@ -778,17 +797,6 @@ export default function Computer({
                   )}
                 </div>
 
-                <div className="win95-panel">
-                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Bar Performance — last 6 days</div>
-                  <div>Avg daily income: <strong>${avgDailyIncome.toLocaleString()}</strong></div>
-                  <div style={{ fontSize: '0.85rem', color: '#555', marginTop: '2px' }}>
-                    Pinball popularity: <strong style={{ color: pinballPopularity >= 70 ? '#006400' : pinballPopularity >= 40 ? '#b35900' : '#8b0000' }}>{pinballPopularity}%</strong>
-                    {franchises.length > 0 && (
-                      <span> · Passive franchise income: <strong>${totalPassiveIncome.toLocaleString()}/day</strong></span>
-                    )}
-                  </div>
-                </div>
-
                 {franchises.length > 0 && (
                   <div className="win95-panel">
                     <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Active Franchises ({franchises.length})</div>
@@ -797,8 +805,7 @@ export default function Computer({
                       return (
                         <div key={f.id} style={{ borderBottom: '1px solid #999', padding: '5px 0', fontSize: '0.85rem' }}>
                           <div style={{ fontWeight: 'bold' }}>{f.name}</div>
-                          <div>Opened: {f.openedAt.year} · {f.machineCount} machine{f.machineCount !== 1 ? 's' : ''}</div>
-                          <div>Daily income: <strong>${f.templateDailyIncome.toLocaleString()}</strong> · Opening cost: ${f.openingCost.toLocaleString()}</div>
+                          <div>Opened: {f.openedAt.year} · {f.machineCount} machine{f.machineCount !== 1 ? 's' : ''} · Cost: ${f.openingCost.toLocaleString()}</div>
                           <button
                             className="win95-btn"
                             style={{ marginTop: '4px', color: '#8b0000' }}
@@ -809,9 +816,6 @@ export default function Computer({
                         </div>
                       );
                     })}
-                    <div style={{ marginTop: '6px', fontWeight: 'bold' }}>
-                      Total passive income: ${totalPassiveIncome.toLocaleString()}/day
-                    </div>
                   </div>
                 )}
 

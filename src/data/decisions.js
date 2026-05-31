@@ -1,12 +1,272 @@
 // Mid-day decision events — player is presented with a choice and consequences are saved as flags.
 //
-// condition({ machines, decisions, popularity, cash, time }) → bool
-// getMessage({ machineName }) → string
+// condition({ machines, decisions, popularity, cash, time, franchises }) → bool
+// getMessage({ machineName, decisions, franchises }) → string
 // choices[].flagId is stored in the decisions object once chosen.
 // Non-repeatable events skip re-firing once any of their flagIds appears in decisions.
 // effect2/effect2Value is an optional secondary effect applied alongside effect.
 
 export const DECISION_DEFS = [
+
+  // ── Franchise events ──────────────────────────────────────────────────────
+  // These only fire when the player has at least one active franchise.
+  // getMessage receives franchises so it can name the affected location.
+
+  {
+    id: 'franchise_machine_breakdown',
+    label: 'Location Incident',
+    weight: 6,
+    repeatable: false,
+    condition: ({ franchises }) => franchises.length >= 1,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)];
+      const name = loc?.name ?? 'one of your locations';
+      return `Machine three at ${name} has gone dark. Staff called it in this morning — no warning, no diagnostics, just off. It's your busiest cabinet.`;
+    },
+    choices: [
+      {
+        id: 'franchise_emergency_repair',
+        label: 'Emergency callout — get it fixed today',
+        hint: '−$800',
+        flagId: 'franchise_machine_repaired_emergency',
+        effect: 'income_delta',
+        effectValue: -800,
+        resolution: {
+          severity: 'good',
+          message: "The technician had it running by mid-afternoon. A solenoid. Standard wear. The queue re-formed within the hour.",
+        },
+      },
+      {
+        id: 'franchise_wait_repairman',
+        label: 'It can wait for the regular service visit',
+        hint: '−$200 lost revenue',
+        flagId: 'franchise_machine_waited',
+        effect: 'income_delta',
+        effectValue: -200,
+        resolution: {
+          severity: 'neutral',
+          message: "Customers noticed. A few left. The machine sat dark for three days until the repairman came through. It's running now.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'franchise_staff_dispute',
+    label: 'Staff Dispute',
+    weight: 4,
+    repeatable: false,
+    condition: ({ franchises, time }) => franchises.length >= 1 && time.year >= 1985,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)];
+      const name = loc?.name ?? 'one of your locations';
+      return `The bar manager at ${name} has written. Two staff members are unhappy with a recent schedule change and looking at other options. The manager thinks one of them will leave by the end of the month.`;
+    },
+    choices: [
+      {
+        id: 'franchise_staff_retention',
+        label: 'Resolve it — retention bonus and a schedule review',
+        hint: '−$600, +5 popularity',
+        flagId: 'franchise_staff_retained',
+        effect: 'income_delta',
+        effectValue: -600,
+        effect2: 'popularity_delta',
+        effect2Value: 5,
+        resolution: {
+          severity: 'good',
+          message: "Both staff stayed. The manager thanked you in a short email that also subtly suggested the original schedule had been the problem from the start.",
+        },
+      },
+      {
+        id: 'franchise_staff_let_go',
+        label: 'Let it play out — staff turnover is normal',
+        hint: '−20 popularity',
+        flagId: 'franchise_staff_left',
+        effect: 'popularity_delta',
+        effectValue: -20,
+        resolution: {
+          severity: 'bad',
+          message: "One of them went. The location ran short-staffed for two weeks. Regulars noticed the difference in service.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'franchise_local_competitor',
+    label: 'New Competition',
+    weight: 4,
+    repeatable: false,
+    condition: ({ franchises, time }) => franchises.length >= 1 && time.year >= 1987,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)];
+      const name = loc?.name ?? 'one of your locations';
+      return `A new bar opened on the same street as ${name} last week. Staff report it has newer machines and cheap weeknight drinks. Foot traffic at the location is already down.`;
+    },
+    choices: [
+      {
+        id: 'franchise_invest_competitive',
+        label: 'Invest in the location — refresh the machines and run a promotion',
+        hint: '−$700, +20 popularity',
+        flagId: 'franchise_competition_fought',
+        effect: 'income_delta',
+        effectValue: -700,
+        effect2: 'popularity_delta',
+        effect2Value: 20,
+        resolution: {
+          severity: 'good',
+          message: "The promotion ran for three weeks. Some customers who'd drifted came back. The new bar is still there, but it's no longer the obvious choice.",
+        },
+      },
+      {
+        id: 'franchise_accept_competition',
+        label: 'Hold your ground — your regulars know where they belong',
+        hint: '−15 popularity',
+        flagId: 'franchise_competition_accepted',
+        effect: 'popularity_delta',
+        effectValue: -15,
+        resolution: {
+          severity: 'bad',
+          message: "Some customers didn't come back. The ones who did were more loyal than before, which is something, but the numbers are down.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'franchise_breakout_night',
+    label: 'Record Night',
+    weight: 3,
+    repeatable: false,
+    condition: ({ franchises, popularity }) => franchises.length >= 1 && popularity >= 500,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)];
+      const name = loc?.name ?? 'one of your locations';
+      return `The manager at ${name} called. Saturday was their best night since opening — a full house, a queue at the door, someone asking about hosting a tournament. They want to talk about expanding capacity.`;
+    },
+    choices: [
+      {
+        id: 'franchise_expand_capacity',
+        label: 'Back the expansion — add machines and open the back room',
+        hint: '−$1,200, +30 popularity',
+        flagId: 'franchise_expanded',
+        effect: 'income_delta',
+        effectValue: -1200,
+        effect2: 'popularity_delta',
+        effect2Value: 30,
+        resolution: {
+          severity: 'good',
+          message: "Three new machines went in over the following fortnight. The manager sent a photo. The queue on Saturday now goes around the corner.",
+        },
+      },
+      {
+        id: 'franchise_acknowledge_night',
+        label: 'Acknowledge the win — keep the current setup',
+        hint: '+8 popularity',
+        flagId: 'franchise_good_night_noted',
+        effect: 'popularity_delta',
+        effectValue: 8,
+        resolution: {
+          severity: 'neutral',
+          message: "You wrote back with a well done. The manager seemed pleased. The Saturday numbers stayed strong for another few weeks.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'franchise_supply_delay',
+    label: 'Supply Chain Issue',
+    weight: 4,
+    repeatable: false,
+    condition: ({ franchises }) => franchises.length >= 2,
+    getMessage: ({ franchises = [] }) => {
+      const count = franchises.length;
+      return `The parts supplier has a backlog. Replacement flippers, solenoids, and coil sleeves for ${count} of your locations are stuck in a warehouse in Coventry. Estimated wait: two weeks.`;
+    },
+    choices: [
+      {
+        id: 'franchise_premium_sourcing',
+        label: 'Source parts at premium through an alternative supplier',
+        hint: '−$500',
+        flagId: 'franchise_supply_resolved',
+        effect: 'income_delta',
+        effectValue: -500,
+        resolution: {
+          severity: 'good',
+          message: "The parts arrived within 48 hours from a distributor in Birmingham. The premium hurt. The machines stayed running.",
+        },
+      },
+      {
+        id: 'franchise_wait_supply',
+        label: 'Wait it out — two weeks is manageable',
+        hint: '−12 popularity',
+        flagId: 'franchise_supply_waited',
+        effect: 'popularity_delta',
+        effectValue: -12,
+        resolution: {
+          severity: 'bad',
+          message: "Wear caught up with two machines before the parts arrived. Customers noticed degraded play. The wait was two and a half weeks, not two.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'franchise_community_league',
+    label: 'Community Initiative',
+    weight: 5,
+    repeatable: false,
+    condition: ({ franchises, popularity, time }) =>
+      franchises.length >= 1 && popularity >= 400 && time.year >= 1980,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)];
+      const name = loc?.name ?? 'one of your locations';
+      return `The staff at ${name} have organised a weekly pinball league on their own initiative. Eight regulars are already signed up. They're asking for a small sponsorship to make it official — a trophy, a league board, a Friday night slot.`;
+    },
+    choices: [
+      {
+        id: 'franchise_league_full',
+        label: 'Back it fully — trophy, board, and a proper slot',
+        hint: '−$250, +35 popularity',
+        flagId: 'franchise_league_sponsored',
+        effect: 'income_delta',
+        effectValue: -250,
+        effect2: 'popularity_delta',
+        effect2Value: 35,
+        resolution: {
+          severity: 'good',
+          message: "The league grew to fourteen players by week three. Someone photographed the trophy board and it ended up in the local paper. Gary, somehow, heard about it.",
+        },
+      },
+      {
+        id: 'franchise_league_light',
+        label: 'Let them run it — give your blessing, no funds',
+        hint: '+15 popularity',
+        flagId: 'franchise_league_informal',
+        effect: 'popularity_delta',
+        effectValue: 15,
+        resolution: {
+          severity: 'neutral',
+          message: "They ran it on a shoestring. The trophy was a certificate printed on the office printer. The players didn't seem to mind.",
+        },
+      },
+      {
+        id: 'franchise_league_decline',
+        label: 'Keep the schedule standard — league nights complicate operations',
+        hint: '−10 popularity',
+        flagId: 'franchise_league_declined',
+        effect: 'popularity_delta',
+        effectValue: -10,
+        resolution: {
+          severity: 'bad',
+          message: "The staff accepted the decision. Two of the eight regulars found a bar down the road that would let them run it.",
+        },
+      },
+    ],
+  },
+
+
 
   {
     id: 'angry_customer',
