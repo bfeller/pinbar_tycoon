@@ -35,7 +35,17 @@ export default function Computer({
   medicalBills = [],
   onPayMedicalBill,
   onPayAllMedicalBills,
+  popularity = 0,
+  franchises = [],
+  franchiseMultiplier = 1,
+  franchiseTotalEquipCost = 0,
+  franchiseUnlockPop = 1500,
+  franchiseSetupFee = 0.20,
+  onOpenFranchise,
+  onCloseFranchise,
+  pinballPopularity = 60,
 }) {
+  const footTrafficMult = Math.max(0.05, Math.min(1.0, pinballPopularity / 100));
   const [booting, setBooting] = useState(true);
   const [activeWindow, setActiveWindow] = useState(null); // 'browser' | 'university' | 'email' | 'bank' | null
   const [purchasedItems, setPurchasedItems] = useState({});
@@ -144,6 +154,12 @@ export default function Computer({
             <div className="icon-img">⚙️</div>
             <span>Settings</span>
           </div>
+          {popularity >= franchiseUnlockPop && (
+            <div className="win95-icon" onClick={() => setActiveWindow('franchises')}>
+              <div className="icon-img">🏪</div>
+              <span>Franchises</span>
+            </div>
+          )}
         </div>
         </div>
 
@@ -155,6 +171,11 @@ export default function Computer({
             </div>
             <div className="win95-toolbar">
               <span>Address: http://www.{marketTab === 'pinball' ? 'pinball-net.com' : 'barsupplies.com'}</span>
+              {franchiseMultiplier > 1 && (
+                <span style={{ marginLeft: '12px', color: '#8b0000', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                  ×{franchiseMultiplier} — buying for {franchiseMultiplier} location{franchiseMultiplier > 1 ? 's' : ''}
+                </span>
+              )}
             </div>
             <div className="win95-content">
               <div className="browser-page">
@@ -168,7 +189,8 @@ export default function Computer({
                         <div className="marketplace-grid">
                           {dailyMarket.filter(m => m.parsedYear === time.year).map(machine => {
                             const rawPrice = calculatePrice(machine.parsedYear, time.year, 100);
-                            const price = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
+                            const basePrice = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
+                            const price = basePrice != null ? basePrice * franchiseMultiplier : null;
                             const isSoldOut = soldOutIds?.has(machine.id);
                             return (
                               <MachineCard
@@ -194,7 +216,8 @@ export default function Computer({
                         <div className="marketplace-grid">
                           {dailyMarket.filter(m => m.parsedYear < time.year).map(machine => {
                             const rawPrice = calculatePrice(machine.parsedYear, time.year, machine.durability ?? 100, machine.locationCount ?? 0);
-                            const price = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
+                            const basePrice = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : rawPrice;
+                            const price = basePrice != null ? basePrice * franchiseMultiplier : null;
                             const isSoldOut = soldOutIds?.has(machine.id);
                             return (
                               <MachineCard
@@ -223,7 +246,7 @@ export default function Computer({
                         <div className="marketplace-grid">
                           {liquidationLot.map(machine => {
                             const rawPrice = calculatePrice(machine.parsedYear, time.year, machine.durability, machine.locationCount ?? 0);
-                            const price = rawPrice ? Math.floor(rawPrice * 0.40) : null;
+                            const price = rawPrice ? Math.floor(rawPrice * 0.40 * franchiseMultiplier) : null;
                             return (
                               <MachineCard
                                 key={machine.id}
@@ -251,54 +274,28 @@ export default function Computer({
                 )}
                 {marketTab === 'supplies' && (
                   <div className="marketplace-grid">
-                    <div className="win95-card">
-                      <div><strong>Kegerator</strong></div>
-                      <div style={{fontSize:'0.8rem'}}>Essential for serving drinks.</div>
-                      <div style={{marginTop:'0.5rem'}}>Price: $1000</div>
-                      <button
-                        className="win95-btn"
-                        disabled={cash < 1000 || dayState === 'REPORT'}
-                        onClick={() => handlePurchaseSupply('kegerator')}
-                      >
-                        {purchasedItems['kegerator'] ? 'Purchased!' : 'Order Now'}
-                      </button>
-                    </div>
-                    <div className="win95-card">
-                      <div><strong>Speed Well</strong></div>
-                      <div style={{fontSize:'0.8rem'}}>Makes cocktails. Slower than beer, but higher revenue. Cocktail demand starts in 1980.</div>
-                      <div style={{marginTop:'0.5rem'}}>Price: $1,500</div>
-                      <button
-                        className="win95-btn"
-                        disabled={cash < 1500 || dayState === 'REPORT'}
-                        onClick={() => handlePurchaseSupply('speed_well')}
-                      >
-                        {purchasedItems['speed_well'] ? 'Purchased!' : 'Order Now'}
-                      </button>
-                    </div>
-                    <div className="win95-card">
-                      <div><strong>Bartop</strong></div>
-                      <div style={{fontSize:'0.8rem'}}>Where patrons order drinks.</div>
-                      <div style={{marginTop:'0.5rem'}}>Price: $500</div>
-                      <button
-                        className="win95-btn"
-                        disabled={cash < 500 || dayState === 'REPORT'}
-                        onClick={() => handlePurchaseSupply('bartop')}
-                      >
-                        {purchasedItems['bartop'] ? 'Purchased!' : 'Order Now'}
-                      </button>
-                    </div>
-                    <div className="win95-card">
-                      <div><strong>Bathroom</strong></div>
-                      <div style={{fontSize:'0.8rem'}}>2×2. Expected by patrons from 1976.</div>
-                      <div style={{marginTop:'0.5rem'}}>Price: $2,000</div>
-                      <button
-                        className="win95-btn"
-                        disabled={cash < 2000 || dayState === 'REPORT'}
-                        onClick={() => handlePurchaseSupply('bathroom')}
-                      >
-                        {purchasedItems['bathroom'] ? 'Purchased!' : 'Order Now'}
-                      </button>
-                    </div>
+                    {[
+                      { type: 'kegerator', name: 'Kegerator',  base: 1000, desc: 'Essential for serving drinks.' },
+                      { type: 'speed_well', name: 'Speed Well', base: 1500, desc: 'Makes cocktails. Slower than beer, but higher revenue. Cocktail demand starts in 1980.' },
+                      { type: 'bartop',    name: 'Bartop',     base: 500,  desc: 'Where patrons order drinks.' },
+                      { type: 'bathroom',  name: 'Bathroom',   base: 2000, desc: '2×2. Expected by patrons from 1976.' },
+                    ].map(({ type, name, base, desc }) => {
+                      const supplyPrice = base * franchiseMultiplier;
+                      return (
+                        <div key={type} className="win95-card">
+                          <div><strong>{name}</strong></div>
+                          <div style={{fontSize:'0.8rem'}}>{desc}</div>
+                          <div style={{marginTop:'0.5rem'}}>Price: ${supplyPrice.toLocaleString()}</div>
+                          <button
+                            className="win95-btn"
+                            disabled={cash < supplyPrice || dayState === 'REPORT'}
+                            onClick={() => handlePurchaseSupply(type)}
+                          >
+                            {purchasedItems[type] ? 'Purchased!' : 'Order Now'}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -403,7 +400,7 @@ export default function Computer({
                     </p>
                   )}
                   <hr />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+                  <div className="marketplace-grid" style={{ marginTop: '12px' }}>
                     {STAFF_DEFS.map(def => {
                       const isCountable = def.maxCount !== undefined;
                       const count = isCountable ? (staff?.[def.id] ?? 0) : 0;
@@ -661,44 +658,46 @@ export default function Computer({
                 </div>
                 <hr />
                 <h2 style={{ fontSize: '1rem', color: '#000080', marginBottom: '6px' }}>Credits &amp; Attribution</h2>
-                <div className="win95-card" style={{ marginBottom: '12px' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
-                    🎱 Pinball Machine Data
+                <div className="marketplace-grid">
+                  <div className="win95-card">
+                    <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                      🎱 Pinball Machine Data
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
+                      All pinball machine names, manufacturers, release years, and images are sourced from the{' '}
+                      <strong>Open Pinball Database (OPDB)</strong> — a community-maintained registry of pinball machines from around the world.
+                    </p>
+                    <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
+                      This game uses a static snapshot of OPDB data. No API calls are made at runtime.
+                    </p>
+                    <a
+                      href="https://opdb.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: '0.85rem', color: '#000080', textDecoration: 'underline', fontWeight: 'bold' }}
+                    >
+                      Visit opdb.org ↗
+                    </a>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
-                    All pinball machine names, manufacturers, release years, and images are sourced from the{' '}
-                    <strong>Open Pinball Database (OPDB)</strong> — a community-maintained registry of pinball machines from around the world.
-                  </p>
-                  <p style={{ fontSize: '0.85rem', color: '#333', margin: '0 0 8px' }}>
-                    This game uses a static snapshot of OPDB data. No API calls are made at runtime.
-                  </p>
-                  <a
-                    href="https://opdb.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: '0.85rem', color: '#000080', textDecoration: 'underline', fontWeight: 'bold' }}
-                  >
-                    Visit opdb.org ↗
-                  </a>
-                </div>
-                <div className="win95-card" style={{ marginBottom: '12px' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
-                    🛠️ Built With
+                  <div className="win95-card">
+                    <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                      🛠️ Built With
+                    </div>
+                    <ul style={{ fontSize: '0.85rem', color: '#333', margin: 0, paddingLeft: '18px' }}>
+                      <li>React 18 + Vite</li>
+                      <li>Claude Code — most of this was written by AI</li>
+                      <li>OPDB for pinball machine data</li>
+                    </ul>
                   </div>
-                  <ul style={{ fontSize: '0.85rem', color: '#333', margin: 0, paddingLeft: '18px' }}>
-                    <li>React 18 + Vite</li>
-                    <li>Claude Code — most of this was written by AI</li>
-                    <li>OPDB for pinball machine data</li>
-                  </ul>
-                </div>
-                <div className="win95-card">
-                  <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
-                    🙏 Thank You
+                  <div className="win95-card">
+                    <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '6px' }}>
+                      🙏 Thank You
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: '#333', margin: 0 }}>
+                      A huge thanks to the OPDB contributors and maintainers who keep the pinball database accurate,
+                      comprehensive, and freely available. This game literally could not exist without their work.
+                    </p>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#333', margin: 0 }}>
-                    A huge thanks to the OPDB contributors and maintainers who keep the pinball database accurate,
-                    comprehensive, and freely available. This game literally could not exist without their work.
-                  </p>
                 </div>
               </div>
             </div>
@@ -738,6 +737,89 @@ export default function Computer({
           />
         )}
 
+        {activeWindow === 'franchises' && (() => {
+          const last6 = financialHistory.slice(-6);
+          const avgDailyIncome = last6.length
+            ? Math.round(last6.reduce((s, r) => s + r.income, 0) / last6.length)
+            : 0;
+          const setupFee = Math.floor(franchiseTotalEquipCost * franchiseSetupFee);
+          const franchiseCost = franchiseTotalEquipCost + setupFee;
+          const totalPassiveIncome = franchises.reduce((s, f) => s + f.templateDailyIncome, 0);
+          const canOpen = franchiseTotalEquipCost > 0 && cash >= franchiseCost;
+          return (
+            <div className="win95-window">
+              <div className="win95-titlebar">
+                <div className="title">🏪 Franchise Manager</div>
+                <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+              </div>
+              <div className="win95-content" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto' }}>
+
+                <div className="win95-panel">
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Open New Franchise</div>
+                  {franchiseTotalEquipCost === 0 ? (
+                    <div style={{ color: '#888', fontSize: '0.85rem' }}>Place machines on the main floor first.</div>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '0.85rem' }}>Equipment value: ${franchiseTotalEquipCost.toLocaleString()}</div>
+                      <div style={{ fontSize: '0.85rem' }}>Setup fee (20%): ${setupFee.toLocaleString()}</div>
+                      <div style={{ marginTop: '4px' }}>Total cost: <strong>${franchiseCost.toLocaleString()}</strong></div>
+                      <div style={{ fontSize: '0.8rem', color: '#555', margin: '4px 0 6px' }}>
+                        New franchise will earn ${avgDailyIncome.toLocaleString()}/day based on current bar performance.
+                        All future machine purchases will cost ×{franchiseMultiplier + 1} (equipping {franchiseMultiplier + 1} locations).
+                      </div>
+                      <button
+                        className="win95-btn"
+                        disabled={!canOpen || dayState === 'REPORT'}
+                        onClick={onOpenFranchise}
+                      >
+                        {cash < franchiseCost ? `Need $${(franchiseCost - cash).toLocaleString()} more` : 'Open Franchise'}
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                <div className="win95-panel">
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Bar Performance — last 6 days</div>
+                  <div>Avg daily income: <strong>${avgDailyIncome.toLocaleString()}</strong></div>
+                  <div style={{ fontSize: '0.85rem', color: '#555', marginTop: '2px' }}>
+                    Pinball popularity: <strong style={{ color: pinballPopularity >= 70 ? '#006400' : pinballPopularity >= 40 ? '#b35900' : '#8b0000' }}>{pinballPopularity}%</strong>
+                    {franchises.length > 0 && (
+                      <span> · Passive franchise income: <strong>${totalPassiveIncome.toLocaleString()}/day</strong></span>
+                    )}
+                  </div>
+                </div>
+
+                {franchises.length > 0 && (
+                  <div className="win95-panel">
+                    <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Active Franchises ({franchises.length})</div>
+                    {franchises.map(f => {
+                      const refund = Math.floor(f.openingCost * 0.50);
+                      return (
+                        <div key={f.id} style={{ borderBottom: '1px solid #999', padding: '5px 0', fontSize: '0.85rem' }}>
+                          <div style={{ fontWeight: 'bold' }}>{f.name}</div>
+                          <div>Opened: {f.openedAt.year} · {f.machineCount} machine{f.machineCount !== 1 ? 's' : ''}</div>
+                          <div>Daily income: <strong>${f.templateDailyIncome.toLocaleString()}</strong> · Opening cost: ${f.openingCost.toLocaleString()}</div>
+                          <button
+                            className="win95-btn"
+                            style={{ marginTop: '4px', color: '#8b0000' }}
+                            onClick={() => onCloseFranchise(f.id)}
+                          >
+                            Close — recover ${refund.toLocaleString()}
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <div style={{ marginTop: '6px', fontWeight: 'bold' }}>
+                      Total passive income: ${totalPassiveIncome.toLocaleString()}/day
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="win95-taskbar">
           <button className="win95-start-btn" onClick={closeComputer}>
             <span style={{fontWeight: 'bold', marginRight: '5px'}}>Start</span> (Turn Off)
@@ -765,6 +847,9 @@ export default function Computer({
           )}
           {activeWindow === 'settings' && (
             <div className="taskbar-item active">Settings</div>
+          )}
+          {activeWindow === 'franchises' && (
+            <div className="taskbar-item active">Franchise Manager</div>
           )}
           <div className="taskbar-tray">
             <div className="taskbar-cash">${cash.toLocaleString()}</div>

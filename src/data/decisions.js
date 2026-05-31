@@ -268,6 +268,270 @@ export const DECISION_DEFS = [
   },
 
   {
+    id: 'reg_donation_choice',
+    label: "Reg's Offer",
+    weight: 10,
+    repeatable: false,
+    condition: ({ decisions, sentIds }) =>
+      sentIds.has('reg_offers_organ') &&
+      !decisions.reg_donation_accepted && !decisions.reg_donation_declined,
+    getMessage: () =>
+      `Reg has been tested. He's a match. He's already spoken to the hospital. He's told Linda. The email is sitting in your inbox and he's waiting for an answer.`,
+    choices: [
+      {
+        id: 'accept_donation',
+        label: 'Yes. Tell him yes.',
+        hint: 'the surgery is scheduled',
+        flagId: 'reg_donation_accepted',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'good',
+          message: "You wrote back. He replied within the hour with one word: 'Good.' Linda added a P.S. that was longer than Reg's entire email.",
+        },
+      },
+      {
+        id: 'decline_donation',
+        label: "I can't let him do this.",
+        hint: 'find another way',
+        flagId: 'reg_donation_declined',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He wrote back one line: 'I expected that. Think about it.' He left the offer open.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'black_market_offer',
+    label: 'An Approach',
+    weight: 8,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      time.year >= 2021 &&
+      !decisions.reg_donation_accepted &&
+      !sentIds.has('reg_offers_money') &&
+      !decisions.black_market_accepted && !decisions.black_market_declined,
+    getMessage: () =>
+      `A man you don't recognise comes in on a Tuesday evening and orders water. He says he heard you've been having some medical difficulties. He says he knows people. He says it's expensive but it works, and that you don't need to know anything else about it.`,
+    choices: [
+      {
+        id: 'black_market_yes',
+        label: "Tell me the number.",
+        hint: '−$50,000',
+        flagId: 'black_market_accepted',
+        effect: 'income_delta',
+        effectValue: -50000,
+        resolution: {
+          severity: 'bad',
+          message: "He named a number. You didn't ask any questions. It worked. You're not going to think too hard about how.",
+        },
+      },
+      {
+        id: 'black_market_no',
+        label: 'Tell him to leave.',
+        hint: 'no effect',
+        flagId: 'black_market_declined',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He finished his water and left. You don't know if he'll come back.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'home_computer_warning',
+    label: 'The Industry Memo',
+    weight: 5,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      time.year >= 1984 && time.week >= 5 &&
+      sentIds.has('terry_console_01') &&
+      !decisions.doubled_down_pinball && !decisions.added_video_cabinet && !decisions.console_wave_ignored,
+    getMessage: () =>
+      `Terry has forwarded a distributor circular about falling footfall at coin-op venues across the country. The numbers aren't dramatic yet, but the trend is clear. Gary noticed this week's Tuesday count was down eleven.`,
+    choices: [
+      {
+        id: 'double_down_pinball',
+        label: 'Double down — make this the best pinball bar in the city',
+        hint: '−$150, +20 popularity',
+        flagId: 'doubled_down_pinball',
+        effect: 'popularity_delta',
+        effectValue: 20,
+        effect2: 'income_delta',
+        effect2Value: -150,
+        resolution: {
+          severity: 'good',
+          message: 'You had the windows cleaned, the machines tuned, and a hand-lettered sign put in the door. The Tuesday count went back up.',
+        },
+      },
+      {
+        id: 'add_video_cabinet',
+        label: 'Add a couple of video arcade cabinets',
+        hint: '−$300, +10 popularity',
+        flagId: 'added_video_cabinet',
+        effect: 'income_delta',
+        effectValue: -300,
+        effect2: 'popularity_delta',
+        effect2Value: 10,
+        resolution: {
+          severity: 'neutral',
+          message: "The video cabinets drew some new faces. Gary noted that most of them came for Space Invaders and didn't stay.",
+        },
+      },
+      {
+        id: 'wait_and_see',
+        label: "Wait and see — it might sort itself out",
+        hint: 'no effect now',
+        flagId: 'console_wave_ignored',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "You filed the memo away. Tuesday was quieter than usual. You told yourself it was the weather.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'nes_response',
+    label: 'The Nintendo Question',
+    weight: 5,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      time.year >= 1986 && time.week >= 5 &&
+      sentIds.has('gary_console_02') &&
+      !decisions.hosted_pinball_league && !decisions.ran_nostalgia_campaign && !decisions.cut_opening_hours,
+    getMessage: ({ decisions = {} }) => {
+      let text = `Gary's latest numbers: Tuesday attendance down 23% on this time last year. The Nintendo console launched in America last Christmas. It's not here yet, but word travels.`;
+      if (decisions.doubled_down_pinball) {
+        text += `\n\nThe work you did in '84 is still visible — the machines are in good shape, the regulars are loyal. But the trend is real.`;
+      }
+      if (decisions.added_video_cabinet) {
+        text += `\n\nThe video cabinets have done decent business, but Gary notes the novelty is fading.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'host_league',
+        label: 'Start a weekly pinball league — make this the place',
+        hint: '−$200, +35 popularity',
+        flagId: 'hosted_pinball_league',
+        effect: 'popularity_delta',
+        effectValue: 35,
+        effect2: 'income_delta',
+        effect2Value: -200,
+        resolution: {
+          severity: 'good',
+          message: 'Eight people signed up for the first league night. By week three it was sixteen. Gary made a spreadsheet.',
+        },
+      },
+      {
+        id: 'nostalgia_campaign',
+        label: 'Run a "Real Machines" campaign — flyers, local press',
+        hint: '−$100, +15 popularity',
+        flagId: 'ran_nostalgia_campaign',
+        effect: 'popularity_delta',
+        effectValue: 15,
+        effect2: 'income_delta',
+        effect2Value: -100,
+        resolution: {
+          severity: 'neutral',
+          message: 'The piece ran in the local paper. You got some curious new faces, and a letter from someone who remembered playing here in 1978.',
+        },
+      },
+      {
+        id: 'cut_hours',
+        label: 'Cut opening hours — focus on the loyal regulars',
+        hint: '+$150, −20 popularity',
+        flagId: 'cut_opening_hours',
+        effect: 'income_delta',
+        effectValue: 150,
+        effect2: 'popularity_delta',
+        effect2Value: -20,
+        resolution: {
+          severity: 'bad',
+          message: 'The savings were real. So was the drop. Gary noted that three regulars stopped coming because of the Tuesday closure.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'console_peak_response',
+    label: 'The Reckoning',
+    weight: 8,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      time.year >= 1987 && time.week >= 5 &&
+      sentIds.has('darren_console_02') &&
+      !decisions.ran_championship && !decisions.accepted_decline && !decisions.leaned_into_nostalgia,
+    getMessage: ({ decisions = {} }) => {
+      let text = `The NES is in shops now. Darren hasn't been in since before Christmas. Gary says Tuesday attendance is down thirty-eight percent on 1984 levels.`;
+      if (decisions.hosted_pinball_league) {
+        text += `\n\nThe league nights are holding — fifteen regulars who wouldn't go anywhere else. It's something.`;
+      }
+      if (decisions.ran_nostalgia_campaign) {
+        text += `\n\nYour "Real Machines" regulars are still coming. They feel invested in the place.`;
+      }
+      if (decisions.console_wave_ignored && !decisions.hosted_pinball_league && !decisions.ran_nostalgia_campaign) {
+        text += `\n\nYou haven't made any major moves. The machines are still good, but the atmosphere has changed.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'championship',
+        label: 'Host a city-wide pinball championship',
+        hint: '−$300, +50 popularity',
+        flagId: 'ran_championship',
+        effect: 'popularity_delta',
+        effectValue: 50,
+        effect2: 'income_delta',
+        effect2Value: -300,
+        resolution: {
+          severity: 'good',
+          message: 'Forty-one entrants. A reporter from the local paper came to watch. Gary produced a written account of the final round. The log entry was the longest he had ever written.',
+        },
+      },
+      {
+        id: 'accept_decline',
+        label: 'Accept the new reality — serve the adults who remain',
+        hint: 'no cost, −10 popularity',
+        flagId: 'accepted_decline',
+        effect: 'popularity_delta',
+        effectValue: -10,
+        resolution: {
+          severity: 'neutral',
+          message: 'You let the bar shift. Quieter, older crowd. Not what it was, but honest about what it is now.',
+        },
+      },
+      {
+        id: 'lean_nostalgia',
+        label: 'Lean into nostalgia — vintage machines, period decor',
+        hint: '−$150, +20 popularity',
+        flagId: 'leaned_into_nostalgia',
+        effect: 'popularity_delta',
+        effectValue: 20,
+        effect2: 'income_delta',
+        effect2Value: -150,
+        resolution: {
+          severity: 'neutral',
+          message: 'Some people drove across the city to see the old machines. A few of them were photographers. You started seeing the place in pictures for the first time.',
+        },
+      },
+    ],
+  },
+
+  {
     id: 'danny_first_visit',
     label: 'The Kid',
     weight: 10,
@@ -300,6 +564,94 @@ export const DECISION_DEFS = [
         resolution: {
           severity: 'neutral',
           message: 'He packed up without a word. You noticed Gary watching from the back.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'danny_repair_bill',
+    label: 'The Invoice',
+    weight: 6,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      sentIds.has('mick_danny_note') && time.year >= 1977 && time.week >= 4 &&
+      !decisions.danny_maintenance_covered && !decisions.danny_told_about_wear && !decisions.danny_charged_for_repairs,
+    getMessage: () =>
+      `Mick's invoice is on the bar. The line item reads: "Machine three — elevated service frequency, extended wear pattern, left flipper mechanism." It's the third month in a row. Danny plays six, sometimes eight hours a week. The machines weren't built for that.`,
+    choices: [
+      {
+        id: 'pay_quietly',
+        label: 'Pay it without a word',
+        hint: '−$150',
+        flagId: 'danny_maintenance_covered',
+        effect: 'income_delta',
+        effectValue: -150,
+        resolution: {
+          severity: 'good',
+          message: "You signed the invoice and put it in the drawer. Danny doesn't know. He probably wouldn't accept it if he did.",
+        },
+      },
+      {
+        id: 'tell_danny',
+        label: 'Tell him — he should know what the machines cost to run',
+        hint: 'no immediate cost',
+        flagId: 'danny_told_about_wear',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He listened carefully and didn't say anything for a moment. Then he said he understood and would think about it.",
+        },
+      },
+      {
+        id: 'charge_danny',
+        label: 'Ask him to chip in — a few pounds a month',
+        hint: '+$30',
+        flagId: 'danny_charged_for_repairs',
+        effect: 'income_delta',
+        effectValue: 30,
+        resolution: {
+          severity: 'bad',
+          message: "He paid without complaint. Exact amount. He didn't look at you when he handed it over.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'danny_bumperzone_warning',
+    label: 'The Scout',
+    weight: 6,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      sentIds.has('gary_danny_warning') && time.year >= 1977 && time.week >= 7 &&
+      !decisions.danny_warned_about_bumperzone && !decisions.danny_not_warned_about_bumperzone,
+    getMessage: () =>
+      `Gary's note is sitting on the bar. A Bumper Zone fleet car. A man asking questions at the counter about "the boy who plays on Tuesdays." Danny's coming in tomorrow. He doesn't know any of this.`,
+    choices: [
+      {
+        id: 'warn_danny',
+        label: 'Tell him what you know',
+        hint: '+10 popularity',
+        flagId: 'danny_warned_about_bumperzone',
+        effect: 'popularity_delta',
+        effectValue: 10,
+        resolution: {
+          severity: 'good',
+          message: "He absorbed it quietly. Said 'okay.' You got the impression he'd already half-suspected something like this. He thanked you before he left.",
+        },
+      },
+      {
+        id: 'say_nothing',
+        label: 'Say nothing — it might come to nothing',
+        hint: 'no effect',
+        flagId: 'danny_not_warned_about_bumperzone',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He played his session and left. You watched him go and told yourself it was the right call.",
         },
       },
     ],
@@ -339,6 +691,99 @@ export const DECISION_DEFS = [
         resolution: {
           severity: 'neutral',
           message: 'Gary told her the graph was private. She apparently understood.',
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'chen_evening',
+    label: "Mr. Chen's Visit",
+    weight: 8,
+    repeatable: false,
+    condition: ({ time, decisions }) =>
+      decisions.chen_invited && time.year >= 1978 && time.week >= 3 &&
+      !decisions.chen_welcomed_personally && !decisions.chen_found_danny_quietly && !decisions.chen_observed_quietly,
+    getMessage: () =>
+      `Lawrence Chen is by the door. He's in a good coat and he's standing very still, watching Danny at machine three. Danny hasn't noticed. Mr. Chen doesn't look like he wants to interrupt. He looks like a man seeing something he'd been trying to picture for a long time.`,
+    choices: [
+      {
+        id: 'introduce_personally',
+        label: 'Go over and introduce yourself — tell him what you see in his son',
+        hint: '+15 popularity',
+        flagId: 'chen_welcomed_personally',
+        effect: 'popularity_delta',
+        effectValue: 15,
+        resolution: {
+          severity: 'good',
+          message: "He shook your hand for a long time. He said 'I see.' He said it twice. Danny noticed his father from across the room and went still for a moment, then kept playing. Mr. Chen watched to the end.",
+        },
+      },
+      {
+        id: 'point_him_over',
+        label: 'Catch his eye and point him toward Danny',
+        hint: 'no effect',
+        flagId: 'chen_found_danny_quietly',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He gave you a nod and walked over. You went back to the bar and didn't hear what was said.",
+        },
+      },
+      {
+        id: 'let_it_happen',
+        label: 'Leave them to it — Danny will notice when he looks up',
+        hint: 'no effect',
+        flagId: 'chen_observed_quietly',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "Danny looked up between games and went very still. They found each other without you. That felt right.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'danny_late_night',
+    label: 'Last Orders',
+    weight: 7,
+    repeatable: false,
+    condition: ({ time, decisions, sentIds }) =>
+      sentIds.has('danny_request_01') && time.year >= 1978 && time.week >= 9 &&
+      !decisions.danny_stayed_after_hours && !decisions.danny_closed_on_time,
+    getMessage: ({ decisions = {} }) => {
+      let text = `It's Thursday, twenty minutes to close. Danny is on machine three and he's clearly in the middle of something — not just playing, working something out. He hasn't looked at the clock.`;
+      if (decisions.danny_watched_repairs) {
+        text += ` Mick's tools are still on the side — he was in earlier and Danny stayed to watch him finish.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'lock_up_around_him',
+        label: 'Let him stay — lock up around him',
+        hint: '+5 popularity',
+        flagId: 'danny_stayed_after_hours',
+        effect: 'popularity_delta',
+        effectValue: 5,
+        resolution: {
+          severity: 'good',
+          message: "You put the chairs up and turned off the main lights except the one over machine three. He was still there when you left. You locked the door and he had a key.",
+        },
+      },
+      {
+        id: 'close_on_time',
+        label: 'Last orders — same rules for everyone',
+        hint: 'no effect',
+        flagId: 'danny_closed_on_time',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He looked up, registered the time, and powered down the machine mid-game without complaint. 'Fair enough,' he said. He said it like Gary.",
         },
       },
     ],

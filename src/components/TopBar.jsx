@@ -2,8 +2,11 @@ import React from 'react';
 import './TopBar.css';
 
 export default function TopBar({
-  pinbarName, time, cash, repairsRemaining, repairCapacity, popularity,
+  pinbarName, time, cash, repairsRemaining, repairCapacity, popularity, pinballPopularity = 60,
 }) {
+  const pinballColor = pinballPopularity >= 70 ? '#006400'
+    : pinballPopularity >= 40 ? '#b35900'
+    : '#8b0000';
   return (
     <div className="topbar">
       <div className="topbar-center">
@@ -31,6 +34,10 @@ export default function TopBar({
           <div className="stat-pill" style={{color: '#5b21b6'}}>
             <i className="fa-solid fa-star"></i>
             <span>{popularity}</span>
+          </div>
+          <div className="stat-pill" style={{color: pinballColor}}>
+            <i className="fa-solid fa-gauge-high"></i>
+            <span>Pinball {pinballPopularity}%</span>
           </div>
         </div>
       </div>

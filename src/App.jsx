@@ -102,6 +102,7 @@ function App() {
   // ── Arc event state ──
   const [firedArcEventIds, setFiredArcEventIds] = useState(new Set());
   const [popGainMult, setPopGainMult] = useState(1.0);
+  const [pinballPopularity, setPinballPopularity] = useState(60); // 0–100; drives foot traffic %
   const [liquidationLot, setLiquidationLot] = useState([]);
   const [liquidationExpiryDay, setLiquidationExpiryDay] = useState(null);
 
@@ -130,6 +131,9 @@ function App() {
   const [isComputerOpen, setIsComputerOpen] = useState(false);
   const [fastForward, setFastForward] = useState(false);
 
+  // ── Franchise state ──
+  const [franchises, setFranchises] = useState([]);
+
   // ── Week run ──
   const [autoRunTotal, setAutoRunTotal] = useState(null);
   const [autoRunRemaining, setAutoRunRemaining] = useState(null);
@@ -142,6 +146,17 @@ function App() {
   // ── Derived upgrade values ──
   const repairCapacity = 5 + upgrades.electronics * 2;
   const backroomRows = BACKROOM_ROWS + upgrades.quantum;
+
+  // ── Pinball popularity → foot traffic ──
+  const footTrafficMult = Math.max(0.05, Math.min(1.0, pinballPopularity / 100));
+
+  // ── Franchise derived values ──
+  const FRANCHISE_UNLOCK_POP = 1500;
+  const FRANCHISE_SETUP_FEE  = 0.20;
+  const franchiseMultiplier  = franchises.length + 1;
+  const franchiseTotalEquipCost = machines
+    .filter(m => m.x !== null && (m.room === 'main' || !m.room))
+    .reduce((sum, m) => sum + (m.purchasePrice ?? 0), 0);
   const purchaseDiscount = upgrades.supply_chain * 0.10;
   const upgradeValues = {
     patienceTicks: 30 + upgrades.psychology * 15,
@@ -157,6 +172,7 @@ function App() {
     repairmanCoverage: staff.repairman ? [10, 15, 25][upgrades.tech_training ?? 0] : 0,
     dayLengthSeconds: DAY_LENGTH_SECONDS + (upgrades.liquor_licensing ?? 0) * 5,
     liquor_licensing: upgrades.liquor_licensing ?? 0,
+    footTrafficMult,
   };
 
   // ── Hooks ──
@@ -255,7 +271,8 @@ function App() {
       firedArcEventIds: [...firedArcEventIds],
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
-      financialHistory, decisions,
+      financialHistory, decisions, franchises,
+      popGainMult, pinballPopularity,
       activeInvestment, activeLoan, medicalBills,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
@@ -283,11 +300,13 @@ function App() {
     setInbox([]);
     setFiredArcEventIds(new Set());
     setPopGainMult(1.0);
+    setPinballPopularity(60);
     setLiquidationLot([]);
     setLiquidationExpiryDay(null);
     setStaff(DEFAULT_STAFF);
     setServers([]);
     setDecisions({});
+    setFranchises([]);
     setActiveInvestment(null);
     setActiveLoan(null);
     setMedicalBills([]);
@@ -316,6 +335,8 @@ function App() {
     setInbox(s.inbox ?? []);
     setFiredArcEventIds(new Set(s.firedArcEventIds ?? []));
     setPopGainMult(s.popGainMult ?? 1.0);
+    // Migrate old saves that stored footTrafficMult (0–1) instead of pinballPopularity (0–100)
+    setPinballPopularity(s.pinballPopularity ?? (s.footTrafficMult != null ? Math.round(s.footTrafficMult * 100) : 60));
     setLiquidationLot(s.liquidationLot ?? []);
     setLiquidationExpiryDay(s.liquidationExpiryDay ?? null);
     const savedStaff = s.staff ?? DEFAULT_STAFF;
@@ -327,6 +348,7 @@ function App() {
     setServers(Array.from({ length: serverCount }, makeServerEntity));
     setFinancialHistory(s.financialHistory ?? []);
     setDecisions(s.decisions ?? {});
+    setFranchises(s.franchises ?? []);
     setActiveInvestment(s.activeInvestment ?? null);
     setActiveLoan(s.activeLoan ?? null);
     setMedicalBills(s.medicalBills ?? []);
@@ -464,7 +486,8 @@ function App() {
     const mYear = machine.parsedYear || extractYear(machine.supplementary);
     const durability = machine.durability ?? 100;
     const rawPrice = calculatePrice(mYear, time.year, durability, machine.locationCount ?? 0);
-    const price = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : null;
+    const basePrice = rawPrice ? Math.floor(rawPrice * (1 - purchaseDiscount)) : null;
+    const price = basePrice ? basePrice * franchiseMultiplier : null;
 
     if (price && cash >= price) {
       const backroomMachines = machines.filter(m => m.room === 'backroom');
@@ -505,7 +528,7 @@ function App() {
   const buySupply = (type) => {
     if (dayState === 'REPORT') return false;
     const nameMap = { kegerator: 'Kegerator', bartop: 'Bartop', bathroom: 'Bathroom', speed_well: 'Speed Well' };
-    const price = BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500;
+    const price = (BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500) * franchiseMultiplier;
     const name = nameMap[type] ?? type;
     if (cash >= price) {
       // Bathrooms must go in the main room — customers need to reach them
@@ -544,6 +567,32 @@ function App() {
       return true;
     }
     return false;
+  };
+
+  const handleOpenFranchise = () => {
+    const cost = Math.floor(franchiseTotalEquipCost * (1 + FRANCHISE_SETUP_FEE));
+    if (franchiseTotalEquipCost === 0 || cash < cost) return;
+    const last6 = financialHistory.slice(-6);
+    const avgIncome = last6.length
+      ? Math.round(last6.reduce((s, r) => s + r.income, 0) / last6.length)
+      : 0;
+    setFranchises(prev => [...prev, {
+      id: `franchise-${Date.now()}`,
+      name: `${pinbarName} #${prev.length + 2}`,
+      openedAt: { year: time.year, week: time.week },
+      templateDailyIncome: avgIncome,
+      openingCost: cost,
+      machineCount: machines.filter(m => m.x !== null && (m.room === 'main' || !m.room)).length,
+    }]);
+    setCash(c => c - cost);
+  };
+
+  const handleCloseFranchise = (franchiseId) => {
+    const target = franchises.find(f => f.id === franchiseId);
+    if (!target) return;
+    const refund = Math.floor(target.openingCost * 0.50);
+    setFranchises(prev => prev.filter(f => f.id !== franchiseId));
+    setCash(c => c + refund);
   };
 
   const sellMachine = (m) => {
@@ -669,7 +718,7 @@ function App() {
   const buyLiquidationMachine = (machine) => {
     if (dayState === 'REPORT') return false;
     const rawPrice = calculatePrice(machine.parsedYear, time.year, machine.durability, machine.locationCount ?? 0);
-    const price = rawPrice ? Math.floor(rawPrice * 0.40) : null; // 60% off — Reg needs it gone
+    const price = rawPrice ? Math.floor(rawPrice * 0.40 * franchiseMultiplier) : null; // 60% off — Reg needs it gone
 
     if (price && cash >= price) {
       const backroomMachines = machines.filter(m => m.room === 'backroom');
@@ -825,7 +874,10 @@ function App() {
           const salaryPerHead = def.id === 'repairman'
             ? def.weeklySalary + (upgrades.tech_training ?? 0) * 100
             : def.weeklySalary;
-          weeklyExpenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: salaryPerHead * count });
+          const salaryLabel = franchiseMultiplier > 1
+            ? `${def.name} ×${count} salary (×${franchiseMultiplier} locations)`
+            : `${def.name} ×${count} (salary)`;
+          weeklyExpenses.push({ id: `salary_${def.id}`, name: salaryLabel, icon: def.icon, amount: salaryPerHead * count * franchiseMultiplier });
         }
       }
       // Loan payment
@@ -928,13 +980,16 @@ St. Agatha's Billing Department`,
 
     // Record this day's financials before resetting dailyReport
     const expenseTotal = weeklyExpenses.reduce((s, e) => s + e.amount, 0);
+    const franchiseIncome = franchises.reduce((s, f) => s + f.templateDailyIncome, 0);
+    if (franchiseIncome > 0) setCash(c => c + franchiseIncome);
     setFinancialHistory(prev => [...prev, {
       year: time.year,
       week: time.week,
       day: time.day,
       income: dailyReport.income,
+      franchiseIncome,
       totalExpenses: expenseTotal,
-      net: dailyReport.income - expenseTotal,
+      net: dailyReport.income + franchiseIncome - expenseTotal,
     }]);
 
     // Check for courses completing on or before the new day
@@ -953,18 +1008,22 @@ St. Agatha's Billing Department`,
     const newFiredIds = new Set(firedArcEventIds);
     let arcPopDelta = 0;
     let newGainMult = popGainMult;
+    let newPinballPop = pinballPopularity;
     let openLiquidation = false;
 
     for (const event of ARC_EVENTS) {
-      if (event.trigger({ time: newTime, firedIds: newFiredIds, sentIds: currentSentIds })) {
+      if (event.trigger({ time: newTime, firedIds: newFiredIds, sentIds: currentSentIds, decisions })) {
         newFiredIds.add(event.id);
         if (event.popularityPct) arcPopDelta += event.popularityPct;
         if (event.setGainMult !== undefined) newGainMult = event.setGainMult;
+        if (event.pinballPopDelta !== undefined) newPinballPop = Math.max(5, Math.min(100, newPinballPop + event.pinballPopDelta));
+        if (event.setPinballPop !== undefined) newPinballPop = Math.max(5, Math.min(100, event.setPinballPop));
         if (event.triggerLiquidation) openLiquidation = true;
       }
     }
     if (newFiredIds.size > firedArcEventIds.size) setFiredArcEventIds(newFiredIds);
     if (newGainMult !== popGainMult) setPopGainMult(newGainMult);
+    if (newPinballPop !== pinballPopularity) setPinballPopularity(newPinballPop);
     if (openLiquidation) {
       setLiquidationLot(BUMPER_ZONE_MACHINES.map(m => ({ ...m })));
       setLiquidationExpiryDay(toLinearDay(newTime) + LIQUIDATION_DURATION_DAYS);
@@ -1004,7 +1063,7 @@ St. Agatha's Billing Department`,
     // Check for new emails (read inbox from closure — safe inside a click handler)
     const sentIds = new Set(inbox.map(e => e.id));
     const completedCourseIds = new Set(justCompleted.map(c => c.id));
-    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions };
+    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions, franchises };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
     if (newEmails.length > 0) {
@@ -1087,7 +1146,10 @@ St. Agatha's Billing Department`,
         const salaryPerHead = def.id === 'repairman'
           ? def.weeklySalary + (upgrades.tech_training ?? 0) * 100
           : def.weeklySalary;
-        expenses.push({ id: `salary_${def.id}`, name: `${def.name} ×${count} (salary)`, icon: def.icon, amount: salaryPerHead * count });
+        const salaryLabel = franchiseMultiplier > 1
+          ? `${def.name} ×${count} salary (×${franchiseMultiplier} locations)`
+          : `${def.name} ×${count} (salary)`;
+        expenses.push({ id: `salary_${def.id}`, name: salaryLabel, icon: def.icon, amount: salaryPerHead * count * franchiseMultiplier });
       }
     }
     if (activeLoan) {
@@ -1128,6 +1190,7 @@ St. Agatha's Billing Department`,
         repairsRemaining={repairsRemaining}
         repairCapacity={repairCapacity}
         popularity={popularity}
+        pinballPopularity={pinballPopularity}
       />
 
       {notification && (
@@ -1263,6 +1326,15 @@ St. Agatha's Billing Department`,
             medicalBills={medicalBills}
             onPayMedicalBill={payMedicalBill}
             onPayAllMedicalBills={payAllMedicalBills}
+            popularity={popularity}
+            franchises={franchises}
+            franchiseMultiplier={franchiseMultiplier}
+            franchiseTotalEquipCost={franchiseTotalEquipCost}
+            franchiseUnlockPop={FRANCHISE_UNLOCK_POP}
+            franchiseSetupFee={FRANCHISE_SETUP_FEE}
+            onOpenFranchise={handleOpenFranchise}
+            onCloseFranchise={handleCloseFranchise}
+            pinballPopularity={pinballPopularity}
           />
         )}
       </div>

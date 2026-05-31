@@ -15,21 +15,92 @@ export const BUMPER_ZONE_MACHINES = [
   { id: 'bz-sopranos',    name: 'The Sopranos',                  supplementary: 'Stern · 2005',    parsedYear: 2005, durability: 69, locationCount: 120 },
 ];
 
-// popularityPct: fraction of current popularity added as a one-time hit (negative = loss)
-// setGainMult: scales only positive daily popularity growth (losses stay full strength)
+// popularityPct:     fraction of current popularity added as a one-time hit (negative = loss)
+// setGainMult:       scales only positive daily popularity growth (losses stay full strength)
+// pinballPopDelta:   additive change to pinballPopularity (0–100 clamped 5–100)
+// setPinballPop:     set pinballPopularity to an absolute value (used for guaranteed floors)
 // triggerLiquidation: opens the Bumper Zone sale window in the market
 export const ARC_EVENTS = [
+
+  // ── Roger Sharpe lifts NYC ban (1976) ────────────────────────────────────
+  // Sharpe called his shot before city council. 35 years of bans ended in one afternoon.
+  {
+    id: 'arc_sharpe_ruling',
+    pinballPopDelta: 20,
+    trigger: ({ time, firedIds }) =>
+      time.year >= 1976 && !firedIds.has('arc_sharpe_ruling'),
+  },
+
+  // ── Danny's story reaches the paper ──────────────────────────────────────
   {
     id: 'arc_danny_fame',
     popularityPct: 0.12,
+    pinballPopDelta: 5,
     trigger: ({ time, firedIds, sentIds }) =>
       sentIds.has('danny_letter_01') && time.year >= 1977 && time.week >= 4 && !firedIds.has('arc_danny_fame'),
   },
+  {
+    id: 'arc_danny_press_boost',
+    pinballPopDelta: 8,
+    trigger: ({ firedIds, decisions }) =>
+      decisions.danny_journalist_featured && !firedIds.has('arc_danny_press_boost'),
+  },
+
+  // ── Danny breaks the record ───────────────────────────────────────────────
+  {
+    id: 'arc_danny_record_boost',
+    pinballPopDelta: 12,
+    trigger: ({ time, firedIds, decisions }) =>
+      time.year >= 1979 &&
+      (decisions.danny_stayed_for_run || decisions.crabtree_distracted) &&
+      !firedIds.has('arc_danny_record_boost'),
+  },
+
   {
     id: 'arc_competition',
     popularityPct: -0.15,
     trigger: ({ time, firedIds }) =>
       time.year >= 1981 && !firedIds.has('arc_competition'),
+  },
+
+  // ── Home Console Wave (1983–1989) ─────────────────────────────────────────
+  {
+    id: 'arc_atari_crash_ripple',
+    popularityPct: -0.05,
+    pinballPopDelta: -8,
+    trigger: ({ time, firedIds }) =>
+      time.year >= 1983 && !firedIds.has('arc_atari_crash_ripple'),
+  },
+  {
+    id: 'arc_console_wave_soft',
+    popularityPct: -0.12,
+    setGainMult: 0.92,
+    pinballPopDelta: -12,
+    trigger: ({ time, firedIds, decisions }) =>
+      time.year >= 1987 &&
+      !firedIds.has('arc_console_wave_soft') && !firedIds.has('arc_console_wave_hard') &&
+      (decisions.doubled_down_pinball || decisions.hosted_pinball_league ||
+       decisions.ran_championship || decisions.ran_nostalgia_campaign),
+  },
+  {
+    id: 'arc_console_wave_hard',
+    popularityPct: -0.25,
+    setGainMult: 0.85,
+    pinballPopDelta: -25,
+    trigger: ({ time, firedIds, decisions }) =>
+      time.year >= 1987 &&
+      !firedIds.has('arc_console_wave_soft') && !firedIds.has('arc_console_wave_hard') &&
+      !decisions.doubled_down_pinball && !decisions.hosted_pinball_league &&
+      !decisions.ran_championship && !decisions.ran_nostalgia_campaign,
+  },
+  {
+    id: 'arc_arcade_community_holds',
+    popularityPct: 0.08,
+    pinballPopDelta: 5,
+    trigger: ({ time, firedIds, decisions }) =>
+      time.year >= 1989 &&
+      !firedIds.has('arc_arcade_community_holds') &&
+      (decisions.ran_championship || decisions.hosted_pinball_league),
   },
   {
     id: 'arc_clustering',
@@ -38,17 +109,31 @@ export const ARC_EVENTS = [
     trigger: ({ sentIds, firedIds }) =>
       sentIds.has('voss_03') && !firedIds.has('arc_clustering'),
   },
+
+  // ── Nineties boom — Williams golden age, Addams Family era ───────────────
   {
     id: 'arc_nineties_boom',
-    // Pinball's second wind — full positive growth; 80s one-time shocks do not linger here.
     setGainMult: 1.0,
+    pinballPopDelta: 18,
     trigger: ({ time, firedIds }) =>
       time.year >= 1990 && time.year < 2001 && !firedIds.has('arc_nineties_boom'),
   },
+
+  // ── Williams exits pinball manufacturing (1999) ───────────────────────────
+  {
+    id: 'arc_williams_retires',
+    popularityPct: -0.10,
+    pinballPopDelta: -15,
+    trigger: ({ time, firedIds }) =>
+      time.year >= 1999 && !firedIds.has('arc_williams_retires'),
+  },
+
+  // ── Internet era — pinball floors out ────────────────────────────────────
   {
     id: 'arc_crisis_begins',
     popularityPct: -0.35,
     setGainMult: 0.75,
+    setPinballPop: 20,
     trigger: ({ time, firedIds }) =>
       time.year >= 2001 && !firedIds.has('arc_crisis_begins'),
   },
@@ -56,6 +141,7 @@ export const ARC_EVENTS = [
     id: 'arc_crisis_deepens',
     popularityPct: -0.45,
     setGainMult: 0.50,
+    setPinballPop: 10,
     trigger: ({ time, firedIds }) =>
       time.year >= 2006 && !firedIds.has('arc_crisis_deepens'),
   },
@@ -67,10 +153,13 @@ export const ARC_EVENTS = [
     trigger: ({ sentIds, firedIds }) =>
       sentIds.has('reg_08') && !firedIds.has('arc_bumperzone_closes'),
   },
+
+  // ── Pinball renaissance ───────────────────────────────────────────────────
   {
     id: 'arc_renaissance',
     popularityPct: 0.50,
     setGainMult: 1.0,
+    setPinballPop: 50,
     trigger: ({ time, firedIds }) =>
       time.year >= 2015 && !firedIds.has('arc_renaissance'),
   },

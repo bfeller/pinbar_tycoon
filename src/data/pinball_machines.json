@@ -104,14 +104,6 @@
     "locationCount": 3
   },
   {
-    "id": "GRWZN-MDv6X",
-    "name": "Card Trix",
-    "supplementary": "Gottlieb",
-    "parsedYear": 1970,
-    "imageUrl": "https://img.opdb.org/c5dbcd32-b97a-4cba-bb5c-9ade21e17361-small.jpg",
-    "locationCount": 0
-  },
-  {
     "id": "GRWZN-Mp41r",
     "name": "Card Trix",
     "supplementary": "Gottlieb",
@@ -1830,14 +1822,6 @@
     "parsedYear": 1975,
     "imageUrl": "https://img.opdb.org/804f7410-90be-41ca-8868-86e5fa4c6206-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "G4Plz-MJpwZ",
-    "name": "Criterium 75",
-    "supplementary": "Recel",
-    "parsedYear": 1975,
-    "imageUrl": "https://img.opdb.org/35cc01b3-66dd-4ecf-8120-4435f4a57af7-small.jpg",
-    "locationCount": 0
   },
   {
     "id": "GRo0B-MQdpe",
@@ -4206,14 +4190,6 @@
     "parsedYear": 1978,
     "imageUrl": "https://img.opdb.org/b7e49cbe-1c0d-4a8b-9309-8b67ffc98555-small.jpg",
     "locationCount": 1
-  },
-  {
-    "id": "G59y1-MQ2VY",
-    "name": "Ski Jump",
-    "supplementary": "Zaccaria",
-    "parsedYear": 1978,
-    "imageUrl": "https://img.opdb.org/6ea992b8-75a7-4f8b-b997-3d7dd23e40d4-small.jpg",
-    "locationCount": 0
   },
   {
     "id": "G5Yqx-MKNjX",
@@ -8488,22 +8464,6 @@
     "locationCount": 1
   },
   {
-    "id": "G4ODR-MLzY7",
-    "name": "The Addams Family Gold",
-    "supplementary": "Bally",
-    "parsedYear": 1994,
-    "imageUrl": "https://img.opdb.org/1550069e-5f45-4c46-97bb-fbd0fe4a4b02-small.jpg",
-    "locationCount": 548
-  },
-  {
-    "id": "G4ODR-MLzY7-ARJrR",
-    "name": "The Addams Family Special Collectors Edition",
-    "supplementary": "Bally",
-    "parsedYear": 1994,
-    "imageUrl": "https://img.opdb.org/df8c7685-db20-4e19-871d-80408b2320be-small.jpg",
-    "locationCount": 0
-  },
-  {
     "id": "GRK95-MQ674",
     "name": "The Flintstones",
     "supplementary": "Williams",
@@ -9136,14 +9096,6 @@
     "locationCount": 135
   },
   {
-    "id": "G4qbX-MJw5r-A93pJ",
-    "name": "Elvis Gold",
-    "supplementary": "Stern",
-    "parsedYear": 2004,
-    "imageUrl": "https://img.opdb.org/49815a3d-9403-4063-b041-dd56594aba35-small.jpg",
-    "locationCount": 135
-  },
-  {
     "id": "GRWyB-MLz6Z",
     "name": "Ripley's Believe It or Not!",
     "supplementary": "Stern",
@@ -9328,14 +9280,6 @@
     "locationCount": 0
   },
   {
-    "id": "GrZBr-MDbx7",
-    "name": "James Cameron's Avatar",
-    "supplementary": "Stern",
-    "parsedYear": 2010,
-    "imageUrl": "https://img.opdb.org/630d82d7-60d7-4938-8af1-98fa25c361ce-small.jpg",
-    "locationCount": 158
-  },
-  {
     "id": "GrZBr-MyNZz",
     "name": "James Cameron's Avatar (LE)",
     "supplementary": "Stern",
@@ -9360,14 +9304,6 @@
     "locationCount": 0
   },
   {
-    "id": "GrkL5-MLvrX",
-    "name": "Disney TRON: Legacy",
-    "supplementary": "Stern",
-    "parsedYear": 2011,
-    "imageUrl": "https://img.opdb.org/1b2c4cd0-3ffd-4049-878a-3e3267b06a9c-small.jpg",
-    "locationCount": 125
-  },
-  {
     "id": "GrkL5-MJoNN",
     "name": "Disney TRON: Legacy (LE)",
     "supplementary": "Stern",
@@ -9376,28 +9312,12 @@
     "locationCount": 125
   },
   {
-    "id": "GredR-MDE2K",
-    "name": "The Rolling Stones",
-    "supplementary": "Stern",
-    "parsedYear": 2011,
-    "imageUrl": "https://img.opdb.org/faf1b05a-27f8-4ae3-bac5-b6653d62a7a0-small.jpg",
-    "locationCount": 78
-  },
-  {
     "id": "GredR-Mb5jN",
     "name": "The Rolling Stones (LE)",
     "supplementary": "Stern",
     "parsedYear": 2011,
     "imageUrl": "https://img.opdb.org/d767735c-5378-4a8a-b608-74071b7f0a5a-small.jpg",
     "locationCount": 78
-  },
-  {
-    "id": "GRnPz-MLBzV",
-    "name": "Transformers",
-    "supplementary": "Stern",
-    "parsedYear": 2011,
-    "imageUrl": "https://img.opdb.org/9bcadc0c-9cff-456f-b6b2-7bd69a430e53-small.jpg",
-    "locationCount": 116
   },
   {
     "id": "GRnPz-Mx0XO",
@@ -9424,14 +9344,6 @@
     "locationCount": 396
   },
   {
-    "id": "G43W4-MrRpw",
-    "name": "AC/DC (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2012,
-    "imageUrl": "https://img.opdb.org/769b6c38-667e-4d14-a855-0db42c5b8496-small.jpg",
-    "locationCount": 0
-  },
-  {
     "id": "G43W4-MrRpw-AOPQR",
     "name": "AC/DC (Let There Be Rock LE)",
     "supplementary": "Stern",
@@ -9448,36 +9360,12 @@
     "locationCount": 396
   },
   {
-    "id": "G43W4-MKNW0",
-    "name": "AC/DC (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2012,
-    "imageUrl": "https://img.opdb.org/a780bf71-4b06-4fef-9faa-f6d15958d998-small.jpg",
-    "locationCount": 396
-  },
-  {
     "id": "G4835-M2YEn",
     "name": "Cactus Canyon Continued",
     "supplementary": "Eric Priepke",
     "parsedYear": 2012,
     "imageUrl": "https://img.opdb.org/655289e1-3860-4e9e-af09-b318c267e91f-small.jpg",
     "locationCount": 394
-  },
-  {
-    "id": "GRzNR-MLlEj",
-    "name": "The Avengers",
-    "supplementary": "Stern",
-    "parsedYear": 2012,
-    "imageUrl": "https://img.opdb.org/c329900d-da14-4e8c-a1a0-2519154aa4f2-small.jpg",
-    "locationCount": 144
-  },
-  {
-    "id": "GRzNR-MyNq8",
-    "name": "The Avengers (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2012,
-    "imageUrl": "https://img.opdb.org/0b1a9190-d670-47f0-92bb-12a85ac970cd-small.jpg",
-    "locationCount": 144
   },
   {
     "id": "GRzNR-Mz2WY",
@@ -9512,20 +9400,12 @@
     "locationCount": 0
   },
   {
-    "id": "Grj6X-MJwj5",
-    "name": "X-Men",
-    "supplementary": "Stern",
-    "parsedYear": 2012,
-    "imageUrl": "https://img.opdb.org/a92c5c93-815a-45d7-afec-05709d8e6d8d-small.jpg",
-    "locationCount": 137
-  },
-  {
     "id": "Grj6X-MJNV1",
     "name": "X-Men (LE)",
     "supplementary": "Stern",
     "parsedYear": 2012,
     "imageUrl": "https://img.opdb.org/cb8c7331-e2ac-4d8b-9b26-24ea4c20cf2e-small.jpg",
-    "locationCount": 0
+    "locationCount": 137
   },
   {
     "id": "Grj6X-MJNV1-AOwN1",
@@ -9560,27 +9440,11 @@
     "locationCount": 0
   },
   {
-    "id": "GRBE4-MOE4l",
-    "name": "Metallica (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": "https://img.opdb.org/a5595f0d-85d1-4964-acfb-47659f5133b1-small.jpg",
-    "locationCount": 420
-  },
-  {
     "id": "GRBE4-MJ9rE",
     "name": "Metallica (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2013,
     "imageUrl": "https://img.opdb.org/d6d201df-05f4-4f52-9684-7370864248df-small.jpg",
-    "locationCount": 0
-  },
-  {
-    "id": "GRBE4-MQK1Z",
-    "name": "Metallica (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": "https://img.opdb.org/73b05a42-9dbe-460d-a710-7a01085b4911-small.jpg",
     "locationCount": 420
   },
   {
@@ -9600,27 +9464,11 @@
     "locationCount": 1
   },
   {
-    "id": "Gryw4-MNEKn",
-    "name": "Star Trek (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": "https://img.opdb.org/e99bf492-d1cc-47fa-b8e6-6f5e12e44f07-small.jpg",
-    "locationCount": 392
-  },
-  {
     "id": "Gryw4-MRj4O",
     "name": "Star Trek (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2013,
     "imageUrl": "https://img.opdb.org/b294cfa2-0cc3-4782-afed-32e6686358c5-small.jpg",
-    "locationCount": 392
-  },
-  {
-    "id": "Gryw4-MwNky",
-    "name": "Star Trek (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2013,
-    "imageUrl": "https://img.opdb.org/7c67e993-4c92-490a-9d84-f06edfdbcf80-small.jpg",
     "locationCount": 392
   },
   {
@@ -9656,27 +9504,11 @@
     "locationCount": 229
   },
   {
-    "id": "GrPOR-MLq5x",
-    "name": "Mustang (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": "https://img.opdb.org/0baf846f-4f68-4fcc-9040-3be24077e7cd-small.jpg",
-    "locationCount": 86
-  },
-  {
     "id": "GrPOR-M61Pw",
     "name": "Mustang (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2014,
     "imageUrl": "https://img.opdb.org/d8a6ea5f-4f01-4bf9-b5aa-743ba5d24c27-small.jpg",
-    "locationCount": 86
-  },
-  {
-    "id": "GrPOR-MJK2k",
-    "name": "Mustang (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": "https://img.opdb.org/435b9dc9-a504-4555-b3d8-b032c9070bb0-small.jpg",
     "locationCount": 86
   },
   {
@@ -9688,36 +9520,12 @@
     "locationCount": 0
   },
   {
-    "id": "G5nz5-MP3r1",
-    "name": "The Walking Dead (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": "https://img.opdb.org/7646d74d-3b22-458c-b1ec-e97cb64e4d34-small.jpg",
-    "locationCount": 433
-  },
-  {
-    "id": "G5nz5-M3d38",
-    "name": "The Walking Dead (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2014,
-    "imageUrl": "https://img.opdb.org/3a57dde7-8ad4-459b-a2d6-9738ea53fb6c-small.jpg",
-    "locationCount": 433
-  },
-  {
     "id": "G5V8q-MQYZ6",
     "name": "Full Throttle",
     "supplementary": "Heighway Pinball",
     "parsedYear": 2015,
     "imageUrl": "https://img.opdb.org/7977db09-c94e-4640-b6ff-6215027a1493-small.jpg",
     "locationCount": 4
-  },
-  {
-    "id": "G41d5-M9REd",
-    "name": "Game of Thrones (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2015,
-    "imageUrl": "https://img.opdb.org/db7d65b0-c0d5-44ea-9520-e4dd96f9afd6-small.jpg",
-    "locationCount": 319
   },
   {
     "id": "G41d5-M0ovk",
@@ -9736,27 +9544,11 @@
     "locationCount": 319
   },
   {
-    "id": "G4qX5-Ml9jb",
-    "name": "KISS (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2015,
-    "imageUrl": "https://img.opdb.org/fed016c7-4e83-40d9-baa1-58b412cbde50-small.jpg",
-    "locationCount": 236
-  },
-  {
     "id": "G4qX5-MJN17",
     "name": "KISS (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2015,
     "imageUrl": "https://img.opdb.org/3c7c2e6a-6498-48b2-9234-766096899a21-small.jpg",
-    "locationCount": 236
-  },
-  {
-    "id": "G4qX5-Mz2Pp",
-    "name": "KISS (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2015,
-    "imageUrl": "https://img.opdb.org/eda6d53c-8e63-419a-bbda-4386ab65ada9-small.jpg",
     "locationCount": 236
   },
   {
@@ -9856,27 +9648,11 @@
     "locationCount": 9
   },
   {
-    "id": "GR9Nr-MVKol",
-    "name": "Ghostbusters (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2016,
-    "imageUrl": "https://img.opdb.org/f9e30b06-93e0-4870-8c25-efd0bd7f9d3e-small.jpg",
-    "locationCount": 683
-  },
-  {
     "id": "GR9Nr-M5RxE",
     "name": "Ghostbusters (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2016,
     "imageUrl": "https://img.opdb.org/d9b8a229-bcde-4710-9648-5e1fa6c220ba-small.jpg",
-    "locationCount": 683
-  },
-  {
-    "id": "GR9Nr-Mz2dY",
-    "name": "Ghostbusters (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2016,
-    "imageUrl": "https://img.opdb.org/745a5bd8-48ce-4693-9674-aff84a63478b-small.jpg",
     "locationCount": 683
   },
   {
@@ -9942,22 +9718,6 @@
     "parsedYear": 2017,
     "imageUrl": "https://img.opdb.org/939d5482-829d-47d2-8417-814d7e3799cf-small.jpg",
     "locationCount": 396
-  },
-  {
-    "id": "Gr16e-MnKEX",
-    "name": "Aerosmith",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/7b75fd25-db4a-4ac4-be7f-b12bd234a27d-small.jpg",
-    "locationCount": 326
-  },
-  {
-    "id": "Gr16e-M5Rbv",
-    "name": "Aerosmith (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/71e2e9ad-230e-46fc-8929-6c38cb0d411b-small.jpg",
-    "locationCount": 326
   },
   {
     "id": "Gr16e-Mq1k3",
@@ -10040,22 +9800,6 @@
     "locationCount": 128
   },
   {
-    "id": "GRWvz-Mp4yl",
-    "name": "Guardians of the Galaxy",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/2e487e41-3cc3-4895-bb85-bcff6aef1f61-small.jpg",
-    "locationCount": 710
-  },
-  {
-    "id": "GRWvz-MP37P",
-    "name": "Guardians of the Galaxy (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/fe8a2297-1d65-4331-ad9c-debfb5472121-small.jpg",
-    "locationCount": 710
-  },
-  {
     "id": "GRWvz-Mx0eb",
     "name": "Guardians of the Galaxy (Premium)",
     "supplementary": "Stern",
@@ -10096,27 +9840,11 @@
     "locationCount": 0
   },
   {
-    "id": "G5vLR-MZebq",
-    "name": "Star Wars (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/938561ea-cf41-489a-819c-5a260a83a54c-small.jpg",
-    "locationCount": 1160
-  },
-  {
     "id": "G5vLR-ME049",
     "name": "Star Wars (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2017,
     "imageUrl": "https://img.opdb.org/9f73b4f2-b77a-4f2a-9451-5d934819610a-small.jpg",
-    "locationCount": 1160
-  },
-  {
-    "id": "G5vLR-MwNwy",
-    "name": "Star Wars (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2017,
-    "imageUrl": "https://img.opdb.org/6525e8fb-e42b-4b1d-9878-3796202dd121-small.jpg",
     "locationCount": 1160
   },
   {
@@ -10160,27 +9888,11 @@
     "locationCount": 1
   },
   {
-    "id": "G6lnq-M6153",
-    "name": "Deadpool (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2018,
-    "imageUrl": "https://img.opdb.org/c0c1cf3b-5d6b-4b2b-a894-cbaaadaba43a-small.jpg",
-    "locationCount": 1115
-  },
-  {
     "id": "G6lnq-MRj7Z",
     "name": "Deadpool (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2018,
     "imageUrl": "https://img.opdb.org/57868149-ca9e-4008-b630-62b0ac9c698e-small.jpg",
-    "locationCount": 1115
-  },
-  {
-    "id": "G6lnq-Mq1kv",
-    "name": "Deadpool (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2018,
-    "imageUrl": "https://img.opdb.org/4cb6b567-180c-4caf-83ab-159255de6061-small.jpg",
     "locationCount": 1115
   },
   {
@@ -10190,22 +9902,6 @@
     "parsedYear": 2018,
     "imageUrl": "https://img.opdb.org/242443af-91b1-4444-a5b4-bf432b09461e-small.jpg",
     "locationCount": 0
-  },
-  {
-    "id": "G4dOQ-MyNbb",
-    "name": "Iron Maiden: Legacy of the Beast",
-    "supplementary": "Stern",
-    "parsedYear": 2018,
-    "imageUrl": "https://img.opdb.org/cf430f9a-7330-4192-9aae-87c5ab522984-small.jpg",
-    "locationCount": 792
-  },
-  {
-    "id": "G4dOQ-MW970",
-    "name": "Iron Maiden: Legacy of the Beast (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2018,
-    "imageUrl": "https://img.opdb.org/f95dceb2-5100-42e7-b2c0-941880f757f7-small.jpg",
-    "locationCount": 792
   },
   {
     "id": "G4dOQ-MkPxr",
@@ -10336,27 +10032,11 @@
     "locationCount": 215
   },
   {
-    "id": "GD7Ld-MBRP4-A1e4P",
-    "name": "Black Knight: Sword of Rage (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/27fb732c-dedb-47cb-9eb9-6e123182c42f-small.jpg",
-    "locationCount": 432
-  },
-  {
     "id": "GD7Ld-MBRP4",
     "name": "Black Knight: Sword of Rage (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/66f59597-eb2d-4764-b6ef-19e5a30750dc-small.jpg",
-    "locationCount": 432
-  },
-  {
-    "id": "GD7Ld-ME0BP",
-    "name": "Black Knight: Sword of Rage (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/4a70ab88-b622-49ff-a3c7-2cd0715595bb-small.jpg",
     "locationCount": 432
   },
   {
@@ -10373,14 +10053,6 @@
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/49f368c2-6f10-423b-9554-94c382f8a09b-small.jpg",
-    "locationCount": 320
-  },
-  {
-    "id": "GZVOd-MwNxZ-AR8vV",
-    "name": "Elvira's House of Horrors (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/9733f2b0-0540-4492-ad3a-7a7f5727ad76-small.jpg",
     "locationCount": 320
   },
   {
@@ -10408,27 +10080,11 @@
     "locationCount": 0
   },
   {
-    "id": "GK17D-MKNKd-AOyKv",
-    "name": "Jurassic Park (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/783b8036-d92d-4a61-889d-1152f1d7d5ce-small.jpg",
-    "locationCount": 1083
-  },
-  {
     "id": "GK17D-MKNKd-A15Yn",
     "name": "Jurassic Park (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/076433ba-52f0-47cf-9dda-f78bbeb752aa-small.jpg",
-    "locationCount": 1083
-  },
-  {
-    "id": "GK17D-MdEqz",
-    "name": "Jurassic Park (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/e7197795-c83e-4278-8b7a-9b20480d0a3d-small.jpg",
     "locationCount": 1083
   },
   {
@@ -10472,35 +10128,11 @@
     "locationCount": 1160
   },
   {
-    "id": "G5vLR-MwNwy-A9Vob",
-    "name": "Star Wars Comic Art (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/2e567d55-22b9-462e-88c1-6996553fdd29-small.jpg",
-    "locationCount": 1160
-  },
-  {
-    "id": "Gzy89-M0oPy-A9xXV",
-    "name": "Stranger Things (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/32d25c1d-3d71-43c8-8539-74ecbcf5d8e9-small.jpg",
-    "locationCount": 925
-  },
-  {
     "id": "Gzy89-M0oPy-A1zrL",
     "name": "Stranger Things (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/d607bdcb-40aa-4ab1-923c-3f73c426a256-small.jpg",
-    "locationCount": 925
-  },
-  {
-    "id": "Gzy89-MNEeO",
-    "name": "Stranger Things (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/dd165916-0430-4bf1-8efe-278aa8ece1f3-small.jpg",
     "locationCount": 925
   },
   {
@@ -10521,27 +10153,11 @@
     "locationCount": 1
   },
   {
-    "id": "GbPde-Mp43l-AO4Do",
-    "name": "The Munsters (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/799ee454-1b66-4a9d-859f-3dcbc3e78668-small.jpg",
-    "locationCount": 480
-  },
-  {
     "id": "GbPde-Mp43l-AOQwL",
     "name": "The Munsters (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2019,
     "imageUrl": "https://img.opdb.org/707b7a5b-53b7-4e0e-b2d5-71fe3dcfe4c3-small.jpg",
-    "locationCount": 480
-  },
-  {
-    "id": "GbPde-M5Rkv",
-    "name": "The Munsters (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2019,
-    "imageUrl": "https://img.opdb.org/273afc51-2c46-4e54-97ee-d5cc2b605d9f-small.jpg",
     "locationCount": 480
   },
   {
@@ -10577,27 +10193,11 @@
     "locationCount": 140
   },
   {
-    "id": "Gj66P-MXr0E-ARkqN",
-    "name": "Avengers: Infinity Quest (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/c21cb11d-beae-4087-be80-809842ab133e-small.jpg",
-    "locationCount": 630
-  },
-  {
     "id": "Gj66P-MXr0E-A1nx0",
     "name": "Avengers: Infinity Quest (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2020,
     "imageUrl": "https://img.opdb.org/c06933ee-e37a-45e2-b6c0-bad5daca7c59-small.jpg",
-    "locationCount": 630
-  },
-  {
-    "id": "Gj66P-M3dxn",
-    "name": "Avengers: Infinity Quest (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/d985319a-a086-43bc-8ecb-889c3ebf8267-small.jpg",
     "locationCount": 630
   },
   {
@@ -10665,27 +10265,11 @@
     "locationCount": 148
   },
   {
-    "id": "Gweel-ME0pP-AR0N5",
-    "name": "Led Zeppelin (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/51294bc8-657e-4ae6-8f67-92597c3d36ef-small.jpg",
-    "locationCount": 415
-  },
-  {
     "id": "Gweel-ME0pP-ARqVK",
     "name": "Led Zeppelin (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2020,
     "imageUrl": "https://img.opdb.org/07aa3d73-adbc-4288-93d2-f6c68fe05f63-small.jpg",
-    "locationCount": 415
-  },
-  {
-    "id": "Gweel-M9Rk0",
-    "name": "Led Zeppelin (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/71ff43a2-3d28-47fb-b9c3-8028ab7414f2-small.jpg",
     "locationCount": 415
   },
   {
@@ -10729,27 +10313,11 @@
     "locationCount": 0
   },
   {
-    "id": "Gd2Xb-MRjpZ-A92v0",
-    "name": "Teenage Mutant Ninja Turtles (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/6918ece8-4ac4-4d53-93a9-3bcd42500dbb-small.jpg",
-    "locationCount": 609
-  },
-  {
     "id": "Gd2Xb-MRjpZ-A9wqN",
     "name": "Teenage Mutant Ninja Turtles (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2020,
     "imageUrl": "https://img.opdb.org/201ff094-5151-4342-be31-b67ca536ac01-small.jpg",
-    "locationCount": 609
-  },
-  {
-    "id": "Gd2Xb-Mq1qv",
-    "name": "Teenage Mutant Ninja Turtles (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2020,
-    "imageUrl": "https://img.opdb.org/fcb2c7ab-4af8-4ec0-a0d7-4bb97757789c-small.jpg",
     "locationCount": 609
   },
   {
@@ -10801,27 +10369,11 @@
     "locationCount": 48
   },
   {
-    "id": "GweeP-Ml9pZ-A9vXB",
-    "name": "Godzilla (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": "https://img.opdb.org/6395743f-d5ad-4a44-9c28-71eca21c5656-small.jpg",
-    "locationCount": 1544
-  },
-  {
     "id": "GweeP-Ml9pZ-ARZoY",
     "name": "Godzilla (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2021,
     "imageUrl": "https://img.opdb.org/3cf2e195-ae8d-4183-aa03-d181d361034f-small.jpg",
-    "locationCount": 1544
-  },
-  {
-    "id": "GweeP-MW95j",
-    "name": "Godzilla (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": "https://img.opdb.org/af8b1df3-0f35-49ec-942a-64a6d1f91953-small.jpg",
     "locationCount": 1544
   },
   {
@@ -10897,27 +10449,11 @@
     "locationCount": 0
   },
   {
-    "id": "GBLLP-MW900-A1KoQ",
-    "name": "The Mandalorian (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": "https://img.opdb.org/a176f447-7c61-4284-afa6-3cf29b709dd8-small.jpg",
-    "locationCount": 886
-  },
-  {
     "id": "GBLLP-MW900-AOEEN",
     "name": "The Mandalorian (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2021,
     "imageUrl": "https://img.opdb.org/c8acdac1-a7fe-4125-92dc-006836d902ed-small.jpg",
-    "locationCount": 886
-  },
-  {
-    "id": "GBLLP-MkPpr",
-    "name": "The Mandalorian (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2021,
-    "imageUrl": "https://img.opdb.org/b2a3df2d-bd75-4bed-a7ea-aef9fe7e7d69-small.jpg",
     "locationCount": 886
   },
   {
@@ -10994,27 +10530,11 @@
     "locationCount": 42
   },
   {
-    "id": "GQKyP-MP3OK-A1KoX",
-    "name": "James Bond 007 (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": "https://img.opdb.org/5a317604-63cc-490c-84cc-49b2748da9a4-small.jpg",
-    "locationCount": 743
-  },
-  {
     "id": "GQKyP-MP3OK-AOEEx",
     "name": "James Bond 007 (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2022,
     "imageUrl": "https://img.opdb.org/effa7627-de52-4e9f-982c-7d2fa4a02e69-small.jpg",
-    "locationCount": 743
-  },
-  {
-    "id": "GQKyP-Mx0O4",
-    "name": "James Bond 007 (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": "https://img.opdb.org/696f28f7-443e-4bab-97a6-69d2ec333005-small.jpg",
     "locationCount": 743
   },
   {
@@ -11034,27 +10554,11 @@
     "locationCount": 24
   },
   {
-    "id": "G2Lkd-M0ope-A97xV",
-    "name": "Rush (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": "https://img.opdb.org/b21a7a29-5fc8-4399-a536-b7933d46aae2-small.jpg",
-    "locationCount": 503
-  },
-  {
     "id": "G2Lkd-M0ope-A9dNy",
     "name": "Rush (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2022,
     "imageUrl": "https://img.opdb.org/ec57f7be-a602-4be5-9166-ae94f85fe3f2-small.jpg",
-    "locationCount": 503
-  },
-  {
-    "id": "G2Lkd-MNEdK",
-    "name": "Rush (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2022,
-    "imageUrl": "https://img.opdb.org/d5240fe1-bed4-4775-bcdd-6a17a0ba8532-small.jpg",
     "locationCount": 503
   },
   {
@@ -11154,27 +10658,11 @@
     "locationCount": 3
   },
   {
-    "id": "GpeoL-MkPz1-A944p",
-    "name": "Foo Fighters (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": "https://img.opdb.org/3a1f38d6-eded-44d1-a311-307efb67671c-small.jpg",
-    "locationCount": 856
-  },
-  {
     "id": "GpeoL-MkPz1-A9Qlw",
     "name": "Foo Fighters (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/7f351600-3de4-45d5-8729-6857bb0d420d-small.jpg",
-    "locationCount": 856
-  },
-  {
-    "id": "GpeoL-MyNPq",
-    "name": "Foo Fighters (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": "https://img.opdb.org/bc8f4662-5be2-4d79-b020-21c9b5cacd1a-small.jpg",
     "locationCount": 856
   },
   {
@@ -11298,27 +10786,11 @@
     "locationCount": 92
   },
   {
-    "id": "G3EBl-MRj6e-ARzbx",
-    "name": "Venom (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": "https://img.opdb.org/bad590b0-4231-4698-b378-3f4e438fc89d-small.jpg",
-    "locationCount": 668
-  },
-  {
     "id": "G3EBl-MRj6e-AOVkD",
     "name": "Venom (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2023,
     "imageUrl": "https://img.opdb.org/88057d58-3f96-49d7-b635-21725103fac3-small.jpg",
-    "locationCount": 668
-  },
-  {
-    "id": "G3EBl-Mq1zy",
-    "name": "Venom (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2023,
-    "imageUrl": "https://img.opdb.org/554d5f6c-83af-4d32-9fca-947990f1af24-small.jpg",
     "locationCount": 668
   },
   {
@@ -11418,14 +10890,6 @@
     "locationCount": 1544
   },
   {
-    "id": "GLWll-M1r8O-A1kx7",
-    "name": "JAWS (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/321b09e1-098d-4cb9-9825-cde518459b87-small.jpg",
-    "locationCount": 1098
-  },
-  {
     "id": "GLWll-M1r8O-ARnV7",
     "name": "JAWS (Premium)",
     "supplementary": "Stern",
@@ -11434,35 +10898,11 @@
     "locationCount": 1098
   },
   {
-    "id": "GLWll-MXr4N",
-    "name": "JAWS (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/80c09af9-aa5d-426d-8111-b5ab93e09cfb-small.jpg",
-    "locationCount": 1098
-  },
-  {
-    "id": "GQK1P-Ml95Z-A9bjw",
-    "name": "John Wick (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/f96fca1e-68d4-46a4-afc0-8503902e6b94-small.jpg",
-    "locationCount": 553
-  },
-  {
     "id": "GQK1P-Ml95Z-AOY43",
     "name": "John Wick (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/5f6a2daa-c083-45cd-8aa6-ef646e0208f8-small.jpg",
-    "locationCount": 553
-  },
-  {
-    "id": "GQK1P-MW9pj",
-    "name": "John Wick (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/7e88a55a-05ce-4877-b4a7-77fe2dba2700-small.jpg",
     "locationCount": 553
   },
   {
@@ -11488,14 +10928,6 @@
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/ac5d2378-056d-4fff-b687-1a831f8fe195-small.jpg",
     "locationCount": 33
-  },
-  {
-    "id": "GO0q3-MOEy8-ARrPz",
-    "name": "Metallica Remastered (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/ea08ed0c-df0f-4750-be38-01c2e63f3020-small.jpg",
-    "locationCount": 286
   },
   {
     "id": "GO0q3-MOEy8-ARol7",
@@ -11578,27 +11010,11 @@
     "locationCount": 18
   },
   {
-    "id": "G7ZEz-MyN3K-ARl3o",
-    "name": "The Uncanny X-Men (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/67c004fd-f9d1-4d67-a459-058d8ca86fb5-small.jpg",
-    "locationCount": 614
-  },
-  {
     "id": "G7ZEz-MyN3K-AO4qp",
     "name": "The Uncanny X-Men (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2024,
     "imageUrl": "https://img.opdb.org/656daa3b-b252-44ec-980e-c2e3d113c3ba-small.jpg",
-    "locationCount": 614
-  },
-  {
-    "id": "G7ZEz-MBRYn",
-    "name": "The Uncanny X-Men (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2024,
-    "imageUrl": "https://img.opdb.org/0f18e457-0921-4b91-9243-010fad8065c7-small.jpg",
     "locationCount": 614
   },
   {
@@ -11635,27 +11051,11 @@
     "locationCount": 52
   },
   {
-    "id": "GK1Ej-MePok-A1zKx",
-    "name": "Dungeons & Dragons: The Tyrant's Eye (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/25ae7f7b-8c42-408d-96e5-e7d22201105c-small.jpg",
-    "locationCount": 663
-  },
-  {
     "id": "GK1Ej-MePok-A9VWD",
     "name": "Dungeons & Dragons: The Tyrant's Eye (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/d86a3e65-44b7-46cd-978d-211b86be4a08-small.jpg",
-    "locationCount": 663
-  },
-  {
-    "id": "GK1Ej-MwNZr",
-    "name": "Dungeons & Dragons: The Tyrant's Eye (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/593fd16d-2e6a-4f82-b81e-1fb2f95e565e-small.jpg",
     "locationCount": 663
   },
   {
@@ -11699,27 +11099,11 @@
     "locationCount": 1098
   },
   {
-    "id": "GEL0V-MyN8E-ARq7n",
-    "name": "King Kong: Myth of Terror Island (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/da0e6ee7-6922-49d1-8f99-615903ebfb99-small.jpg",
-    "locationCount": 669
-  },
-  {
     "id": "GEL0V-MyN8E-A1Dkr",
     "name": "King Kong: Myth of Terror Island (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/359b002f-0eac-4999-b582-67238bbeb9e5-small.jpg",
-    "locationCount": 669
-  },
-  {
-    "id": "GEL0V-MBRyb",
-    "name": "King Kong: Myth of Terror Island (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/305c30e1-33d5-4e2d-9c8a-7de3f8210022-small.jpg",
     "locationCount": 669
   },
   {
@@ -11779,36 +11163,12 @@
     "locationCount": 23
   },
   {
-    "id": "Gxv81-Mo1rp-A9Qew",
-    "name": "Star Wars: Fall of the Empire (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/2f852797-f028-4c73-be5b-f85ff47a7a83-small.jpg",
-    "locationCount": 416
-  },
-  {
     "id": "Gxv81-Mo1rp-A9vrL",
     "name": "Star Wars: Fall of the Empire (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2025,
     "imageUrl": "https://img.opdb.org/ac52fae6-ce94-41b5-9a05-e21736cebbfe-small.jpg",
     "locationCount": 416
-  },
-  {
-    "id": "Gxv81-M610r",
-    "name": "Star Wars: Fall of the Empire (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/68defeaf-e2bd-48c1-893e-e9f9853dd5b1-small.jpg",
-    "locationCount": 416
-  },
-  {
-    "id": "Gj6DE-MePEz-AR5Pz",
-    "name": "The Walking Dead Remastered (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2025,
-    "imageUrl": "https://img.opdb.org/3a1cff81-4b71-4dfb-a1b1-21a7f81f38e5-small.jpg",
-    "locationCount": 82
   },
   {
     "id": "Gj6DE-MePEz-ARJ35",
@@ -11827,27 +11187,11 @@
     "locationCount": 23
   },
   {
-    "id": "GV8wB-MRjKd-ARz2r",
-    "name": "Pok\u00e9mon (LE)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": "https://img.opdb.org/6760f322-aac9-4d6e-85e0-8998e29aa53f-small.jpg",
-    "locationCount": 715
-  },
-  {
     "id": "GV8wB-MRjKd-AOVy7",
     "name": "Pok\u00e9mon (Premium)",
     "supplementary": "Stern",
     "parsedYear": 2026,
     "imageUrl": "https://img.opdb.org/54d0e2d4-7cbf-49e5-b378-6a573ce82f28-small.jpg",
-    "locationCount": 715
-  },
-  {
-    "id": "GV8wB-Mq12N",
-    "name": "Pok\u00e9mon (Pro)",
-    "supplementary": "Stern",
-    "parsedYear": 2026,
-    "imageUrl": "https://img.opdb.org/fd10f07d-ffdf-4a45-a8e1-32546e3e4b52-small.jpg",
     "locationCount": 715
   },
   {

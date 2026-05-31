@@ -240,6 +240,85 @@ P.S. The Gottlieb is fixed. The new sound was also fixed. There is currently no 
     choices: null,
   },
 
+  // ── Franchise arc ─────────────────────────────────────────────────────────
+
+  {
+    id: 'reg_franchise_01',
+    from: 'Reg Nutter',
+    address: 'regnutter@thebumperzone.biz',
+    subject: "heard you've expanded",
+    body:
+`Hi.
+
+I have heard — through general industry channels, which is to say Dave Morley mentioned it at the trade suppliers — that you've opened a second location.
+
+I don't know how to describe how I feel about this professionally. So I'll say: I note it as a significant strategic development in the local sector. That is my official position on the matter.
+
+I also note that you didn't mention it. Which is fine. We're not required to mention things.
+
+Reg Nutter
+Owner & Operator, The Bumper Zone
+"Pinball Done Properly"
+
+P.S. The Gottlieb is making a new sound. I am not going to connect these two pieces of information.`,
+    trigger: ({ time, sentIds, franchises }) =>
+      franchises.length >= 1 && time.year >= 1990 &&
+      sentIds.has('reg_acknowledge') && !sentIds.has('reg_franchise_01'),
+    choices: null,
+  },
+
+  {
+    id: 'reg_franchise_02',
+    from: 'Reg Nutter',
+    address: 'regnutter@thebumperzone.biz',
+    subject: 'The Bumper Zone Expansion Initiative',
+    body:
+`Hi.
+
+I wanted to let you know — professionally — that The Bumper Zone is expanding.
+
+I've been planning this for some time. The second location will be called The Outer Zone. I want to be clear that this name was entirely my idea and is in no way a response to decisions made by other operators in the area. It simply reflects a natural geographic extension of our brand identity.
+
+The Outer Zone will have six machines, a modified version of our signature carpet, and a lighting scheme I'm already quite pleased with. Steve said "that's a big step." I told him it was a calculated step. He said those are the same thing. He's not wrong, but I didn't say that.
+
+I'm telling you because I feel we've reached a stage where these things can be mentioned. That's how I'm choosing to read our professional relationship at this point.
+
+Reg Nutter
+Owner & Operator, The Bumper Zone (Two Locations)
+"Pinball Done Properly — In More Places"
+
+P.S. The Gottlieb has been relocated to The Outer Zone as a "featured machine." This is not why I'm expanding. I just want that noted.`,
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('reg_franchise_01') && time.year >= 1992 && !sentIds.has('reg_franchise_02'),
+    choices: null,
+  },
+
+  {
+    id: 'reg_franchise_result',
+    from: 'Reg Nutter',
+    address: 'regnutter@thebumperzone.biz',
+    subject: 'operational update',
+    body:
+`Hi.
+
+A brief operational update.
+
+The Outer Zone has been consolidated back into the main Bumper Zone operation. This was a strategic decision following a full review of the financial and logistical picture. It was not — and I want to be clear about this — a failure. It was a reallocation of resources in response to a market that was, I'll acknowledge, more challenging than the original projections suggested.
+
+The machines are back. Most of them.
+
+Linda said "I told you." I said she hadn't told me. She said "I thought it, which is the same thing." We've been married long enough that this is a reasonable position.
+
+The main Bumper Zone is still here. Still the same. Some things don't need two locations to work.
+
+Reg
+
+P.S. The Gottlieb came back too. It is not doing well. But it came back.`,
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('reg_franchise_02') && time.year >= 1996 && !sentIds.has('reg_franchise_result'),
+    choices: null,
+  },
+
   // ── First friendly gesture (1991) ────────────────────────────────────────
 
   {
@@ -411,7 +490,10 @@ Reg
 P.S. The Gottlieb is still going. Not fully fixed, I'll be honest with you now. But still going.`,
     trigger: ({ time, sentIds }) =>
       time.year >= 2004 && sentIds.has('reg_06') && !sentIds.has('reg_plan'),
-    choices: null,
+    choices: [
+      { label: "Count me in. Two bars, one night.", effectId: null, decisionsFlag: 'reg_joint_night_confirmed' },
+      { label: "Not quite the right timing.", effectId: null, decisionsFlag: 'reg_joint_night_deferred' },
+    ],
   },
 
   // ── Still standing (2006) ─────────────────────────────────────────────────
@@ -491,7 +573,10 @@ Reg
 P.S. The Gottlieb eventually became the problem I said it wasn't. Turns out Dave was right about the sound. Don't tell Dave.`,
     trigger: ({ time, sentIds }) =>
       time.year >= 2010 && sentIds.has('reg_07') && !sentIds.has('reg_08'),
-    choices: null,
+    choices: [
+      { label: "Come over. Take whatever you want. The Gottlieb too.", effectId: null, decisionsFlag: 'reg_farewelled_warmly' },
+      { label: "Take care of yourself, Reg.", effectId: null, decisionsFlag: 'reg_farewelled_briefly' },
+    ],
     event: {
       label: 'The Bumper Zone is Closing',
       severity: 'bad',

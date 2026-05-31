@@ -92,7 +92,13 @@ export default function useGameEngine({
       openingRush,
     });
 
-    if (!guaranteed && Math.random() <= spawnThreshold) return false;
+    const ftMult = upgradeValuesRef.current.footTrafficMult ?? 1.0;
+    // Scale the spawn probability: chance = (1 - threshold) * ftMult
+    const effectiveThreshold = ftMult >= 1.0
+      ? spawnThreshold
+      : 1 - (1 - spawnThreshold) * ftMult;
+
+    if (!guaranteed && Math.random() <= effectiveThreshold) return false;
 
     setCustomers(prev => [...prev, {
       id: 'cust-' + Date.now() + Math.random(),

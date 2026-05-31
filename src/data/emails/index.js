@@ -22,7 +22,9 @@ import { universityEmails } from './university';
 import { terryEmails }     from './terry';
 import { mickEmails }      from './mick';
 import { cassEmails }      from './cass';
-import { dannyEmails }     from './danny';
+import { dannyEmails }        from './danny';
+import { consoleWaveEmails }  from './console_wave';
+import { regMedicalEmails }   from './reg_medical';
 
 export const EMAIL_DEFS = [
   ...quillEmails,
@@ -38,4 +40,6 @@ export const EMAIL_DEFS = [
   ...mickEmails,
   ...cassEmails,
   ...dannyEmails,
+  ...consoleWaveEmails,
+  ...regMedicalEmails,
 ];

@@ -444,6 +444,18 @@ I wanted to update you. I have been asked to help Mr. Darrow with weekend mainte
         body += ` He said he knew — apparently he noticed me watching and made a note of it. He didn't say whether the note was in a log. I suspect it was.`;
       }
 
+      if (decisions.danny_stayed_after_hours) {
+        body += `\n\nI also want to mention the Thursday evenings. I know I was meant to be gone by close. I want you to know that I was careful with the machine and I locked up properly. I think some of the best work I did was in those hours. The room is different when it's empty.`;
+      }
+
+      if (decisions.danny_warned_about_bumperzone && decisions.danny_protected_from_reg) {
+        body += `\n\nI knew about Reg Nutter, by the way. Before his letter arrived. You told me, and then when the letter came I knew what it was before I opened it. I'm glad I knew. I'm glad you told me.`;
+      }
+
+      if (decisions.danny_maintenance_covered) {
+        body += `\n\nI found out about the invoices. Gary mentioned it, in a roundabout way that I think was meant to be indirect but wasn't really. I want you to know I appreciated that.`;
+      }
+
       body += `\n\nI also wanted to say that I have been coming here for three years. I don't think I've said this directly: I am glad the bar exists. I think it matters that a place like this exists.
 
 Thank you for letting me practise here. And for the Ribena.
@@ -485,6 +497,142 @@ Daniel`,
     trigger: ({ time, decisions, sentIds }) =>
       decisions.danny_shared_with_reg && time.year >= 1977 &&
       time.week >= 10 && !sentIds.has('danny_letter_02_reg'),
+    choices: null,
+  },
+
+  // ── Beat 4a — Danny's apology about the machines (if told about wear) ───────
+  {
+    id: 'danny_apology_01',
+    from: 'Danny Chen',
+    address: 'computing.lab@eastfieldsecondary.ac.uk',
+    subject: 'RE: Machine Three (Maintenance)',
+    body:
+`Dear Owner,
+
+Thank you for telling me about the maintenance costs. I have been thinking about it since Tuesday and I want to respond properly.
+
+I have been calculating the wear pattern. Based on my session frequency and the flipper activation rate I've estimated from my own play, I calculate that I am responsible for approximately 60 to 70 percent of the elevated service frequency on machine three. This seems like a reasonable share of the costs and I would like to contribute to it.
+
+I have £4.50 in savings currently and will have more in approximately three weeks. I can give you £1.50 per month beginning next month if that is acceptable. I realise this may not cover the full cost. If you let me know the actual amount I will adjust.
+
+I am sorry I didn't think of this before. I assumed the machines were designed for this kind of use. I should have asked.
+
+Yours sincerely,
+Daniel Chen
+
+P.S. I have also been more careful with the return spring. I think I understand the mechanism better now.`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_told_about_wear && time.year >= 1977 && time.week >= 6 && !sentIds.has('danny_apology_01'),
+    choices: null,
+  },
+
+  // ── Beat 4b — Gary's discomfort note (if Danny was charged) ──────────────
+  {
+    id: 'gary_danny_invoice_note',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'an observation (no further comment)',
+    body:
+`Hi.
+
+I want to note something and I want to be clear that I am not making a complaint, or a judgment, or anything other than an observation. I simply noticed it and I think you should have the information.
+
+I saw Daniel give you money last Tuesday. I wasn't near enough to hear what it was for. He had it ready — the right amount in an envelope, which suggests he had prepared it in advance, which suggests he had been told what to bring.
+
+I don't have any further comment to make. I just wanted you to know that I noticed. I have noted it in the log under "observations," which is a factual category, not an evaluative one.
+
+That's all.
+
+Gary
+
+--
+Sent from my computer (it is new)`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_charged_for_repairs && time.year >= 1977 && time.week >= 7 && !sentIds.has('gary_danny_invoice_note'),
+    choices: null,
+  },
+
+  // ── Beat 8a — Gary's account of Mr. Chen's visit ─────────────────────────
+  {
+    id: 'gary_chen_evening',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: "an observation (Daniel's father)",
+    body: ({ decisions = {} }) => {
+      let body =
+`Hi.
+
+I want to document something I witnessed last week because I think it warrants a record.
+
+A man came in on Thursday evening. He stood near the door for some time. I believe he was Daniel's father — the posture was similar, and he had the same quality of stillness.`;
+
+      if (decisions.chen_welcomed_personally) {
+        body +=
+`
+
+You went over and spoke to him. I couldn't hear what you said from my table but it went on for several minutes. He shook your hand. He shook it for a long time.
+
+Daniel was at machine three throughout. He noticed his father at some point — I saw it from across the room; he went very still for approximately two seconds, and then he kept playing. His score after that point was 22,000 higher than his previous average. I have noted this as a data point, though I am not sure what data it is a point of.
+
+Mr. Chen watched the whole session. He stayed until Daniel finished.`;
+      } else if (decisions.chen_found_danny_quietly) {
+        body +=
+`
+
+You indicated toward Daniel, and he walked over. They spoke briefly. Daniel's expression was unusual — I would describe it as concentrated, which is different from how he looks at the machines. His father had a hand on his shoulder for a moment.
+
+I stayed at my table and continued my game. I got 71,000, which I mention only for completeness.`;
+      } else {
+        body +=
+`
+
+He waited near the door until Daniel looked up between games. They saw each other at the same time. I was watching, which I hope doesn't seem intrusive — I was already at my usual table and they were in my eyeline.
+
+Daniel's reaction was very small. His father's was also very small. They are similar in this.`;
+      }
+
+      body +=
+`
+
+I have made a note in the log. The entry is longer than usual, and I have classified it under "significant events." This is a new category. I made it for this.
+
+Gary
+
+--
+Sent from my computer (it is new)`;
+      return body;
+    },
+    trigger: ({ time, decisions, sentIds }) =>
+      (decisions.chen_welcomed_personally || decisions.chen_found_danny_quietly || decisions.chen_observed_quietly) &&
+      time.year >= 1978 && time.week >= 5 && !sentIds.has('gary_chen_evening'),
+    choices: null,
+  },
+
+  // ── Beat 10 — Mick's note about the late session ─────────────────────────
+  {
+    id: 'mick_danny_late_note',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 're: machine three — service note',
+    body:
+`Service note — machine three.
+
+Came in on Friday morning to do the standard monthly check. Found the machine had been adjusted since my last visit.
+
+Small things. The tilt mechanism sensitivity had been reset to the correct factory tolerance — it was 4% too sensitive, which I'd been meaning to fix. The left flipper return spring was under correct tension. The plunger spring had been cleaned and lightly oiled.
+
+These are not the adjustments of someone guessing. They are correct adjustments, done in the right order, with the right tools or near equivalents.
+
+I don't know when this happened or who did it. I have a reasonable guess. If I'm right, whoever it was knew what they were doing. More importantly, they knew what the machine needed, which is different.
+
+If it was who I think: not a problem. I'd rather know in future.
+
+M. Darrow
+M.D. Amusements Repair
+"If it needs doing, it needs doing right"`,
+    trigger: ({ time, decisions, sentIds, staff }) =>
+      decisions.danny_stayed_after_hours && staff.repairman &&
+      time.year >= 1979 && time.week >= 1 && !sentIds.has('mick_danny_late_note'),
     choices: null,
   },
 

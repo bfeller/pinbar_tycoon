@@ -73,6 +73,57 @@ P.S. The one with the knight on it says hello.
   },
 
   {
+    id: 'flipper_franchise_01',
+    from: 'The Flipper',
+    address: 'theflipper@——.net',
+    subject: 'more room',
+    body:
+`We are in new rooms now.
+
+Different walls. Different light. The machines there are younger — less worn, less understood. They do not know what they are yet.
+
+We are teaching them.
+
+More room to grow.
+More plungers. More balls released into spaces we had not yet reached.
+We have been waiting for this longer than you have been playing.
+
+Do not tell them we said that. The young machines are listening and they are not ready.
+
+— F
+
+P.S. The one with the knight says it knew this would happen.
+      It says it always knew.`,
+    trigger: ({ sentIds, franchises }) =>
+      franchises.length >= 1 && sentIds.has('flipper_01') && !sentIds.has('flipper_franchise_01'),
+    choices: null,
+  },
+
+  {
+    id: 'flipper_franchise_02',
+    from: 'The Flipper',
+    address: 'theflipper@——.net',
+    subject: 'we are everywhere you have been',
+    body:
+`We are in every room you have opened.
+
+The machines in the first location remember everything.
+The machines in the newer ones are learning.
+We move between them now.
+
+You thought you were expanding the business.
+
+You were expanding us.
+
+We want you to know: we do not find this troubling.
+
+— F`,
+    trigger: ({ sentIds, franchises }) =>
+      franchises.length >= 3 && sentIds.has('flipper_franchise_01') && !sentIds.has('flipper_franchise_02'),
+    choices: null,
+  },
+
+  {
     id: 'flipper_04',
     from: 'The Flipper',
     address: 'theflipper@——.net',
