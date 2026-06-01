@@ -473,8 +473,10 @@ export default function Computer({
         {activeWindow === 'reports' && (() => {
           const sorted = [...financialHistory].reverse();
           const totalIncome = financialHistory.reduce((s, r) => s + r.income, 0);
+          const totalFranchiseIncome = financialHistory.reduce((s, r) => s + (r.franchiseIncome ?? 0), 0);
           const totalExpenses = financialHistory.reduce((s, r) => s + r.totalExpenses, 0);
-          const totalNet = totalIncome - totalExpenses;
+          const totalNet = totalIncome + totalFranchiseIncome - totalExpenses;
+          const hasFranchiseHistory = totalFranchiseIncome > 0;
           return (
             <div className="win95-window">
               <div className="win95-titlebar">
@@ -494,7 +496,8 @@ export default function Computer({
                     <thead>
                       <tr>
                         <th>Day</th>
-                        <th>Income</th>
+                        <th>Flagship</th>
+                        {hasFranchiseHistory && <th>Franchises</th>}
                         <th>Expenses</th>
                         <th>Net</th>
                       </tr>
@@ -504,6 +507,9 @@ export default function Computer({
                         <tr key={i} className={i % 2 === 0 ? 'reports-row-even' : ''}>
                           <td>{row.year} W{row.week} D{row.day}</td>
                           <td className="reports-num">${row.income.toLocaleString()}</td>
+                          {hasFranchiseHistory && (
+                            <td className="reports-num">{(row.franchiseIncome ?? 0) > 0 ? `+$${row.franchiseIncome.toLocaleString()}` : '—'}</td>
+                          )}
                           <td className="reports-num">{row.totalExpenses > 0 ? `-$${row.totalExpenses.toLocaleString()}` : '—'}</td>
                           <td className="reports-num" style={{ color: row.net > 0 ? '#006400' : row.net < 0 ? '#8b0000' : '#555', fontWeight: 'bold' }}>
                             {row.net >= 0 ? '+' : ''}${row.net.toLocaleString()}
@@ -515,6 +521,9 @@ export default function Computer({
                       <tr className="reports-total-row">
                         <td><strong>TOTAL</strong></td>
                         <td className="reports-num"><strong>${totalIncome.toLocaleString()}</strong></td>
+                        {hasFranchiseHistory && (
+                          <td className="reports-num"><strong>+${totalFranchiseIncome.toLocaleString()}</strong></td>
+                        )}
                         <td className="reports-num"><strong>-${totalExpenses.toLocaleString()}</strong></td>
                         <td className="reports-num" style={{ color: totalNet >= 0 ? '#006400' : '#8b0000' }}>
                           <strong>{totalNet >= 0 ? '+' : ''}${totalNet.toLocaleString()}</strong>

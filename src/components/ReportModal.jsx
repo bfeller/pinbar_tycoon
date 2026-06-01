@@ -24,8 +24,10 @@ const LOG_MAX = Math.log1p(1200);
 export default function ReportModal({
   dailyReport, machines, popularity, upgrades, popGainMult = 1,
   repairsRemaining, cash, repairMachine, nextDay, upcomingExpenses = [],
+  franchiseIncome = 0, franchiseCount = 0,
   title = '📊 End of Day Report',
 }) {
+  const totalIncome = dailyReport.income + franchiseIncome;
   const placedPinball = machines.filter(m => m.type === 'pinball' && m.room === 'main' && m.x !== null);
   const machineEquivalents = Math.floor(
     placedPinball.reduce((sum, m) => sum + 1 + (Math.log1p(m.locationCount ?? 0) / LOG_MAX) * 4, 0)
@@ -47,7 +49,17 @@ export default function ReportModal({
        <div className="report-modal">
          <div className="report-modal-titlebar">{title}</div>
          <div className="report-modal-body">
-         <p style={{fontSize: '1.2rem', color: '#006400'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
+         {franchiseCount > 0 ? (
+           <div style={{ fontSize: '1.2rem', color: '#006400' }}>
+             <p style={{ margin: 0 }}>Daily Income: <strong>+${totalIncome.toLocaleString()}</strong></p>
+             <div style={{ fontSize: '0.8rem', color: '#444444', marginTop: '0.2rem', display: 'flex', gap: '1rem' }}>
+               <span>🏠 Flagship: +${dailyReport.income.toLocaleString()}</span>
+               <span>🏪 Franchises ×{franchiseCount}: +${franchiseIncome.toLocaleString()}</span>
+             </div>
+           </div>
+         ) : (
+           <p style={{fontSize: '1.2rem', color: '#006400'}}>Daily Income: <strong>+${dailyReport.income}</strong></p>
+         )}
          <div style={{marginTop: '0.75rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap'}}>
            <span style={{color: '#000000'}}>★ Popularity: {popularity} <span style={{fontSize:'0.85rem', color: popularityDelta >= 0 ? '#006400' : '#cc0000'}}>({popularityDelta >= 0 ? '+' : ''}{popularityDelta})</span></span>
            <span style={{fontSize: '0.85rem', color: '#444444'}}>

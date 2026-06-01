@@ -418,6 +418,7 @@ function App() {
         }
         return {
           income:             (prev?.income      ?? 0) + dailyReport.income,
+          franchiseIncome:    (prev?.franchiseIncome ?? 0) + dailyReport.income * franchises.length,
           damage:             Array.from(damageMap.values()),
           satisfied:          (prev?.satisfied   ?? 0) + (dailyReport.satisfied   ?? 0),
           unsatisfied:        (prev?.unsatisfied ?? 0) + (dailyReport.unsatisfied ?? 0),
@@ -1322,6 +1323,8 @@ St. Agatha's Billing Department`,
             repairMachine={repairMachine}
             nextDay={nextDay}
             upcomingExpenses={upcomingExpenses}
+            franchiseIncome={dailyReport.income * franchises.length}
+            franchiseCount={franchises.length}
           />
         )}
 
@@ -1338,6 +1341,8 @@ St. Agatha's Billing Department`,
             repairMachine={repairMachine}
             nextDay={() => { setShowAutoRunSummary(false); setAutoRunSummary(null); setAutoRunTotal(null); }}
             upcomingExpenses={upcomingExpenses}
+            franchiseIncome={autoRunSummary.franchiseIncome ?? 0}
+            franchiseCount={franchises.length}
           />
         )}
 
