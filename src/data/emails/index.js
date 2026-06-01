@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Email definitions — barrel file
 //
-// Each trigger receives: { time, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions }
+// Each trigger receives: { time, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions, franchises, upgrades }
 // sentIds is a Set of IDs already in the player's inbox (used to sequence emails)
 // completedCourseIds is a Set of course IDs that completed this day (only populated on that day)
 // decisions is the full decisions object { flagId: true, ... } (read-only)
@@ -25,6 +25,7 @@ import { cassEmails }      from './cass';
 import { dannyEmails }        from './danny';
 import { consoleWaveEmails }  from './console_wave';
 import { regMedicalEmails }   from './reg_medical';
+import { loyaltyCultEmails }  from './loyaltyCult';
 
 export const EMAIL_DEFS = [
   ...quillEmails,
@@ -42,4 +43,5 @@ export const EMAIL_DEFS = [
   ...dannyEmails,
   ...consoleWaveEmails,
   ...regMedicalEmails,
+  ...loyaltyCultEmails,
 ];

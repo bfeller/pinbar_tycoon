@@ -4,6 +4,43 @@
 
 export const corporateEmails = [
 
+  // ── Head Office proposal — fires at 10 franchises ─────────────────────────
+  {
+    id: 'head_office_offer',
+    from: 'Janet Okafor — Franchise Operations',
+    address: 'j.okafor@pinbar-ops.co.uk',
+    subject: 'Proposal: Establishing Head Office',
+    body:
+`Dear Owner,
+
+My name is Janet Okafor. I manage operations across your franchise network, and I'm writing with a proposal I've been developing for some time.
+
+You now operate eleven locations. At this scale, the informal coordination model we've been using — direct calls, shared spreadsheets, best guesses — is becoming a liability. I've been tracking operational incidents across the network for the past six months and the pattern is clear: decisions that should take an afternoon are taking a week, and problems at one location are reaching two others before anyone has context.
+
+What I'm proposing is a dedicated head office. A central operations hub from which the network can be managed properly: procurement, maintenance scheduling, staff oversight, and eventually R&D into what makes this business more competitive at scale.
+
+The upfront cost is significant — £250,000 for the fit-out and first year — with ongoing premises costs of £5,000 per week thereafter. It's not a small commitment. But at eleven locations generating what we generate, it's also not an unusual one.
+
+I can walk you through the numbers in detail if that would help. What I can say from here: the network is ready for this. The question is whether the business is.
+
+Yours,
+Janet Okafor
+Franchise Operations Manager`,
+    trigger: ({ franchises, sentIds }) =>
+      franchises.length >= 10 && !sentIds.has('head_office_offer'),
+    choices: [
+      { label: 'Establish Head Office ($250,000 + $5,000/week)', effectId: 'purchase_head_office', decisionsFlag: 'head_office_purchased' },
+      { label: 'Not yet — hold off for now.', effectId: null, decisionsFlag: 'head_office_deferred' },
+    ],
+    event: {
+      label: 'Proposal from Operations',
+      severity: 'neutral',
+      message: 'Janet Okafor has sent a proposal. Check your inbox.',
+    },
+  },
+
+
+
   {
     id: 'bally_01',
     from: 'Bally Manufacturing',

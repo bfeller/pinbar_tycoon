@@ -8,6 +8,175 @@
 
 export const DECISION_DEFS = [
 
+  // ── Chaos events (chaosOnly: true, repeatable: true) ─────────────────────
+  // Fire only when franchises > 10 and no head office is established.
+  // Frequency scales with excess franchise count via the chaos roll in eventRoller.
+  // These are excluded from the regular decision pool.
+
+  {
+    id: 'chaos_coordination',
+    label: 'Coordination Failure',
+    weight: 5,
+    repeatable: true,
+    chaosOnly: true,
+    condition: ({ franchises }) => franchises.length > 10,
+    getMessage: ({ franchises = [] }) => {
+      const count = franchises.length;
+      return `A routine maintenance decision needed authorisation from someone. Nobody knew who. Three managers waited a week. Two acted independently and contradicted each other. You're running ${count} locations without a central authority and it is starting to show.`;
+    },
+    choices: [
+      {
+        id: 'chaos_coord_absorb',
+        label: 'Absorb the cost and move on',
+        hint: '−$2,000',
+        flagId: 'chaos_coord_absorbed',
+        effect: 'income_delta',
+        effectValue: -2000,
+        resolution: {
+          severity: 'bad',
+          message: "You signed off on the remediation. It was routine. It should not have cost $2,000. It will happen again.",
+        },
+      },
+      {
+        id: 'chaos_coord_escalate',
+        label: 'Investigate — find out who dropped this',
+        hint: '−$500, −15 popularity',
+        flagId: 'chaos_coord_escalated',
+        effect: 'income_delta',
+        effectValue: -500,
+        effect2: 'popularity_delta',
+        effect2Value: -15,
+        resolution: {
+          severity: 'bad',
+          message: "The investigation cost more in morale than the original problem cost in money. Staff at three locations are now unsure what they're allowed to decide.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'chaos_rogue_spend',
+    label: 'Unauthorised Expenditure',
+    weight: 4,
+    repeatable: true,
+    chaosOnly: true,
+    condition: ({ franchises }) => franchises.length > 10,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)]?.name ?? 'one of your locations';
+      return `The manager at ${loc} spent $4,000 on a full refit of the bar area. It looks good. They did not ask. They sent receipts after the fact with a note explaining that they'd "been meaning to bring it up."`;
+    },
+    choices: [
+      {
+        id: 'chaos_rogue_absorb',
+        label: "Absorb it — it's done now",
+        hint: '−$4,000',
+        flagId: 'chaos_rogue_absorbed',
+        effect: 'income_delta',
+        effectValue: -4000,
+        resolution: {
+          severity: 'bad',
+          message: "The refit looks good. You paid for it. You still don't know how many other managers are planning similar initiatives.",
+        },
+      },
+      {
+        id: 'chaos_rogue_claw_back',
+        label: 'Claw it back from wages over three months',
+        hint: '−$1,500, −20 popularity',
+        flagId: 'chaos_rogue_clawed',
+        effect: 'income_delta',
+        effectValue: -1500,
+        effect2: 'popularity_delta',
+        effect2Value: -20,
+        resolution: {
+          severity: 'bad',
+          message: "The manager accepted the deduction without complaint, which somehow made it worse. Word travelled to other locations before the week was out.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'chaos_coverage_gap',
+    label: 'Location Unstaffed',
+    weight: 5,
+    repeatable: true,
+    chaosOnly: true,
+    condition: ({ franchises }) => franchises.length > 10,
+    getMessage: ({ franchises = [] }) => {
+      const loc = franchises[Math.floor(Math.random() * franchises.length)]?.name ?? 'one of your locations';
+      return `${loc} ran without a manager for four days. The bar manager quit on Monday. Nobody escalated it. Staff opened and closed without authorisation because they didn't know what else to do. You found out on Friday.`;
+    },
+    choices: [
+      {
+        id: 'chaos_gap_emergency',
+        label: 'Send emergency cover immediately',
+        hint: '−$3,000',
+        flagId: 'chaos_gap_covered',
+        effect: 'income_delta',
+        effectValue: -3000,
+        resolution: {
+          severity: 'bad',
+          message: "Cover arrived and stabilised the location. The four days of unmanaged operation cost you in a dozen small ways you'll be finding for weeks.",
+        },
+      },
+      {
+        id: 'chaos_gap_promote',
+        label: 'Promote from within — give a staff member the keys',
+        hint: '−$800, −10 popularity',
+        flagId: 'chaos_gap_promoted',
+        effect: 'income_delta',
+        effectValue: -800,
+        effect2: 'popularity_delta',
+        effect2Value: -10,
+        resolution: {
+          severity: 'bad',
+          message: "The promoted staff member is trying their best. Customers are noticing the inconsistency in how the location is run.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'chaos_supplier_tangle',
+    label: 'Supply Chain Confusion',
+    weight: 4,
+    repeatable: true,
+    chaosOnly: true,
+    condition: ({ franchises }) => franchises.length > 10,
+    getMessage: ({ franchises = [] }) => {
+      const count = franchises.length;
+      return `${count} locations placed separate orders with the same three suppliers this month. The suppliers received conflicting instructions, applied discounts inconsistently, and one of them invoiced the same delivery to two different locations. Your accounts department has flagged a discrepancy of approximately $3,500.`;
+    },
+    choices: [
+      {
+        id: 'chaos_supplier_pay',
+        label: 'Pay the discrepancy and sort it out later',
+        hint: '−$3,500',
+        flagId: 'chaos_supplier_paid',
+        effect: 'income_delta',
+        effectValue: -3500,
+        resolution: {
+          severity: 'bad',
+          message: "The accounts are cleared. The underlying process that caused it is unchanged. Next month the same suppliers will receive seventeen separate orders again.",
+        },
+      },
+      {
+        id: 'chaos_supplier_dispute',
+        label: 'Dispute the invoice — drag it out',
+        hint: '−$1,000, −10 popularity',
+        flagId: 'chaos_supplier_disputed',
+        effect: 'income_delta',
+        effectValue: -1000,
+        effect2: 'popularity_delta',
+        effect2Value: -10,
+        resolution: {
+          severity: 'bad',
+          message: "The dispute resolved in your favour, mostly. The supplier now charges you a 'complex account premium' on future orders. You choose not to ask what that means.",
+        },
+      },
+    ],
+  },
+
   // ── Franchise events ──────────────────────────────────────────────────────
   // These only fire when the player has at least one active franchise.
   // getMessage receives franchises so it can name the affected location.

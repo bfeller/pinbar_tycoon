@@ -29,6 +29,7 @@ export default function useGameEngine({
   upgradeValues = {},
   decisions = {},
   franchises = [],
+  headOffice = null,
   inbox = [],
   isPausedRef,
   fastForward = false,
@@ -53,6 +54,7 @@ export default function useGameEngine({
   const onCustomerSpendRef = useRef(onCustomerSpend);
   const decisionsRef       = useRef(decisions);
   const franchisesRef      = useRef(franchises);
+  const headOfficeRef      = useRef(headOffice);
   const sentIdsRef         = useRef(new Set(inbox.map(e => e.id)));
   const lastEventDayRef    = useRef(-1); // lin-day of last fired event, prevents >1 per day
   const prevDayStateRef    = useRef(dayState);
@@ -74,6 +76,7 @@ export default function useGameEngine({
   useEffect(() => { onCustomerSpendRef.current = onCustomerSpend;}, [onCustomerSpend]);
   useEffect(() => { decisionsRef.current       = decisions;      }, [decisions]);
   useEffect(() => { franchisesRef.current      = franchises;     }, [franchises]);
+  useEffect(() => { headOfficeRef.current      = headOffice;     }, [headOffice]);
   useEffect(() => { sentIdsRef.current = new Set(inbox.map(e => e.id)); }, [inbox]);
 
   trySpawnPatronRef.current = ({ guaranteed = false, openingRush = false } = {}) => {
@@ -175,6 +178,7 @@ export default function useGameEngine({
         cash:         cashRef.current,
         decisions:    decisionsRef.current,
         franchises:   franchisesRef.current,
+        headOffice:   headOfficeRef.current,
         sentIds:      sentIdsRef.current,
         lastEventDay: lastEventDayRef.current,
       });

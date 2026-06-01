@@ -7,6 +7,7 @@ import { calcCustomerPopDelta, calcDailyPopGain } from './utils/popularity';
 import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
 import { UPGRADE_DEFS } from './data/upgrades';
+import { CORPORATE_UPGRADE_DEFS } from './data/corporateUpgrades';
 import { STAFF_DEFS } from './data/staff';
 import { EMAIL_DEFS } from './data/emails/index';
 import { ARC_EVENTS, BUMPER_ZONE_MACHINES, LIQUIDATION_DURATION_DAYS } from './data/arcEvents';
@@ -50,7 +51,7 @@ function addGameDays({ year, week, day }, days) {
   return { year: y, week: w, day: d };
 }
 
-const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0, liquor_licensing: 0, tech_training: 0 };
+const DEFAULT_UPGRADES = { electronics: 0, mixology: 0, quantum: 0, marketing: 0, psychology: 0, electrical_eng: 0, social_media: 0, supply_chain: 0, charm: 0, liquor_licensing: 0, tech_training: 0, bully_suppliers: 0, mascot_program: 0, creative_accounting: 0, goon_squad: 0, loyalty_cult: 0, espresso_iv: 0, happy_hour_engine: 0 };
 const DEFAULT_BARTENDER = { id: 'bartender', x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, targetStationId: null, targetStationType: null, timer: 0 };
 const DEFAULT_STAFF = { server: 0, repairman: false };
 const makeServerEntity = () => ({ id: 'server-' + Date.now() + Math.random(), x: null, y: null, status: 'idle', path: [], pathIndex: 0, targetCustId: null, targetBartopId: null, targetStationId: null, targetStationType: null, timer: 0 });
@@ -131,8 +132,10 @@ function App() {
   const [isComputerOpen, setIsComputerOpen] = useState(false);
   const [fastForward, setFastForward] = useState(false);
 
-  // ── Franchise state ──
+  // ── Franchise / corporate state ──
   const [franchises, setFranchises] = useState([]);
+  const [headOffice, setHeadOffice] = useState(null);
+  // headOffice shape: { purchasedAt: {year,week}, purchaseCost: number, weeklyRent: number }
 
   // ── Week run ──
   const [autoRunTotal, setAutoRunTotal] = useState(null);
@@ -157,16 +160,19 @@ function App() {
   const franchiseTotalEquipCost = machines
     .filter(m => m.x !== null && (m.room === 'main' || !m.room))
     .reduce((sum, m) => sum + (m.purchasePrice ?? 0), 0);
-  const purchaseDiscount = upgrades.supply_chain * 0.10;
+  const purchaseDiscount     = upgrades.supply_chain * 0.10;
+  const bullySupplierDiscount = upgrades.bully_suppliers * 0.10;
+  // ── Corporate upgrade derived values ──
+  const rentReduction        = (upgrades.creative_accounting ?? 0) * 0.15;
   const upgradeValues = {
-    patienceTicks: 30 + upgrades.psychology * 15,
-    spawnBoost: upgrades.marketing * 0.08,
-    damageReduction: upgrades.electrical_eng * 0.10,
-    bartenderSpeed: 1 + upgrades.mixology * 0.5,
+    patienceTicks: 30 + upgrades.psychology * 15 + (upgrades.loyalty_cult ?? 0) * 10,
+    spawnBoost: upgrades.marketing * 0.08 + (upgrades.mascot_program ?? 0) * 0.12,
+    damageReduction: upgrades.electrical_eng * 0.10 + (upgrades.goon_squad ?? 0) * 0.08,
+    bartenderSpeed: 1 + upgrades.mixology * 0.5 + (upgrades.espresso_iv ?? 0) * 0.25,
     charm: upgrades.charm,
     drinkPatienceMult: staff.server > 0 ? 2 : 1,
-    drinkRevenue: staff.server > 0 ? 20 : 15,
-    cocktailRevenue: staff.server > 0 ? 35 : 25,
+    drinkRevenue: (staff.server > 0 ? 20 : 15) + (upgrades.happy_hour_engine ?? 0) * 4,
+    cocktailRevenue: (staff.server > 0 ? 35 : 25) + (upgrades.happy_hour_engine ?? 0) * 4,
     repairPower: [3, 4, 5][upgrades.tech_training ?? 0],
     repairmanActive: staff.repairman,
     repairmanCoverage: staff.repairman ? [10, 15, 25][upgrades.tech_training ?? 0] : 0,
@@ -236,6 +242,7 @@ function App() {
     upgradeValues,
     decisions,
     franchises,
+    headOffice,
     inbox,
     isPausedRef,
     fastForward,
@@ -272,8 +279,8 @@ function App() {
       firedArcEventIds: [...firedArcEventIds],
       popGainMult, liquidationLot, liquidationExpiryDay, staff,
       serverCount: staff.server,
-      financialHistory, decisions, franchises,
-      popGainMult, pinballPopularity,
+      financialHistory, decisions, franchises, headOffice,
+      pinballPopularity,
       activeInvestment, activeLoan, medicalBills,
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(save));
@@ -308,6 +315,7 @@ function App() {
     setServers([]);
     setDecisions({});
     setFranchises([]);
+    setHeadOffice(null);
     setActiveInvestment(null);
     setActiveLoan(null);
     setMedicalBills([]);
@@ -350,6 +358,7 @@ function App() {
     setFinancialHistory(s.financialHistory ?? []);
     setDecisions(s.decisions ?? {});
     setFranchises(s.franchises ?? []);
+    setHeadOffice(s.headOffice ?? null);
     setActiveInvestment(s.activeInvestment ?? null);
     setActiveLoan(s.activeLoan ?? null);
     setMedicalBills(s.medicalBills ?? []);
@@ -529,7 +538,7 @@ function App() {
   const buySupply = (type) => {
     if (dayState === 'REPORT') return false;
     const nameMap = { kegerator: 'Kegerator', bartop: 'Bartop', bathroom: 'Bathroom', speed_well: 'Speed Well' };
-    const price = (BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500) * franchiseMultiplier;
+    const price = Math.floor((BAR_SUPPLY_PURCHASE_PRICE[type] ?? 500) * (1 - bullySupplierDiscount)) * franchiseMultiplier;
     const name = nameMap[type] ?? type;
     if (cash >= price) {
       // Bathrooms must go in the main room — customers need to reach them
@@ -586,9 +595,31 @@ function App() {
   const handleCloseFranchise = (franchiseId) => {
     const target = franchises.find(f => f.id === franchiseId);
     if (!target) return;
-    const refund = Math.floor(target.openingCost * 0.50);
+    const refund = Math.floor(target.openingCost * 0.50 * (pinballPopularity / 100));
     setFranchises(prev => prev.filter(f => f.id !== franchiseId));
     setCash(c => c + refund);
+  };
+
+  const handleLiquidateHeadOffice = () => {
+    if (!headOffice) return;
+    const refund = Math.floor(headOffice.purchaseCost * 0.40 * (pinballPopularity / 100));
+    setHeadOffice(null);
+    setCash(c => c + refund);
+    // Revoke all corporate upgrades — they require the head office to function
+    const resets = Object.fromEntries(CORPORATE_UPGRADE_DEFS.map(d => [d.id, 0]));
+    setUpgrades(prev => ({ ...prev, ...resets }));
+  };
+
+  const purchaseCorporateUpgrade = (id, cost) => {
+    if (!headOffice || cash < cost) return false;
+    setCash(c => c - cost);
+    setUpgrades(prev => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
+    // Joining the Patron Loyalty Cult enrolls you in its newsletter. Stamp the
+    // join day so the arc paces its issues (see data/emails/loyaltyCult.js).
+    if (id === 'loyalty_cult') {
+      setDecisions(prev => prev.cult_joined_day != null ? prev : { ...prev, cult_joined_day: toLinearDay(time) });
+    }
+    return true;
   };
 
   const sellMachine = (m) => {
@@ -684,6 +715,18 @@ function App() {
         setCash(c => c - 400);
         setHasStockedParts(true);
       }
+    } else if (effectId === 'purchase_head_office') {
+      const cost = 250000;
+      if (cash >= cost) {
+        setCash(c => c - cost);
+        setHeadOffice({ purchasedAt: { year: time.year, week: time.week }, purchaseCost: cost, weeklyRent: 5000 });
+      }
+    } else if (effectId === 'cult_endorse') {
+      // Bless the Patron Loyalty Program: the faithful flood in (and tithe).
+      setPopularity(p => p + 150);
+      setCash(c => c + 2000);
+    } else if (effectId === 'cult_distance') {
+      // Keep your distance: no immediate effect — the finale handles the fallout.
     }
     if (decisionsFlag) {
       setDecisions(prev => ({ ...prev, [decisionsFlag]: true }));
@@ -878,6 +921,11 @@ function App() {
           weeklyExpenses.push({ id: `salary_${def.id}`, name: salaryLabel, icon: def.icon, amount: salaryPerHead * count * franchiseMultiplier });
         }
       }
+      // Head office rent
+      if (headOffice) {
+        weeklyExpenses.push({ id: 'head_office_rent', name: 'Head Office Rent', icon: '🏢', amount: Math.round(headOffice.weeklyRent * (1 - rentReduction)) });
+      }
+
       // Loan payment
       if (activeLoan) {
         weeklyExpenses.push({ id: 'loan_payment', name: 'Loan Payment', icon: '💸', amount: activeLoan.weeklyPayment });
@@ -1061,7 +1109,7 @@ St. Agatha's Billing Department`,
     // Check for new emails (read inbox from closure — safe inside a click handler)
     const sentIds = new Set(inbox.map(e => e.id));
     const completedCourseIds = new Set(justCompleted.map(c => c.id));
-    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions, franchises };
+    const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions, franchises, upgrades };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
     if (newEmails.length > 0) {
@@ -1149,6 +1197,9 @@ St. Agatha's Billing Department`,
           : `${def.name} ×${count} (salary)`;
         expenses.push({ id: `salary_${def.id}`, name: salaryLabel, icon: def.icon, amount: salaryPerHead * count * franchiseMultiplier });
       }
+    }
+    if (headOffice) {
+      expenses.push({ id: 'head_office_rent', name: 'Head Office Rent', icon: '🏢', amount: Math.round(headOffice.weeklyRent * (1 - rentReduction)) });
     }
     if (activeLoan) {
       expenses.push({ id: 'loan_payment', name: 'Loan Payment', icon: '💸', amount: activeLoan.weeklyPayment });
@@ -1334,6 +1385,10 @@ St. Agatha's Billing Department`,
             onOpenFranchise={handleOpenFranchise}
             onCloseFranchise={handleCloseFranchise}
             pinballPopularity={pinballPopularity}
+            headOffice={headOffice}
+            onLiquidateHeadOffice={handleLiquidateHeadOffice}
+            onPurchaseCorporateUpgrade={purchaseCorporateUpgrade}
+            bullySupplierDiscount={bullySupplierDiscount}
           />
         )}
       </div>

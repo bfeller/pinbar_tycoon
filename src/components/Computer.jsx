@@ -3,6 +3,7 @@ import './Computer.css';
 import { calculatePrice } from '../utils/economy';
 import { getUsedBlurb } from '../data/used_blurbs';
 import { UPGRADE_DEFS } from '../data/upgrades';
+import { CORPORATE_UPGRADE_DEFS } from '../data/corporateUpgrades';
 import { STAFF_DEFS } from '../data/staff';
 import EmailClient from './EmailClient';
 import BankWindow from './BankWindow';
@@ -44,6 +45,10 @@ export default function Computer({
   onOpenFranchise,
   onCloseFranchise,
   pinballPopularity = 60,
+  headOffice = null,
+  onLiquidateHeadOffice,
+  onPurchaseCorporateUpgrade,
+  bullySupplierDiscount = 0,
 }) {
   const footTrafficMult = Math.max(0.05, Math.min(1.0, pinballPopularity / 100));
   const [booting, setBooting] = useState(true);
@@ -158,6 +163,12 @@ export default function Computer({
             <div className="win95-icon" onClick={() => setActiveWindow('franchises')}>
               <div className="icon-img">🏪</div>
               <span>Franchises</span>
+            </div>
+          )}
+          {headOffice && (
+            <div className="win95-icon" onClick={() => setActiveWindow('corporate')}>
+              <div className="icon-img">🏢</div>
+              <span>Corporate HQ</span>
             </div>
           )}
         </div>
@@ -280,7 +291,7 @@ export default function Computer({
                       { type: 'bartop',    name: 'Bartop',     base: 500,  desc: 'Where patrons order drinks.' },
                       { type: 'bathroom',  name: 'Bathroom',   base: 2000, desc: '2×2. Expected by patrons from 1976.' },
                     ].map(({ type, name, base, desc }) => {
-                      const supplyPrice = base * franchiseMultiplier;
+                      const supplyPrice = Math.floor(base * (1 - bullySupplierDiscount)) * franchiseMultiplier;
                       return (
                         <div key={type} className="win95-card">
                           <div><strong>{name}</strong></div>
@@ -801,7 +812,8 @@ export default function Computer({
                   <div className="win95-panel">
                     <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Active Franchises ({franchises.length})</div>
                     {franchises.map(f => {
-                      const refund = Math.floor(f.openingCost * 0.50);
+                      const refund = Math.floor(f.openingCost * 0.50 * (pinballPopularity / 100));
+                      const maxRefund = Math.floor(f.openingCost * 0.50);
                       return (
                         <div key={f.id} style={{ borderBottom: '1px solid #999', padding: '5px 0', fontSize: '0.85rem' }}>
                           <div style={{ fontWeight: 'bold' }}>{f.name}</div>
@@ -812,12 +824,96 @@ export default function Computer({
                             onClick={() => onCloseFranchise(f.id)}
                           >
                             Close — recover ${refund.toLocaleString()}
+                            {pinballPopularity < 100 && (
+                              <span style={{ fontSize: '0.75rem', opacity: 0.7 }}> (max ${maxRefund.toLocaleString()} at full market)</span>
+                            )}
                           </button>
                         </div>
                       );
                     })}
                   </div>
                 )}
+
+              </div>
+            </div>
+          );
+        })()}
+
+        {activeWindow === 'corporate' && headOffice && (() => {
+          const liquidationRefund = Math.floor(headOffice.purchaseCost * 0.40 * (pinballPopularity / 100));
+          const maxLiquidation   = Math.floor(headOffice.purchaseCost * 0.40);
+          return (
+            <div className="win95-window">
+              <div className="win95-titlebar">
+                <div className="title">🏢 Corporate HQ</div>
+                <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+              </div>
+              <div className="win95-content" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto' }}>
+
+                <div className="win95-panel">
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Head Office</div>
+                  <div style={{ fontSize: '0.85rem' }}>
+                    <div>Established: {headOffice.purchasedAt.year} · Week {headOffice.purchasedAt.week}</div>
+                    <div style={{ marginTop: '3px' }}>Weekly rent: <strong style={{ color: '#8b0000' }}>${headOffice.weeklyRent.toLocaleString()}</strong></div>
+                  </div>
+                  <button
+                    className="win95-btn"
+                    style={{ marginTop: '8px', color: '#8b0000', fontSize: '0.8rem' }}
+                    onClick={onLiquidateHeadOffice}
+                  >
+                    Liquidate — recover ${liquidationRefund.toLocaleString()}
+                    {pinballPopularity < 100 && (
+                      <span style={{ opacity: 0.7 }}> (max ${maxLiquidation.toLocaleString()} at full market)</span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="win95-panel">
+                  <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Corporate Upgrades</div>
+                  <div className="marketplace-grid">
+                    {CORPORATE_UPGRADE_DEFS.map(def => {
+                      const level   = upgrades[def.id] ?? 0;
+                      const atMax   = level >= def.maxLevel;
+                      const cost    = atMax ? null : def.costs[level];
+                      const canAfford = cost != null && cash >= cost;
+                      return (
+                        <div key={def.id} className="win95-card">
+                          <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '4px' }}>
+                            {def.icon} {def.name}
+                            {level > 0 && (
+                              <span style={{ marginLeft: '6px', fontSize: '0.7rem', background: '#006400', color: '#fff', padding: '1px 6px', fontWeight: 'bold' }}>
+                                LVL {level}
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ fontSize: '0.8rem', color: '#555', margin: '0 0 6px', fontStyle: 'italic' }}>{def.flavor}</p>
+                          <div style={{ fontSize: '0.8rem', marginBottom: '6px' }}>{def.effect(level)}</div>
+                          {atMax ? (
+                            <div style={{ fontSize: '0.8rem', color: '#006400', fontWeight: 'bold' }}>Maxed out</div>
+                          ) : (
+                            <button
+                              className="win95-btn"
+                              disabled={!canAfford || dayState === 'REPORT'}
+                              onClick={() => onPurchaseCorporateUpgrade(def.id, cost)}
+                            >
+                              Upgrade — ${cost.toLocaleString()}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="win95-panel" style={{ opacity: 0.5 }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>R&amp;D Division</div>
+                  <div style={{ fontSize: '0.82rem', color: '#555' }}>Coming soon.</div>
+                </div>
+
+                <div className="win95-panel" style={{ opacity: 0.5 }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Strategic Acquisitions</div>
+                  <div style={{ fontSize: '0.82rem', color: '#555' }}>Coming soon.</div>
+                </div>
 
               </div>
             </div>
@@ -854,6 +950,9 @@ export default function Computer({
           )}
           {activeWindow === 'franchises' && (
             <div className="taskbar-item active">Franchise Manager</div>
+          )}
+          {activeWindow === 'corporate' && (
+            <div className="taskbar-item active">Corporate HQ</div>
           )}
           <div className="taskbar-tray">
             <div className="taskbar-cash">${cash.toLocaleString()}</div>
