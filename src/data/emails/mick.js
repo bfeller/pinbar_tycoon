@@ -9,13 +9,17 @@ export const mickEmails = [
     id: 'mick_01',
     from: 'Mick Darrow',
     address: 'mick@mdarrow-repairs.co.uk',
-    subject: 'service note – Black Knight',
-    body:
-`Hi.
+    subject: 'service note – multi-level machines',
+    body: ({ machines = [] }) => {
+      const placed = machines.filter(m => m.x !== null && m.durability > 0);
+      const bk = placed.find(m => m.name?.toLowerCase().includes('black knight'));
+
+      if (bk) {
+        return `Hi.
 
 Just flagging something from last night.
 
-The Black Knight. Two levels. I know it's impressive. It's also a nightmare to work on.
+The ${bk.name}. Two levels. I know it's impressive. It's also a nightmare to work on.
 
 The upper playfield rubber rings require removing panel C, then panel A, in that order, before you can get to panel B. The manual says nothing about this. I found out the hard way. Panel B has a sharp edge on the left side that I have also now found the hard way.
 
@@ -23,7 +27,23 @@ I'm noting it for billing purposes. If that machine needs regular rubber work �
 
 No complaints. Just information.
 
-Mick`,
+Mick`;
+      }
+
+      return `Hi.
+
+Flagging something before you end up with a surprise invoice.
+
+I've been servicing Black Knights at a couple of other venues this month. Two-level machines — upper playfield on a separate mechanism. Impressive cabinets. Also a nightmare to work on.
+
+The upper playfield rubbers require removing panel C, then panel A, before you can access panel B. The manual doesn't mention this. Panel B has a sharp edge on the left. Every time.
+
+If you ever pick one up, factor an extra thirty minutes per service visit into your expectations. I charge by the hour and I'm not going to pretend it goes faster than it does.
+
+No action needed on your end. Just thought you should know what's out there.
+
+Mick`;
+    },
     trigger: ({ time, sentIds, staff }) =>
       time.year >= 1980 && staff.repairman && !sentIds.has('mick_01'),
     choices: null,
