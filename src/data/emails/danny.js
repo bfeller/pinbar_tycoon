@@ -636,6 +636,227 @@ M.D. Amusements Repair
     choices: null,
   },
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // Adult Danny Arc (1997–2016+)
+  // Danny Chen resurfaces when the player is franchising. He's been in pinball
+  // professionally for twenty years. His path and tone vary based on the 1970s arc.
+  //
+  // Arc flags set via email choices:
+  //   danny_franchise_consultant / danny_kept_independent  — from danny_returns_02
+  //   danny_knows_about_flipper / danny_told_mystery_stands — from danny_returns_flipper_ask
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── Adult Beat 1 — Danny surfaces ────────────────────────────────────────
+  {
+    id: 'danny_returns_01',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'Hello (from an unexpected direction)',
+    body: ({ decisions = {} }) => {
+      let opening = `I'm not sure if you remember me. I'm writing anyway.
+
+My name is Daniel Chen. I came in on Tuesday evenings in the late seventies — machine three, mostly. I was fourteen when I started. I left when I was seventeen.`;
+
+      if (decisions.danny_welcomed_warmly) {
+        opening += ` You called me Danny.`;
+      }
+
+      return opening + `
+
+I've been working in pinball professionally for most of the time since. Tournament circuit for a few years, then machine evaluation, then building a small repair operation. I now run a consultancy called Chen Mechanical. Not a very exciting name, but it says what it does.
+
+I saw your bar mentioned in a trade circular. It noted the franchise expansion. I thought about it for a few weeks before deciding to write.
+
+I don't know what I'm proposing exactly. I wanted to make contact first, before the proposal, because that seemed correct.
+
+Danny`;
+    },
+    trigger: ({ time, sentIds, franchises }) =>
+      sentIds.has('danny_letter_01') && franchises.length >= 1 &&
+      time.year >= 1997 && !sentIds.has('danny_returns_01'),
+    choices: null,
+  },
+
+  // ── Adult Beat 1.5 — Gary recognises the name ────────────────────────────
+  {
+    id: 'gary_danny_returns',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'something I noticed (a name)',
+    body:
+`Hi.
+
+I want to mention something I noticed last week and I'm going to let you decide what to do with it.
+
+I was reading a pinball trade magazine — I have a subscription, this is not new information — and I found a name in the tournament results section. "D. Chen, Chen Mechanical." It was in a regional evaluation context. I looked it up. The company address is in Bristol.
+
+I have a very large log entry from 1976 to 1979 about a person with this name. The handwriting in those entries is more careful than my average handwriting, which I take to mean I considered them important at the time.
+
+I have noted this development in the current volume. The entry is longer than usual.
+
+Gary
+
+--
+Sent from my computer (it is the same one)`,
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('danny_returns_01') && time.year >= 1997 && !sentIds.has('gary_danny_returns'),
+    choices: null,
+  },
+
+  // ── Adult Beat 2 — The proposal ───────────────────────────────────────────
+  {
+    id: 'danny_returns_02',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'A Proposal',
+    body:
+`I've thought about what I want to say.
+
+I'd like to help with the franchise expansion. Not as an investor or a partner — I'm not interested in the business side. Specifically: machine selection, maintenance standards, and technician training across your locations.
+
+I've evaluated machines for five different operators in the past ten years. I know what wears badly, what holds up, and what gets better with age. More importantly — and I want to be direct about this — I know what it means to be in a room where the machines are cared about. I've been in rooms where they aren't. The difference is not subtle.
+
+You have something in that bar that most operators have been trying to describe for decades. I'd like to help make sure the franchise locations have some version of it.
+
+I'll understand if this isn't the right time.
+
+Danny`,
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('danny_returns_01') && time.year >= 1998 && !sentIds.has('danny_returns_02'),
+    choices: [
+      { label: 'Bring him in. The franchise needs someone like him.', effectId: null, decisionsFlag: 'danny_franchise_consultant' },
+      { label: 'Write back warmly — this should be his own thing to build.', effectId: null, decisionsFlag: 'danny_kept_independent' },
+    ],
+  },
+
+  // ── Adult Beat 3a — Danny joins the franchise (consultant path) ───────────
+  {
+    id: 'danny_returns_consultant_01',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'RE: Machine specifications — a note',
+    body:
+`I've sent the first draft of the evaluation framework to Janet Okafor at head office. She's sharp — she came back with detailed questions within two hours.
+
+The point of friction is what she calls "brand consistency." She wants machines across locations to feel interchangeable. My position is that they shouldn't — they should each be calibrated to their room. A machine in a low-ceilinged venue plays differently from the same machine in a high one, and the maintenance should reflect that.
+
+We haven't resolved this. I thought you should know there's a conversation happening.
+
+One more thing: I went through machine three during my first week here. The tilt mechanism was set to factory tolerance. The left flipper return spring was perfect. I don't know when it was last serviced but whoever did it knew what the machine needed. Not just what was wrong. What it needed. That's rarer than it sounds.
+
+Danny`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_franchise_consultant && time.year >= 1999 && !sentIds.has('danny_returns_consultant_01'),
+    choices: null,
+  },
+
+  // ── Adult Beat 3b — Danny goes independent ────────────────────────────────
+  {
+    id: 'danny_returns_independent_01',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'Opened something',
+    body:
+`I understand. It's probably the right call.
+
+I've been thinking about what I said in the proposal, about rooms where machines are cared about. I've decided to build one.
+
+It's small — six machines, no bar, no frills. A room in Bristol where people who take pinball seriously can come and play machines that are in proper condition. I'm calling it The Mechanism. Not a very exciting name, but it says what it does.
+
+Gary came to see it last month. He spent four hours. He took notes. He said "the left flipper on machine four is 3% too stiff." He was right. I fixed it before he left.
+
+I think we're parallel, not competing. I think you knew that when you wrote back.
+
+Danny`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_kept_independent && time.year >= 2000 && !sentIds.has('danny_returns_independent_01'),
+    choices: null,
+  },
+
+  // ── Adult Beat 4 — Mick and Danny (consultant + mick_backed path) ─────────
+  {
+    id: 'danny_returns_mick_note',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 're: the kid',
+    body:
+`Just a note.
+
+The one you sent — Chen. He's been coming along on service visits. He knows what he's doing. Better instincts than most people I've trained, and I've trained a few.
+
+There's a way he works on machine three specifically. Like he remembers something about it. I haven't asked. It's not my business.
+
+He told me he worked out the left flipper return spring issue by watching me in 1978. That would make him about fifteen. I don't remember him watching. He clearly remembers everything.
+
+Don't tell him I said any of this.
+
+Mick`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_franchise_consultant && decisions.mick_backed &&
+      sentIds.has('mick_backed_01') && time.year >= 2002 && !sentIds.has('danny_returns_mick_note'),
+    choices: null,
+  },
+
+  // ── Adult Beat 5 — Danny asks about the machines (consultant + Gary told) ──
+  {
+    id: 'danny_returns_flipper_ask',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'Something I want to ask (about machine three)',
+    body:
+`I want to ask you something directly, and I want to preface it by saying I'm not sure how to ask it.
+
+I've been servicing machine three for three months now. There's nothing wrong with it mechanically. It's in better condition than most machines half its age.
+
+But there's something else. I noticed it the first time I played it, in 1976. I thought it was just how good the machine was. Then I thought I was projecting. I've been thinking about it for forty years, off and on.
+
+Gary told me something recently. He was careful about how he told me. He said you'd be the one to ask.
+
+Is there something in machine three?
+
+Danny`,
+    trigger: ({ time, decisions, sentIds }) =>
+      decisions.danny_franchise_consultant && decisions.gary_knows_everything &&
+      time.year >= 2000 && !sentIds.has('danny_returns_flipper_ask'),
+    choices: [
+      { label: 'Tell him everything.', effectId: null, decisionsFlag: 'danny_knows_about_flipper' },
+      { label: 'Some things are for the machines to say.', effectId: null, decisionsFlag: 'danny_told_mystery_stands' },
+    ],
+  },
+
+  // ── Adult Beat 6 — Danny's final email (renaissance era) ──────────────────
+  {
+    id: 'danny_returns_final',
+    from: 'Danny Chen',
+    address: 'dchen@chenmechanical.co.uk',
+    subject: 'The record still stands',
+    body: ({ decisions = {} }) => {
+      let body = `I looked it up.
+
+Machine three. The record is still listed at 347,800. I set it in 1979. I was seventeen. I know the circumstances were complicated.
+
+I've been playing for forty years. I've never beaten it on any other machine. I've thought about why and I think the answer is that I wasn't trying to beat a score that night. I was trying to understand something. The score was a side effect.`;
+
+      if (decisions.danny_franchise_consultant) {
+        body += `\n\nI've been here long enough now to see what you've built. The franchise locations are good. They're not the original, but they're not trying to be. That was the right call and it wasn't obvious that it would be.`;
+      } else if (decisions.danny_kept_independent) {
+        body += `\n\nThe Mechanism is still running. We get the serious players — the ones who come to compete with themselves rather than the machine. I think you'd recognise the type.`;
+      }
+
+      body += `
+
+I'm going grey, which Gary noted in the log last Tuesday with characteristic data accuracy.
+
+I'm glad the bar is still here. That's the short version of a much longer thing.
+
+Danny`;
+      return body;
+    },
+    trigger: ({ time, sentIds }) =>
+      sentIds.has('danny_returns_02') && time.year >= 2016 && !sentIds.has('danny_returns_final'),
+    choices: null,
+  },
+
   // ── Beat 13c — Danny's final letter (Path C: score was lost) ─────────────
   {
     id: 'danny_letter_02_gone',

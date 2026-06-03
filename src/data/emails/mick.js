@@ -60,4 +60,112 @@ Mick`,
     },
   },
 
+
+  // ── Franchise strain ──────────────────────────────────────────────────────
+  {
+    id: 'mick_franchise_strain',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 're: coverage',
+    body:
+`Hi.
+
+I need to say something plainly.
+
+I'm covering four locations. I can't cover five. The travel alone is taking two days a week and that's before the actual work.
+
+Something needs to happen. Either I bring someone on and we formalise MD Amusements as a proper outfit, or the franchise locations go to a contract service and I stay on the original. Both are workable. Neither is ideal.
+
+I'm not asking you to solve it for me. I'm telling you what the options are and that I need a decision before the next location opens.
+
+You've got a week.
+
+Mick`,
+    trigger: ({ franchises, staff, sentIds, time }) =>
+      franchises.length >= 4 && staff.repairman && sentIds.has('mick_02') &&
+      time.year >= 2001 && !sentIds.has('mick_franchise_strain'),
+    choices: null,
+    event: {
+      label: 'Mick needs an answer',
+      severity: 'neutral',
+      message: 'Mick Darrow has reached his limit. Check your inbox.',
+    },
+  },
+
+  // ── Backed path: MD Amusements Ltd ────────────────────────────────────────
+  {
+    id: 'mick_backed_01',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 'MD Amusements Repair Ltd.',
+    body: ({ decisions = {} }) => {
+      let body = `Registered it last week. MD Amusements Repair Ltd. — took three attempts to spell "amusements" correctly on the form.
+
+I've found an apprentice.`;
+
+      if (decisions.danny_franchise_consultant) {
+        body += ` The one you sent — Chen. He already knows more about these machines than most technicians I've worked with. He learned to read a machine by watching, which is rarer than it sounds. I'll take it.`;
+      } else {
+        body += ` Young woman named Jules. No background in pinball specifically but she's got the hands for it, which matters more than people think. I'll have her trained on the Williams line by summer.`;
+      }
+
+      body += `
+
+The original location is still mine. Always will be, as long as I'm doing this.
+
+Mick`;
+      return body;
+    },
+    trigger: ({ decisions, sentIds }) =>
+      decisions.mick_backed && !sentIds.has('mick_backed_01'),
+    choices: null,
+  },
+
+  // ── Corporatised path: quiet bitterness ───────────────────────────────────
+  {
+    id: 'mick_corporate_regret',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 'update',
+    body:
+`Machine three at the original location is fine. All others are under contract.
+
+I heard about the Harrow franchise — the board issue. The contractor logged it as intermittent and left it. It ran intermittent for six weeks before it failed completely. Two weeks down.
+
+I would have caught it in the first visit.
+
+I'm not saying this as a complaint. Just thought you should know how that works.
+
+Mick`,
+    trigger: ({ decisions, sentIds, time }) =>
+      decisions.mick_corporatized && time.year >= 2003 && !sentIds.has('mick_corporate_regret'),
+    choices: null,
+  },
+
+  // ── Retirement ────────────────────────────────────────────────────────────
+  {
+    id: 'mick_retirement',
+    from: 'Mick Darrow',
+    address: 'mick@mdarrow-repairs.co.uk',
+    subject: 'last invoice',
+    body:
+`This is the last one.
+
+Machine three: left flipper mechanism — standard wear, replaced coil sleeve and return spring. Tilt sensitivity — re-calibrated to factory tolerance. Playfield: cleaned and waxed. General check — all systems within spec.
+
+It's in good shape. Better than it should be after this long.
+
+Forty-three years. I don't know what else to say about that, so I won't.
+
+Tell Gary I said hello.
+
+Mick
+
+M.D. Amusements Repair
+"If it needs doing, it needs doing right"`,
+    trigger: ({ sentIds, time }) =>
+      sentIds.has('mick_franchise_strain') && time.year >= 2020 && !sentIds.has('mick_retirement'),
+    choices: null,
+  },
+
 ];

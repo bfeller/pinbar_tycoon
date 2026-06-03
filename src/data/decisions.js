@@ -512,6 +512,263 @@ export const DECISION_DEFS = [
     ],
   },
 
+  // ── Crabtree arc decisions ────────────────────────────────────────────────
+  // These fire as part of the Crabtree inspection timeline (crabtree.js).
+  // crabtree_third_attempt: his most focused inspection attempt, ~1980.
+  // crabtree_replacement_inspection: his successor Ms. Fenchurch arrives, ~1986.
+
+  {
+    id: 'crabtree_third_attempt',
+    label: "The Inspector's Return",
+    weight: 7,
+    repeatable: false,
+    condition: ({ time, sentIds, decisions }) =>
+      (sentIds.has('crabtree_04_welcomed') || sentIds.has('crabtree_04_corresponded')) &&
+      time.year >= 1980 && time.week >= 5 &&
+      !decisions.crabtree_inspection_completed && !decisions.crabtree_inspection_derailed,
+    getMessage: ({ decisions = {} }) => {
+      let text = `Crabtree is at the door. He has his clipboard. He is working through a checklist quietly and systematically. He hasn't mentioned the drain once. It might actually be an inspection.`;
+      if (decisions.crabtree_corresponded) {
+        text += `\n\nHe has printed notes. He looks prepared.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'cooperate_crabtree',
+        label: 'Cooperate fully — show him around',
+        hint: 'outstanding inspection resolved',
+        flagId: 'crabtree_inspection_completed',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'good',
+          message: "He went through the checklist. He found nothing of concern. At the door he shook your hand and wrote something down — in the journal, not the clipboard. You chose not to ask which.",
+        },
+      },
+      {
+        id: 'derail_crabtree',
+        label: 'Offer him a coffee — ask about the journal',
+        hint: 'inspection deferred again',
+        flagId: 'crabtree_inspection_derailed',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "He accepted the coffee. You talked for an hour. At the end he said 'I should have done the inspection.' You both agreed he probably would.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'crabtree_replacement_inspection',
+    label: 'The Replacement Inspector',
+    weight: 7,
+    repeatable: false,
+    condition: ({ time, sentIds, decisions }) =>
+      sentIds.has('crabtree_07') && time.year >= 1986 && time.week >= 2 &&
+      !decisions.crabtree_replacement_cooperated && !decisions.crabtree_replacement_redirected,
+    getMessage: () =>
+      `A woman in a council jacket is at the door with a clipboard. She identifies herself as Ms. Fenchurch from Environmental Health — here for the outstanding inspection, reference BC/0044. She appears to have memorised the reference number. She shows no signs of philosophical distraction.`,
+    choices: [
+      {
+        id: 'cooperate_fenchurch',
+        label: 'Welcome her — cooperate fully',
+        hint: '−5 popularity (closed early)',
+        flagId: 'crabtree_replacement_cooperated',
+        effect: 'popularity_delta',
+        effectValue: -5,
+        resolution: {
+          severity: 'neutral',
+          message: "She was thorough and efficient. Three minor citations, all legitimate. Done in forty-five minutes. She did not look at the machines the way Crabtree looked at the machines.",
+        },
+      },
+      {
+        id: 'redirect_fenchurch',
+        label: "Tell her you'll need to consult Mr. Crabtree about the scheduling",
+        hint: 'inspection deferred',
+        flagId: 'crabtree_replacement_redirected',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "She noted it on her clipboard and left without entering. Her expression suggested she had spoken to Crabtree before and was not entirely surprised.",
+        },
+      },
+    ],
+  },
+
+  // ── Franchise character arc decisions ────────────────────────────────────
+  // mick_succession: Mick can't cover the whole network alone. Expand MD Amusements
+  //   or move franchise locations to a corporate contract?
+  // janet_rebrand: Janet proposes standardising all locations. Franchise coherence
+  //   vs. protecting what makes the original work.
+
+  {
+    id: 'mick_succession',
+    label: "Mick's Decision",
+    weight: 9,
+    repeatable: false,
+    condition: ({ sentIds, decisions }) =>
+      sentIds.has('mick_franchise_strain') &&
+      !decisions.mick_backed && !decisions.mick_corporatized,
+    getMessage: ({ decisions = {} }) => {
+      let text = `Mick Darrow has been servicing your machines since the beginning. At four franchise locations he's reached his limit. He's given you two options: fund the expansion of MD Amusements into a proper outfit with an apprentice, or he stays on the original location only and the network goes to a corporate repair contract.`;
+      if (decisions.danny_franchise_consultant) {
+        text += `\n\nDanny Chen has mentioned he'd be interested in the apprentice role, if it comes to that.`;
+      }
+      return text;
+    },
+    choices: [
+      {
+        id: 'back_mick',
+        label: 'Back Mick — fund the expansion of MD Amusements',
+        hint: '−$3,000, better long-term quality',
+        flagId: 'mick_backed',
+        effect: 'income_delta',
+        effectValue: -3000,
+        resolution: {
+          severity: 'good',
+          message: "Mick registered MD Amusements Repair Ltd. the following week. He spelled 'amusements' wrong on the first attempt. He corrected it. He did not mention this.",
+        },
+      },
+      {
+        id: 'corporatize_repairs',
+        label: 'Move the network to a corporate contract',
+        hint: '−$500/month saved, risk to quality',
+        flagId: 'mick_corporatized',
+        effect: 'income_delta',
+        effectValue: 500,
+        resolution: {
+          severity: 'neutral',
+          message: "Mick acknowledged the decision in one sentence. He said he'd stay on the original. He did not say anything else about it.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'janet_rebrand',
+    label: 'The Rebrand Proposal',
+    weight: 8,
+    repeatable: false,
+    condition: ({ decisions, sentIds, franchises }) =>
+      decisions.head_office_purchased && franchises.length >= 5 &&
+      sentIds.has('janet_cult_alarm') &&
+      !decisions.brand_refreshed && !decisions.brand_protected,
+    getMessage: () =>
+      `Janet Okafor has sent a formal proposal: a network-wide rebrand. Standardised interiors, a unified name, consistent design across all locations. The projections show a seven percent revenue lift and substantially reduced operational confusion. It would change what the original location looks like to new visitors. It would make the chain legible. It would make it a chain.`,
+    choices: [
+      {
+        id: 'approve_rebrand',
+        label: 'Back the rebrand — scale requires coherence',
+        hint: '+7% franchise income, −15 popularity at original',
+        flagId: 'brand_refreshed',
+        effect: 'popularity_delta',
+        effectValue: -15,
+        effect2: 'income_delta',
+        effect2Value: 1500,
+        resolution: {
+          severity: 'neutral',
+          message: "The rollout took three months. Revenue lifted across the network. Gary noted the new lighting scheme was 'technically an improvement.' He still came on Tuesday.",
+        },
+      },
+      {
+        id: 'protect_brand',
+        label: 'Protect the name — the original is not a template',
+        hint: 'no cost, Janet adapts her approach',
+        flagId: 'brand_protected',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'good',
+          message: "Janet said understood. She came to the original location on Saturday without a clipboard. She sat at the bar for two hours. She sent a different kind of proposal the following week.",
+        },
+      },
+    ],
+  },
+
+  // ── Flipper arc decisions ─────────────────────────────────────────────────
+  // flipper_night_activity: machine three does the impossible in front of witnesses (trust path).
+  // flipper_cold_machines: the bar grows subtly wrong after the Flipper was refused.
+
+  {
+    id: 'flipper_night_activity',
+    label: 'The Incident',
+    weight: 8,
+    repeatable: false,
+    condition: ({ time, decisions, popularity }) =>
+      decisions.flipper_trusted && popularity >= 4000 && time.year >= 1991 &&
+      !decisions.flipper_kept_secret && !decisions.flipper_promoted,
+    getMessage: () =>
+      `Three customers were still at the bar past midnight when it happened. Machine three played a complete multiball sequence — forty-four bumper contacts, both ramps — with no ball visible on the playfield. The sequence ran for forty-eight seconds. Then the machine reset itself and went dark. No fault lights. No error codes. Gary was there. He has been sitting at his table for two hours with his notebook open and has not looked up.`,
+    choices: [
+      {
+        id: 'flipper_say_nothing',
+        label: 'Leave it. This stays between you and the machines.',
+        hint: 'no effect',
+        flagId: 'flipper_kept_secret',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "You turned off the lights and locked up. Whatever it was, it happened. Gary was still writing when you left.",
+        },
+      },
+      {
+        id: 'flipper_lean_in',
+        label: "Embrace it — this bar has something the others don't.",
+        hint: '+25 popularity',
+        flagId: 'flipper_promoted',
+        effect: 'popularity_delta',
+        effectValue: 25,
+        resolution: {
+          severity: 'good',
+          message: "Word spread. People came specifically to be in the room. Three of them stayed until two in the morning and didn't play a single game. They just sat near the machines.",
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'flipper_cold_machines',
+    label: 'Something Has Changed',
+    weight: 7,
+    repeatable: false,
+    condition: ({ time, decisions }) =>
+      decisions.flipper_refused && time.year >= 1989 &&
+      !decisions.flipper_coldness_accepted && !decisions.flipper_reconcile_attempt,
+    getMessage: () =>
+      `Three regulars have mentioned to staff, separately, that the machines feel different this month. Not broken — different. One said she couldn't explain it. Gary's Tuesday count is down for the fourth consecutive week. Mick came through on Wednesday and found no fault. He said the machines were "technically fine." He said it the way you say something is technically the speed limit.`,
+    choices: [
+      {
+        id: 'flipper_hold_steady',
+        label: "Hold steady — it's probably a quiet patch.",
+        hint: '−10 popularity',
+        flagId: 'flipper_coldness_accepted',
+        effect: 'popularity_delta',
+        effectValue: -10,
+        resolution: {
+          severity: 'bad',
+          message: "The quiet continued for another fortnight. Gary noted in his log that machine three had been draining unusually fast. He wrote it factually, without comment.",
+        },
+      },
+      {
+        id: 'flipper_try_overnight',
+        label: 'Leave the machines on overnight. Try it once.',
+        hint: 'opens reconciliation',
+        flagId: 'flipper_reconcile_attempt',
+        effect: null,
+        effectValue: 0,
+        resolution: {
+          severity: 'neutral',
+          message: "You left the lights on and went home. In the morning everything was exactly as you'd left it. Gary's Tuesday numbers were better the following week. He noted the improvement without explanation.",
+        },
+      },
+    ],
+  },
+
   {
     id: 'health_inspection',
     label: 'Health Inspector',

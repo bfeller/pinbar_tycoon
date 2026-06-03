@@ -118,4 +118,35 @@ Dr. Elspeth Voss
     },
   },
 
+
+  // ── Voss meets Gary (if introduced) ──────────────────────────────────────
+  {
+    id: 'voss_05',
+    from: 'Dr. E. Voss',
+    address: 'e.voss@university.edu',
+    subject: 'Subject G (a correction)',
+    body:
+`Dear Bar Operator,
+
+I want to let you know: I've been in correspondence with Gary Kowalski.
+
+He found the thesis himself, apparently. He read all 247 pages. He had observations. Several of them were about methodology. He was right about two of them.
+
+I want to correct something I wrote in 2016: I said "Subject G's log is paraphrased — anonymously, but I suspect he will recognise himself." I was wrong about the anonymously part. It took him approximately forty-five minutes.
+
+We met for tea on Tuesday. He brought volume 7 of the log, which I have now read in full. I'm revising the paperback edition. I've asked him to be listed as a contributor. He said he would "accept this designation on a provisional basis pending review of the editorial terms," which is Gary for yes.
+
+He also mentioned that Dave has read the footnote and is pleased about it.
+
+I wanted to say, belatedly: thank you for the bar. A great deal of my life's work came out of sitting in the corner watching people play pinball in a particular kind of light. That is a strange thing to owe someone. I owe it anyway.
+
+With warm regards,
+Dr. Elspeth Voss
+(no longer pending — thoroughly official)`,
+    trigger: ({ decisions, sentIds }) =>
+      decisions.gary_voss_introduced && sentIds.has('gary_subject_g_reaction') &&
+      !sentIds.has('voss_05'),
+    choices: null,
+  },
+
 ];

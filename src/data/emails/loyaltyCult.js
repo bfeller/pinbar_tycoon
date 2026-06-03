@@ -241,4 +241,68 @@ The Membership Committee (Dissolving)`,
     },
   },
 
+
+  // ── Franchise expansion arc ────────────────────────────────────────────────
+  // These fire when the cult has been endorsed AND the player has franchises.
+
+  {
+    id: 'cult_franchise_01',
+    from: 'The Inner Flipper — Patron Loyalty Program',
+    address: 'devotion@theinnerflipper.org',
+    subject: 'Issue #6: New Territories 🌍',
+    body:
+`Beloved Operator and Expanding Empire,
+
+The Programme is growing.
+
+With the blessing of the Franchise Network, the Inner Flipper™ has extended its reach to your additional locations. We want to reassure you that this happened entirely within the terms of your original endorsement. Clause 7 was always intended to read the way it now reads.
+
+NEWS FROM THE TERRITORIES:
+  • Gerald has been designated Roving Devotee. He is currently on secondment to the Northgate location. He will return when "the work is done." We do not know when the work will be done.
+  • Candles are now region-specific. Northern locations receive Heather & Persistence. Southern locations receive something we cannot describe in print.
+  • Tier 4 documentation has been updated. There is now less of it.
+
+The Founder is pleased.
+
+In service and expansion,
+The Membership Committee (HQ Division)`,
+    trigger: ({ decisions, sentIds, franchises }) =>
+      decisions.cult_endorsed && franchises.length >= 2 &&
+      sentIds.has('cult_news_05_endorsed') && !sentIds.has('cult_franchise_01'),
+    choices: null,
+  },
+
+  {
+    id: 'cult_gerald_at_franchise',
+    from: 'The Inner Flipper — Patron Loyalty Program',
+    address: 'devotion@theinnerflipper.org',
+    subject: 'Issue #7: Gerald — A Progress Update 🕯️',
+    body:
+`Beloved Operator,
+
+Gerald has now visited four of your franchise locations.
+
+At each location he has: identified the machine with "the strongest presence," spent between two and eleven days, reorganised the loyalty display materials, and left a candle. The candles at two locations have been lit. This was, we want to be clear, their own decision.
+
+Gerald has not been asked to leave by any location. We are choosing to read this as endorsement.
+
+We should tell you something. Gerald has reached a threshold that required us to consult the Tier 4 documentation. We did. We are not at liberty to share what it said. What we can tell you is that Gerald is well, that Gerald is content, and that Gerald no longer uses the word "Gerald" in the first person.
+
+He has asked that we refer to him, in all future correspondence, as "The Plunger."
+
+We will be in touch.
+
+Warmly and with increasing complexity,
+The Membership Committee`,
+    trigger: ({ decisions, sentIds, franchises }) =>
+      decisions.cult_endorsed && franchises.length >= 4 &&
+      sentIds.has('cult_franchise_01') && !sentIds.has('cult_gerald_at_franchise'),
+    choices: null,
+    event: {
+      label: 'Gerald has achieved Tier 4',
+      severity: 'neutral',
+      message: "The Membership Committee has an update on Gerald. (He is now The Plunger.)",
+    },
+  },
+
 ];

@@ -252,4 +252,134 @@ Sent from my computer (it is new)`,
     choices: null,
   },
 
+
+  // ── Franchise reactions ───────────────────────────────────────────────────
+
+  {
+    id: 'gary_franchise_reaction',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'an observation (the expansion)',
+    body:
+`Hi.
+
+I understand you've opened another location.
+
+I want to be clear that I don't have a data-based objection to this. Expansion is a reasonable business decision and I've been tracking the economics of this bar long enough to know the numbers have supported it.
+
+What I want to note, for the record, is that the original is the original. I've been coming here since 1975. I know what machine three smells like when it's been running for three hours. I know which floorboard near the door is slightly soft. I know that the light behind the bar is better on the left side.
+
+I'm not saying this is an argument against expansion. I'm noting it so it's in writing somewhere.
+
+I'll be in on Tuesday as usual.
+
+Gary
+
+--
+Sent from my computer (it is the same one)`,
+    trigger: ({ franchises, sentIds }) =>
+      franchises.length >= 1 && sentIds.has('gary_06') && !sentIds.has('gary_franchise_reaction'),
+    choices: null,
+  },
+
+  {
+    id: 'gary_franchise_visit',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'an observation (the Northgate location)',
+    body:
+`Hi.
+
+I visited the Northgate location on Thursday. I want to share my findings.
+
+I have a comparison spreadsheet. The key points:
+
+Machine selection: 7/10. Two machines I don't recognise. One of them is better than I expected.
+Carpet: inferior to the original. Not dramatically. Just inferior.
+The machine near the back: there is no machine near the back. There is a machine near the side. This is not the same thing.
+The light: different. Not worse, different. Harder to describe.
+Overall atmosphere: good. 7.5 out of 10. Genuinely good.
+
+I want to be clear: it was good. I just wanted you to have the data.
+
+I came back to the original on Friday. I got 94,000. I noted this in the log under "control readings."
+
+Gary
+
+--
+Sent from my computer (it is the same one)`,
+    trigger: ({ franchises, sentIds }) =>
+      franchises.length >= 3 && sentIds.has('gary_franchise_reaction') && !sentIds.has('gary_franchise_visit'),
+    choices: null,
+  },
+
+  // ── Gary discovers he was Subject G ──────────────────────────────────────
+
+  {
+    id: 'gary_subject_g',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 'a development (I want to ask you about it)',
+    body:
+`Hi.
+
+I need to ask you something directly.
+
+My wife showed me a piece in a magazine about the pinball renaissance. It mentioned a thesis. "The Tilt," by Dr. Elspeth Voss. It mentioned a "Subject G" who kept a log. The description was: one visit per week, same machine, consistent for many years, neighbour named Dave who had not visited.
+
+I have looked up the thesis. I have read all 247 pages. Chapter 4 is about me.
+
+I want to know two things. First: did you know? Second: am I supposed to mind?
+
+I haven't decided yet whether I mind. I'm asking for context before I decide.
+
+Gary
+
+--
+Sent from my computer (it is the same one)`,
+    trigger: ({ sentIds }) =>
+      sentIds.has('voss_04') && sentIds.has('gary_06') && !sentIds.has('gary_subject_g'),
+    choices: [
+      { label: "She thought the world of you in the research. It's a tribute.", effectId: null, decisionsFlag: 'gary_voss_compliment_told' },
+      { label: "Introduce them properly — she'd like to know the real Subject G.", effectId: null, decisionsFlag: 'gary_voss_introduced' },
+    ],
+  },
+
+  {
+    id: 'gary_subject_g_reaction',
+    from: 'Gary Kowalski',
+    address: 'garykowalski77@aol.com',
+    subject: 're: Subject G (update)',
+    body: ({ decisions = {} }) => {
+      let body =
+`Hi.
+
+I've processed this.
+
+I reread Chapter 4 three times. She got the numbers right, which I appreciate. She also got something else right that I couldn't have put into words myself — the bit about the log being "an act of attention rather than record-keeping." I had not thought about it that way. I think she's correct.
+
+I have a longer log entry about this than I have about most things.`;
+
+      if (decisions.gary_voss_introduced) {
+        body += `
+
+We've been in correspondence. She asked to see volume 7. I sent it. She described it as "extraordinary primary source material" which I am choosing to interpret as a compliment. She also told me Dave appears in a footnote, which I have relayed to Dave. Dave said "obviously."`;
+      }
+
+      body += `
+
+I have decided I don't mind. For the record.
+
+Gary
+
+--
+Sent from my computer (it is the same one)`;
+      return body;
+    },
+    trigger: ({ decisions, sentIds }) =>
+      (decisions.gary_voss_compliment_told || decisions.gary_voss_introduced) &&
+      sentIds.has('gary_subject_g') && !sentIds.has('gary_subject_g_reaction'),
+    choices: null,
+  },
+
 ];
