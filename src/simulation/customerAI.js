@@ -1,7 +1,7 @@
 import PF from 'pathfinding';
 import { DOOR_POS, GRID_COLS, GRID_ROWS, resolveDayLengthSeconds } from '../constants';
 import { getPlayCell, getMachineCells } from '../utils/grid';
-import { buildGrid } from '../utils/pathfinding';
+import { buildGrid, findPathInBounds } from '../utils/pathfinding';
 import { maybeQueueBathroomAfterDrink } from '../utils/patronNeeds';
 
 const PATIENCE_TICKS = 30;        // ticks before a queued customer gives up (~6s at 200ms)
@@ -53,7 +53,7 @@ function tryAssignTarget(nextC, targetType, prev, updated, machines) {
     if (entryX < 0 || entryX >= GRID_COLS || entryY < 0 || entryY >= GRID_ROWS) return false;
     if (!grid.isWalkableAt(entryX, entryY)) return false;
     const finder = new PF.AStarFinder();
-    const path = finder.findPath(nextC.x, nextC.y, entryX, entryY, grid.clone());
+    const path = findPathInBounds(finder, nextC.x, nextC.y, entryX, entryY, grid.clone());
     if (!path || path.length === 0) return false;
     nextC.machineId = target.id;
     nextC.path = path;
@@ -68,7 +68,7 @@ function tryAssignTarget(nextC, targetType, prev, updated, machines) {
   if (!playCell || !grid.isWalkableAt(playCell.x, playCell.y)) return false;
 
   const finder = new PF.AStarFinder();
-  const path = finder.findPath(nextC.x, nextC.y, playCell.x, playCell.y, grid);
+  const path = findPathInBounds(finder, nextC.x, nextC.y, playCell.x, playCell.y, grid);
   if (!path || path.length === 0) return false;
 
   nextC.machineId = target.id;
@@ -115,7 +115,7 @@ function findWaitingSpot(nextC, targetType, prev, updated, machines) {
   let bestPath = null;
   for (const spot of spots) {
     if (spot.x === nextC.x && spot.y === nextC.y) return true; // already at a good spot
-    const path = finder.findPath(nextC.x, nextC.y, spot.x, spot.y, buildGrid(machines));
+    const path = findPathInBounds(finder, nextC.x, nextC.y, spot.x, spot.y, buildGrid(machines));
     if (path && path.length > 0 && (!bestPath || path.length < bestPath.length)) bestPath = path;
   }
 
@@ -131,7 +131,7 @@ function findWaitingSpot(nextC, targetType, prev, updated, machines) {
 function sendToExit(nextC, machines) {
   const grid = buildGrid(machines);
   const finder = new PF.AStarFinder();
-  const path = finder.findPath(nextC.x, nextC.y, DOOR_POS.x, DOOR_POS.y, grid);
+  const path = findPathInBounds(finder, nextC.x, nextC.y, DOOR_POS.x, DOOR_POS.y, grid);
   if (!path || path.length === 0) return false;
   nextC.status = 'walking_out';
   nextC.path = path;
@@ -322,7 +322,11 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
         nextC.drinkPatienceTicks = Math.round(DRINK_PATIENCE_TICKS * (upgradeValues.drinkPatienceMult ?? 1));
       } else if (c.status === 'walking_to_bathroom') {
         const bath = machines.find(m => m.id === nextC.machineId);
-        if (bath) { nextC.x = bath.x + 1; nextC.y = bath.y; }
+        // Prefer right half of 2×2 tile; fall back when flush against east edge (x+1 OOB).
+        if (bath) {
+          nextC.x = bath.x + 1 < GRID_COLS ? bath.x + 1 : bath.x;
+          nextC.y = bath.y;
+        }
         nextC.status = 'using_bathroom';
         nextC.bathroomTicks = BATHROOM_USE_TICKS;
       } else {
@@ -410,9 +414,12 @@ export function tickCustomers(prev, { machines, dayTimer, upgradeValues, time, o
       } else {
         satisfiedCount++;
         nextC.satisfiedNeeds = (nextC.satisfiedNeeds ?? 0) + 1;
-        // Teleport back to bathroom door cell
+        // Teleport back to bathroom door cell (same row as tryAssignTarget entry)
         const bath = machines.find(m => m.id === nextC.machineId);
-        if (bath) { nextC.x = bath.x; nextC.y = bath.y + 2; }
+        if (bath) {
+          nextC.x = bath.x;
+          nextC.y = Math.min(bath.y + 2, GRID_ROWS - 1);
+        }
         nextC.machineId = null;
         nextC.bathroomTicks = undefined;
         nextC.bathroomQueued = true;

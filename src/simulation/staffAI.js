@@ -1,7 +1,7 @@
 import PF from 'pathfinding';
 import { DOOR_POS, GRID_COLS, GRID_ROWS } from '../constants';
 import { getPlayCell, getBackCell, getMachineCells } from '../utils/grid';
-import { buildGrid } from '../utils/pathfinding';
+import { buildGrid, findPathInBounds } from '../utils/pathfinding';
 
 const SERVICE_STATIONS = [
   {
@@ -26,7 +26,7 @@ function findDirectApproach(fromX, fromY, targetCell, machines, blocked) {
   const grid = buildGrid(machines);
   if (!grid.isWalkableAt(targetCell.x, targetCell.y)) return null;
   if (blocked.has(key)) return null;
-  const path = new PF.AStarFinder().findPath(fromX, fromY, targetCell.x, targetCell.y, grid);
+  const path = findPathInBounds(new PF.AStarFinder(), fromX, fromY, targetCell.x, targetCell.y, grid);
   if (!path || path.length === 0) return null;
   return { path, x: targetCell.x, y: targetCell.y };
 }
@@ -53,7 +53,7 @@ function findAdjacentApproach(fromX, fromY, machine, machineType, machines, bloc
   const finder = new PF.AStarFinder();
   let best = null;
   for (const cell of candidates.values()) {
-    const path = finder.findPath(fromX, fromY, cell.x, cell.y, buildGrid(machines));
+    const path = findPathInBounds(finder, fromX, fromY, cell.x, cell.y, buildGrid(machines));
     if (path && path.length > 0 && (!best || path.length < best.path.length)) {
       best = { path, x: cell.x, y: cell.y };
     }
@@ -266,7 +266,7 @@ export function tickStaff(bartender, servers, updatedCustomers, { machines, upgr
         const bartop   = machines.find(m => m.id === next.targetBartopId);
         const backCell = bartop ? getBackCell(bartop.type, bartop.x, bartop.y, bartop.orientation) : null;
         if (backCell) {
-          const path = new PF.AStarFinder().findPath(next.x, next.y, backCell.x, backCell.y, buildGrid(machines));
+          const path = findPathInBounds(new PF.AStarFinder(), next.x, next.y, backCell.x, backCell.y, buildGrid(machines));
           if (path && path.length > 0) {
             next.path = path;
             next.pathIndex = 0;
