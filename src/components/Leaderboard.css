@@ -1,0 +1,130 @@
+.lb {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lb-tabs {
+  display: flex;
+  gap: 3px;
+}
+
+.lb-tab {
+  flex: 1;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  color: #000000;
+  padding: 3px 4px;
+  font-size: 0.72rem;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lb-tab.scope {
+  font-size: 0.68rem;
+  font-weight: normal;
+}
+
+.lb-tab.active {
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+  background: #000080;
+  color: #ffffff;
+}
+
+.lb-status {
+  font-size: 0.82rem;
+  color: #444444;
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.lb-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  max-height: 260px;
+  overflow-y: auto;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  background: #ffffff;
+  padding: 4px;
+}
+
+.lb-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 6px;
+  font-size: 0.82rem;
+}
+
+.lb-head {
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #808080;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.lb-row:nth-child(odd):not(.lb-head):not(.lb-you) {
+  background: #f0f0f0;
+}
+
+.lb-you {
+  background: #000080;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.lb-you .lb-bar {
+  color: #a8c8f0;
+}
+
+.lb-rank {
+  width: 28px;
+  flex-shrink: 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.lb-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.lb-char {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-bar {
+  font-size: 0.7rem;
+  color: #666666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-score {
+  flex-shrink: 0;
+  font-weight: bold;
+  white-space: nowrap;
+  text-align: right;
+}

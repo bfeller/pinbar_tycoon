@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './StartMenu.css';
+import Leaderboard from './Leaderboard';
 
 export default function StartMenu({ savedGame, onNewGame, onContinue }) {
   const [view, setView] = useState('main');
@@ -55,6 +56,25 @@ export default function StartMenu({ savedGame, onNewGame, onContinue }) {
                   <span className="startmenu-save-info muted">No saved game</span>
                 </button>
               )}
+              <button className="startmenu-btn" onClick={() => setView('scores')}>
+                🏆 High Scores
+              </button>
+            </div>
+          </>
+        )}
+
+        {view === 'scores' && (
+          <>
+            <h2 className="startmenu-form-title">🏆 Hall of Fame</h2>
+            <Leaderboard defaultCategory="value" defaultScope="all" />
+            <div className="startmenu-form-actions" style={{ justifyContent: 'flex-start', marginTop: '12px' }}>
+              <button
+                type="button"
+                className="startmenu-btn small secondary"
+                onClick={() => setView('main')}
+              >
+                ← Back
+              </button>
             </div>
           </>
         )}

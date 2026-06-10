@@ -153,6 +153,99 @@
   white-space: nowrap;
 }
 
+.win-finalscore {
+  margin: 14px 0 4px;
+  padding: 10px 12px;
+  background: #000080;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+}
+
+.win-finalscore-label {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #a8c8f0;
+  margin-bottom: 4px;
+}
+
+.win-finalscore-val {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.win-finalscore-rank {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: bold;
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+
+.win-finalscore-subranks {
+  margin-top: 3px;
+  font-size: 0.7rem;
+  color: #a8c8f0;
+  letter-spacing: 0.5px;
+}
+
+.win-leaderboard {
+  margin-top: 14px;
+}
+
+.win-share {
+  margin-top: 12px;
+}
+
+.win-share-label {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #444444;
+  margin-bottom: 8px;
+}
+
+.win-share-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.win-share-btn {
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #808080;
+  border-right: 2px solid #808080;
+  color: #000000;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+.win-share-btn:active {
+  border-top-color: #808080;
+  border-left-color: #808080;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+}
+
+.win-share-native {
+  background: #000080;
+  color: #ffffff;
+}
+
 .win-quill-sig {
   font-size: 0.75rem;
   color: #444444;

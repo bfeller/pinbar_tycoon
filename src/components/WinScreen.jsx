@@ -1,8 +1,51 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './WinScreen.css';
+import Leaderboard from './Leaderboard';
+import { submitScore } from '../utils/scores';
 
 export default function WinScreen({ stats, onRestart }) {
-  const { pinbarName, characterName, popularity, cash, machineCount } = stats;
+  const { pinbarName, characterName, popularity, cash, machineCount, franchiseCount = 0, totalAssets = cash } = stats;
+
+  const [myId, setMyId] = useState(null);
+  const [ranks, setRanks] = useState(null);
+  const [submitDone, setSubmitDone] = useState(false);
+  const submitted = useRef(false);
+
+  useEffect(() => {
+    if (submitted.current) return; // guard against React strict-mode double-invoke
+    submitted.current = true;
+    (async () => {
+      const result = await submitScore({
+        characterName, barName: pinbarName, score: totalAssets,
+        cash, machineCount, franchiseCount, popularity,
+      });
+      if (result) { setMyId(result.id); setRanks(result.ranks); }
+      setSubmitDone(true); // only now render the leaderboard, so the new row is included
+    })();
+  }, [characterName, pinbarName, totalAssets, cash, machineCount, franchiseCount, popularity]);
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://pinbartycoon.com';
+  const shareText = `I kept ${pinbarName} trading for 51 years in Pinbar Tycoon — final net worth $${totalAssets.toLocaleString()}. Can you beat my empire?`;
+
+  const shareLinks = [
+    { label: '𝕏', title: 'Share on X', href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}` },
+    { label: 'Facebook', title: 'Share on Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}` },
+    { label: 'Reddit', title: 'Share on Reddit', href: `https://www.reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}` },
+    { label: 'Bluesky', title: 'Share on Bluesky', href: `https://bsky.app/intent/compose?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}` },
+    { label: 'WhatsApp', title: 'Share on WhatsApp', href: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}` },
+  ];
+
+  const handleNativeShare = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: 'Pinbar Tycoon', text: shareText, url: shareUrl });
+        return;
+      } catch { /* user dismissed — fall through to copy */ }
+    }
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+    }
+  };
 
   return (
     <div className="win-overlay">
@@ -66,6 +109,47 @@ export default function WinScreen({ stats, onRestart }) {
             <span className="win-score-key">Machines owned</span>
             <span className="win-score-dots" />
             <span className="win-score-val">{machineCount}</span>
+          </div>
+        </div>
+
+        <div className="win-finalscore">
+          <div className="win-finalscore-label">FINAL SCORE &middot; TOTAL ASSET VALUE</div>
+          <div className="win-finalscore-val">${totalAssets.toLocaleString()}</div>
+          {ranks != null && (
+            <>
+              <div className="win-finalscore-rank">
+                {ranks.value === 1 ? '👑 World #1 — richest operator alive!' : `Net worth ranked #${ranks.value.toLocaleString()} all-time`}
+              </div>
+              <div className="win-finalscore-subranks">
+                Franchises #{ranks.franchises.toLocaleString()} &middot; Popularity #{ranks.popularity.toLocaleString()}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="win-leaderboard">
+          <div className="win-score-label">HALL OF FAME</div>
+          {submitDone
+            ? <Leaderboard highlightId={myId} defaultCategory="value" defaultScope="all" refreshKey={1} />
+            : <div className="lb-status">Saving your score…</div>}
+        </div>
+
+        <div className="win-share">
+          <div className="win-share-label">Brag about it</div>
+          <div className="win-share-row">
+            <button className="win-share-btn win-share-native" onClick={handleNativeShare} title="Share or copy">Share / Copy</button>
+            {shareLinks.map(s => (
+              <a
+                key={s.label}
+                className="win-share-btn"
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={s.title}
+              >
+                {s.label}
+              </a>
+            ))}
           </div>
         </div>
 

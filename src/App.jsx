@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import './index.css';
 import { GRID_COLS, GRID_ROWS, DOOR_POS, BACKROOM_COLS, BACKROOM_ROWS, DAY_LENGTH_SECONDS } from './constants';
 import { getMachineCells, findFreeSpace } from './utils/grid';
-import { extractYear, calculatePrice, BAR_SUPPLY_PURCHASE_PRICE } from './utils/economy';
+import { extractYear, calculatePrice, franchiseSellMultiplier, BAR_SUPPLY_PURCHASE_PRICE } from './utils/economy';
 import { calcCustomerPopDelta, calcDailyPopGain } from './utils/popularity';
 import useMarketplace from './hooks/useMarketplace';
 import useGameEngine from './hooks/useGameEngine';
@@ -628,7 +628,8 @@ function App() {
     const marketValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
     const baseValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
     const isPinball = m.type === 'pinball' || !m.type;
-    const sellValue = isPinball ? Math.floor(baseValue * (pinballPopularity / 100)) : baseValue;
+    const perLocationValue = isPinball ? Math.floor(baseValue * (pinballPopularity / 100)) : baseValue;
+    const sellValue = Math.floor(perLocationValue * franchiseSellMultiplier(franchises.length)); // bulk discount across locations
     if (sellValue) {
       setCash(c => c + sellValue);
       setMachines(prev => prev.filter(machine => machine.id !== m.id));
@@ -883,7 +884,16 @@ function App() {
     if (newTime.year >= 2026) {
       localStorage.removeItem(SAVE_KEY);
       setSavedGame(null);
-      setWinStats({ pinbarName, characterName, time: newTime, cash, popularity, machineCount: machines.length });
+      // Liquidation value of every machine, across all locations — same maths as selling.
+      const machineValue = machines.reduce((sum, m) => {
+        const marketValue = calculatePrice(m.year, newTime.year, m.durability, m.locationCount ?? 0, m.type);
+        const baseValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
+        const isPinball = m.type === 'pinball' || !m.type;
+        const perLocationValue = isPinball ? Math.floor(baseValue * (pinballPopularity / 100)) : baseValue;
+        return sum + Math.floor(perLocationValue * franchiseSellMultiplier(franchises.length));
+      }, 0);
+      const totalAssets = cash + machineValue;
+      setWinStats({ pinbarName, characterName, time: newTime, cash, popularity, machineCount: machines.length, franchiseCount: franchises.length, totalAssets });
       setScreen('win');
       return;
     }
@@ -1307,6 +1317,7 @@ St. Agatha's Billing Department`,
             repairMachine={repairMachine}
             sellMachine={sellMachine}
             pinballPopularity={pinballPopularity}
+            franchiseCount={franchises.length}
             placementMachineType={placementMachineType}
           />
         </div>

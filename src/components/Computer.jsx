@@ -7,6 +7,7 @@ import { CORPORATE_UPGRADE_DEFS } from '../data/corporateUpgrades';
 import { STAFF_DEFS } from '../data/staff';
 import EmailClient from './EmailClient';
 import BankWindow from './BankWindow';
+import Leaderboard from './Leaderboard';
 
 function conditionLabel(durability) {
   if (durability >= 95) return { label: 'Mint',      color: '#006400' };
@@ -137,6 +138,10 @@ export default function Computer({
           <div className="win95-icon" onClick={() => setActiveWindow('reports')}>
             <div className="icon-img">📊</div>
             <span>Reports</span>
+          </div>
+          <div className="win95-icon" onClick={() => setActiveWindow('leaderboard')}>
+            <div className="icon-img">🏆</div>
+            <span>High Scores</span>
           </div>
           <div className="win95-icon" onClick={() => setActiveWindow('bank')}>
             <div className="icon-img">🏦</div>
@@ -536,6 +541,28 @@ export default function Computer({
             </div>
           );
         })()}
+
+        {activeWindow === 'leaderboard' && (
+          <div className="win95-window">
+            <div className="win95-titlebar">
+              <div className="title">🏆 Pinbar Tycoon — World Rankings</div>
+              <button className="win95-close" onClick={() => setActiveWindow(null)}>X</button>
+            </div>
+            <div className="win95-toolbar">
+              <span>Address: http://www.pinbar-tycoon.com/highscores</span>
+            </div>
+            <div className="win95-content">
+              <div className="browser-page">
+                <h1 style={{ color: 'blue', textDecoration: 'underline', fontSize: '1.2rem' }}>Global High Scores</h1>
+                <p style={{ fontSize: '0.82rem', color: '#555', fontStyle: 'italic', margin: '0 0 10px' }}>
+                  See how the world's tycoons stack up. Finish your run in 2026 to claim your spot.
+                </p>
+                <hr />
+                <Leaderboard defaultCategory="value" defaultScope="all" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {activeWindow === 'medical' && (() => {
           const linearNow = toLinearDay(time);
@@ -944,6 +971,9 @@ export default function Computer({
           )}
           {activeWindow === 'reports' && (
             <div className="taskbar-item active">Performance Reports</div>
+          )}
+          {activeWindow === 'leaderboard' && (
+            <div className="taskbar-item active">World Rankings</div>
           )}
           {activeWindow === 'bank' && (
             <div className="taskbar-item active">First Pinbar Bank</div>

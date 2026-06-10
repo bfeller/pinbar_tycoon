@@ -1,13 +1,13 @@
 import React from 'react';
 import './Inventory.css';
-import { calculatePrice } from '../utils/economy';
+import { calculatePrice, franchiseSellMultiplier } from '../utils/economy';
 import GameGrid from './GameGrid';
 import { BACKROOM_COLS } from '../constants';
 
 export default function Inventory({
   backroomMachines, backroomRows, dayState, cash, repairsRemaining, time, hoveredCell,
   placementMachine, placementRotation, repairMachine, sellMachine, handleCellClick, setHoveredCell,
-  placementMachineType, pinballPopularity = 100,
+  placementMachineType, pinballPopularity = 100, franchiseCount = 0,
 }) {
   return (
     <div className="inventory-panel" style={{opacity: dayState === 'REPORT' ? 0.5 : 1}}>
@@ -33,7 +33,8 @@ export default function Inventory({
                const rawSellValue = calculatePrice(m.year, time.year, m.durability, m.locationCount ?? 0, m.type);
                const locationCount = m.locationCount ?? 0;
                const isPinball = m.type === 'pinball' || !m.type;
-               const sellValue = isPinball ? Math.floor(rawSellValue * (pinballPopularity / 100)) : rawSellValue;
+               const perLocationValue = isPinball ? Math.floor(rawSellValue * (pinballPopularity / 100)) : rawSellValue;
+               const sellValue = Math.floor(perLocationValue * franchiseSellMultiplier(franchiseCount));
                const machineEquiv = isPinball
                  ? +(1 + (Math.log1p(locationCount) / Math.log1p(1200)) * 4).toFixed(1)
                  : null;

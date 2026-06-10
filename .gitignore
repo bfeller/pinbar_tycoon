@@ -36,5 +36,10 @@ pnpm-debug.log*
 # Misc
 scratch.js
 
+# Local high-score DB (server runs against a Docker volume in prod)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
 # Claude Code / superpowers tooling
 .superpowers/

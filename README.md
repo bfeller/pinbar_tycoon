@@ -45,6 +45,26 @@ npm run dev
 
 Open `http://localhost:5173` in your browser.
 
+To exercise the high-score leaderboard locally, run the backend too (Vite proxies `/api` to it):
+```bash
+cd server && npm install && DB_PATH=./highscores.sqlite npm start
+```
+
+## Deployment (Docker)
+
+```bash
+docker compose up -d --build
+```
+
+This starts two services:
+
+| Service | Role | Port |
+|---|---|---|
+| `pinbar-tycoon` | nginx serving the built app; proxies `/api/` to the scores backend | `3080:80` |
+| `scores` | Node + SQLite high-score API | internal `3000` |
+
+High scores persist in the named volume `highscores` (SQLite DB at `/data/highscores.sqlite`), so they survive rebuilds. To reset the leaderboard: `docker compose down -v`.
+
 ## Scripts
 
 | Command | Description |

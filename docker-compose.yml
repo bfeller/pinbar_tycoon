@@ -5,3 +5,17 @@ services:
     ports:
       - "3080:80"
     restart: unless-stopped
+    depends_on:
+      - scores
+
+  scores:
+    image: pinbar-tycoon-scores:latest
+    build: ./server
+    environment:
+      - DB_PATH=/data/highscores.sqlite
+    volumes:
+      - highscores:/data
+    restart: unless-stopped
+
+volumes:
+  highscores:

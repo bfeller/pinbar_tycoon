@@ -17,6 +17,24 @@ export const extractYear = (supplementary) => {
   return match ? parseInt(match[1]) : 2020;
 };
 
+/**
+ * Total sell multiplier when liquidating a machine that's deployed across the flagship
+ * plus `franchiseCount` franchises. The flagship sells at full value; each additional
+ * franchise fetches 10% less than the previous location (you're dumping stock in bulk),
+ * steepening to 20% less for every franchise beyond the 10th.
+ *
+ * e.g. 1 franchise → 1 + 0.9 = 1.9× (a $10k machine sells for $19k).
+ */
+export const franchiseSellMultiplier = (franchiseCount = 0) => {
+  let total = 1;          // flagship at full value
+  let locationFactor = 1; // value of the most recently added location, relative to full
+  for (let i = 1; i <= franchiseCount; i++) {
+    locationFactor *= i <= 10 ? 0.9 : 0.8; // franchises 11+ shed 20% per step
+    total += locationFactor;
+  }
+  return total;
+};
+
 const LOG_MAX = Math.log1p(1200); // normalise against ~peak observed locationCount
 
 export const calculatePrice = (machineYear, currentYear, durability = 100, locationCount = 0, machineType = null) => {
