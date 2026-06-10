@@ -2,6 +2,7 @@ services:
   pinbar-tycoon:
     image: pinbar-tycoon:latest
     build: .
+    pull_policy: build        # built locally — never try to pull from a registry
     ports:
       - "3080:80"
     restart: unless-stopped
@@ -11,6 +12,7 @@ services:
   scores:
     image: pinbar-tycoon-scores:latest
     build: ./server
+    pull_policy: build        # built locally — never try to pull from a registry
     environment:
       - DB_PATH=/data/highscores.sqlite
     volumes:
