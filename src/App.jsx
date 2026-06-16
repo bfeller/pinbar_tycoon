@@ -596,7 +596,11 @@ function App() {
   const handleCloseFranchise = (franchiseId) => {
     const target = franchises.find(f => f.id === franchiseId);
     if (!target) return;
-    const refund = Math.floor(target.openingCost * 0.50 * (pinballPopularity / 100));
+    // Liquidate against the current cost of standing up a new franchise, not the
+    // historical opening cost — machines/equipment bought since were added to every
+    // location, so the franchise's worth tracks today's setup price.
+    const currentSetupCost = Math.floor(franchiseTotalEquipCost * (1 + FRANCHISE_SETUP_FEE));
+    const refund = Math.floor(currentSetupCost * 0.50 * (pinballPopularity / 100));
     setFranchises(prev => prev.filter(f => f.id !== franchiseId));
     setCash(c => c + refund);
   };

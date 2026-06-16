@@ -848,8 +848,8 @@ export default function Computer({
                   <div className="win95-panel">
                     <div style={{ fontWeight: 'bold', marginBottom: '6px' }}>Active Franchises ({franchises.length})</div>
                     {franchises.map(f => {
-                      const refund = Math.floor(f.openingCost * 0.50 * (pinballPopularity / 100));
-                      const maxRefund = Math.floor(f.openingCost * 0.50);
+                      const refund = Math.floor(franchiseCost * 0.50 * (pinballPopularity / 100));
+                      const maxRefund = Math.floor(franchiseCost * 0.50);
                       return (
                         <div key={f.id} style={{ borderBottom: '1px solid #999', padding: '5px 0', fontSize: '0.85rem' }}>
                           <div style={{ fontWeight: 'bold' }}>{f.name}</div>
