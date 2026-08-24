@@ -889,14 +889,20 @@ function App() {
       localStorage.removeItem(SAVE_KEY);
       setSavedGame(null);
       // Liquidation value of every machine, across all locations — same maths as selling.
+      // Guard against null/NaN prices so the high-score payload stays finite (server rejects NaN).
       const machineValue = machines.reduce((sum, m) => {
         const marketValue = calculatePrice(m.year, newTime.year, m.durability, m.locationCount ?? 0, m.type);
-        const baseValue = m.purchasePrice != null ? Math.min(marketValue, m.purchasePrice) : marketValue;
+        const rawBase = (m.purchasePrice != null && marketValue != null)
+          ? Math.min(marketValue, m.purchasePrice)
+          : (marketValue ?? m.purchasePrice ?? 0);
+        const baseValue = Number.isFinite(rawBase) ? rawBase : 0;
         const isPinball = m.type === 'pinball' || !m.type;
-        const perLocationValue = isPinball ? Math.floor(baseValue * (pinballPopularity / 100)) : baseValue;
-        return sum + Math.floor(perLocationValue * franchiseSellMultiplier(franchises.length));
+        const popFactor = Math.max(0, Math.min(1, (pinballPopularity ?? 100) / 100));
+        const perLocationValue = isPinball ? Math.floor(baseValue * popFactor) : baseValue;
+        const piece = Math.floor(perLocationValue * franchiseSellMultiplier(franchises.length));
+        return sum + (Number.isFinite(piece) ? piece : 0);
       }, 0);
-      const totalAssets = cash + machineValue;
+      const totalAssets = (Number.isFinite(cash) ? cash : 0) + machineValue;
       setWinStats({ pinbarName, characterName, time: newTime, cash, popularity, machineCount: machines.length, franchiseCount: franchises.length, totalAssets });
       setScreen('win');
       return;
@@ -1127,20 +1133,22 @@ St. Agatha's Billing Department`,
     const emailState = { time: newTime, popularity, cash, machines, sentIds, completedCourseIds, staff, decisions, franchises, upgrades };
     const newEmails = EMAIL_DEFS.filter(def => !sentIds.has(def.id) && def.trigger(emailState));
 
+    // Collect email-attached events before resetting dailyReport so popularity
+    // deltas and report entries survive into the new day (they used to be written
+    // then immediately wiped by the reset below).
+    let emailPopDelta = 0;
+    const emailEvents = [];
+    let lastNotification = null;
+
     if (newEmails.length > 0) {
       setInbox(prev => [...prev, ...newEmails.map(def => ({
-  ...def,
-  body: typeof def.body === 'function' ? def.body(emailState) : def.body,
-  read: false,
-  choiceMade: false,
-  deliveredAt: toLinearDay(newTime),
-}))]);
+        ...def,
+        body: typeof def.body === 'function' ? def.body(emailState) : def.body,
+        read: false,
+        choiceMade: false,
+        deliveredAt: toLinearDay(newTime),
+      }))]);
 
-
-      // Fire any events attached to incoming emails
-      let emailPopDelta = 0;
-      const emailEvents = [];
-      let lastNotification = null;
       for (const email of newEmails) {
         if (!email.event) continue;
         const ev = email.event;
@@ -1150,14 +1158,7 @@ St. Agatha's Billing Department`,
         emailEvents.push(record);
         lastNotification = record;
       }
-      if (emailEvents.length > 0) {
-        setDailyReport(r => ({
-          ...r,
-          events: [...(r.events ?? []), ...emailEvents],
-          eventPopularityDelta: (r.eventPopularityDelta ?? 0) + emailPopDelta,
-        }));
-        setNotification(lastNotification);
-      }
+      if (lastNotification) setNotification(lastNotification);
     }
 
     setDayState('BUILD');
@@ -1169,8 +1170,8 @@ St. Agatha's Billing Department`,
       unsatisfied: 0,
       forgiven: 0,
       unsatisfiedReasons: {},
-      events: [],
-      eventPopularityDelta: 0,
+      events: emailEvents,
+      eventPopularityDelta: emailPopDelta,
       completedCourses: justCompleted.map(c => ({ name: c.name, icon: c.icon })),
       expenses: weeklyExpenses,
     });

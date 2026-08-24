@@ -27,12 +27,17 @@ export default function Leaderboard({
   const [scope, setScope] = useState(defaultScope);
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchScores({ category, scope, limit: 20 }).then(rows => {
-      if (!cancelled) { setScores(rows); setLoading(false); }
+    setFetchError(null);
+    fetchScores({ category, scope, limit: 20 }).then(result => {
+      if (cancelled) return;
+      setScores(result.scores ?? []);
+      setFetchError(result.ok ? null : (result.error || 'Could not load scores.'));
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [category, scope, refreshKey]);
@@ -71,6 +76,8 @@ export default function Leaderboard({
 
       {loading ? (
         <div className="lb-status">Loading high scores…</div>
+      ) : fetchError ? (
+        <div className="lb-status lb-error">{fetchError}</div>
       ) : scores.length === 0 ? (
         <div className="lb-status">No scores yet — be the first.</div>
       ) : (

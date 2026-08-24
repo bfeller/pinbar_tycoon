@@ -47,6 +47,12 @@
   padding: 8px 0;
 }
 
+.lb-status.lb-error {
+  color: #8b0000;
+  font-style: normal;
+  font-weight: bold;
+}
+
 .lb-table {
   display: flex;
   flex-direction: column;

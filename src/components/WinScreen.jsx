@@ -1,31 +1,71 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './WinScreen.css';
 import Leaderboard from './Leaderboard';
-import { submitScore } from '../utils/scores';
+import { submitScore, savePendingScore, loadPendingScore, clearPendingScore } from '../utils/scores';
 
 export default function WinScreen({ stats, onRestart }) {
-  const { pinbarName, characterName, popularity, cash, machineCount, franchiseCount = 0, totalAssets = cash } = stats;
+  const {
+    pinbarName: initialBar,
+    characterName: initialChar,
+    popularity,
+    cash,
+    machineCount,
+    franchiseCount = 0,
+    totalAssets = cash,
+  } = stats ?? {};
 
+  const [characterName, setCharacterName] = useState(initialChar ?? '');
+  const [barName, setBarName] = useState(initialBar ?? '');
+  const [phase, setPhase] = useState('confirm'); // confirm | submitting | done
   const [myId, setMyId] = useState(null);
   const [ranks, setRanks] = useState(null);
-  const [submitDone, setSubmitDone] = useState(false);
-  const submitted = useRef(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [lbRefresh, setLbRefresh] = useState(0);
 
+  // Recover a pending submission if the player refreshed after a failed save.
   useEffect(() => {
-    if (submitted.current) return; // guard against React strict-mode double-invoke
-    submitted.current = true;
-    (async () => {
-      const result = await submitScore({
-        characterName, barName: pinbarName, score: totalAssets,
-        cash, machineCount, franchiseCount, popularity,
-      });
-      if (result) { setMyId(result.id); setRanks(result.ranks); }
-      setSubmitDone(true); // only now render the leaderboard, so the new row is included
-    })();
-  }, [characterName, pinbarName, totalAssets, cash, machineCount, franchiseCount, popularity]);
+    const pending = loadPendingScore();
+    if (!pending) return;
+    if (pending.score !== totalAssets) return; // different run
+    setCharacterName(pending.characterName || initialChar || '');
+    setBarName(pending.barName || initialBar || '');
+  }, [totalAssets, initialChar, initialBar]);
+
+  const buildEntry = () => ({
+    characterName: characterName.trim() || 'Anonymous',
+    barName: barName.trim() || 'Unnamed Bar',
+    score: totalAssets,
+    cash,
+    machineCount,
+    franchiseCount,
+    popularity,
+  });
+
+  const handleSubmit = async () => {
+    if (!characterName.trim() || !barName.trim()) {
+      setSubmitError('Enter your name and bar name to claim your spot.');
+      return;
+    }
+    const entry = buildEntry();
+    savePendingScore(entry);
+    setPhase('submitting');
+    setSubmitError(null);
+
+    const result = await submitScore(entry);
+    if (result.ok) {
+      clearPendingScore();
+      setMyId(result.id);
+      setRanks(result.ranks);
+      setLbRefresh(k => k + 1);
+      setPhase('done');
+    } else {
+      setSubmitError(result.error || 'Could not save your score.');
+      setPhase('confirm');
+    }
+  };
 
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://pinbartycoon.com';
-  const shareText = `I kept ${pinbarName} trading for 51 years in Pinbar Tycoon — final net worth $${totalAssets.toLocaleString()}. Can you beat my empire?`;
+  const shareText = `I kept ${barName || initialBar} trading for 51 years in Pinbar Tycoon — final net worth $${Number(totalAssets).toLocaleString()}. Can you beat my empire?`;
 
   const shareLinks = [
     { label: '𝕏', title: 'Share on X', href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}` },
@@ -62,19 +102,19 @@ export default function WinScreen({ stats, onRestart }) {
           <div className="win-banner-line">THE BAR IS STILL OPEN</div>
         </div>
 
-        <div className="win-bar-name">{pinbarName}</div>
+        <div className="win-bar-name">{barName || initialBar}</div>
         <div className="win-bar-dates">Est. 1975 &mdash; Still trading in 2026</div>
 
         <div className="win-divider" />
 
         <div className="win-narrative">
-          <p><strong>{characterName}</strong> made it.</p>
+          <p><strong>{characterName || initialChar}</strong> made it.</p>
           <p>
             51 years. Weekly rent. Broken machines. A competitor who finally closed his doors.
             An illness that should have ended everything — and nearly did.
           </p>
           <p>
-            In 2026, in a moment of desperation, {characterName} discovered something remarkable.
+            In 2026, in a moment of desperation, {characterName || initialChar} discovered something remarkable.
           </p>
           <p className="win-reveal">
             They invented time travel.<br />
@@ -103,7 +143,7 @@ export default function WinScreen({ stats, onRestart }) {
           <div className="win-score-row">
             <span className="win-score-key">Cash remaining</span>
             <span className="win-score-dots" />
-            <span className="win-score-val">${cash.toLocaleString()}</span>
+            <span className="win-score-val">${Number(cash).toLocaleString()}</span>
           </div>
           <div className="win-score-row">
             <span className="win-score-key">Machines owned</span>
@@ -114,7 +154,7 @@ export default function WinScreen({ stats, onRestart }) {
 
         <div className="win-finalscore">
           <div className="win-finalscore-label">FINAL SCORE &middot; TOTAL ASSET VALUE</div>
-          <div className="win-finalscore-val">${totalAssets.toLocaleString()}</div>
+          <div className="win-finalscore-val">${Number(totalAssets).toLocaleString()}</div>
           {ranks != null && (
             <>
               <div className="win-finalscore-rank">
@@ -127,11 +167,56 @@ export default function WinScreen({ stats, onRestart }) {
           )}
         </div>
 
+        {/* High-score claim — players must confirm before POST (was silent auto-submit) */}
+        <div className="win-submit">
+          <div className="win-score-label">CLAIM YOUR HIGH SCORE</div>
+          {phase !== 'done' ? (
+            <>
+              <p className="win-submit-hint">
+                Confirm how you want to appear on the Hall of Fame, then submit.
+              </p>
+              <div className="win-submit-fields">
+                <label className="win-submit-label">
+                  <span>Operator name</span>
+                  <input
+                    type="text"
+                    maxLength={24}
+                    value={characterName}
+                    onChange={e => { setCharacterName(e.target.value); setSubmitError(null); }}
+                    disabled={phase === 'submitting'}
+                  />
+                </label>
+                <label className="win-submit-label">
+                  <span>Bar name</span>
+                  <input
+                    type="text"
+                    maxLength={32}
+                    value={barName}
+                    onChange={e => { setBarName(e.target.value); setSubmitError(null); }}
+                    disabled={phase === 'submitting'}
+                  />
+                </label>
+              </div>
+              {submitError && <p className="win-submit-error">{submitError}</p>}
+              <button
+                type="button"
+                className="win-btn win-submit-btn"
+                onClick={handleSubmit}
+                disabled={phase === 'submitting'}
+              >
+                {phase === 'submitting' ? 'Saving…' : submitError ? 'Retry Submit' : 'Submit High Score'}
+              </button>
+            </>
+          ) : (
+            <p className="win-submit-ok">Score saved to the Hall of Fame.</p>
+          )}
+        </div>
+
         <div className="win-leaderboard">
           <div className="win-score-label">HALL OF FAME</div>
-          {submitDone
-            ? <Leaderboard highlightId={myId} defaultCategory="value" defaultScope="all" refreshKey={1} />
-            : <div className="lb-status">Saving your score…</div>}
+          {phase === 'done'
+            ? <Leaderboard highlightId={myId} defaultCategory="value" defaultScope="all" refreshKey={lbRefresh} />
+            : <div className="lb-status">Submit your score to see the rankings.</div>}
         </div>
 
         <div className="win-share">
@@ -157,7 +242,7 @@ export default function WinScreen({ stats, onRestart }) {
 
         <div className="win-quill-sig">
           — Dr. H. Quill, Senior Analyst, Temporal Continuity Office, Dept. 7<br />
-          <span className="win-quill-formerly">(Formerly: {characterName}, Bar Operator, {pinbarName})</span>
+          <span className="win-quill-formerly">(Formerly: {characterName || initialChar}, Bar Operator, {barName || initialBar})</span>
         </div>
 
         <button className="win-btn" onClick={onRestart}>

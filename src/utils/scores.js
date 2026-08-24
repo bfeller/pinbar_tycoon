@@ -1,22 +1,23 @@
-// Client for the high-score backend (see server/index.js). All calls fail soft:
-// the leaderboard is a nice-to-have, never block or crash the game on a network error.
+// Client for the high-score backend (see server/index.js). Failures are returned
+// as structured results so the win screen can show an error + retry — never throw.
 const API = '/api/scores';
+
+const PENDING_KEY = 'pinbar_tycoon_pending_score';
 
 export async function fetchScores({ category = 'value', scope = 'all', limit = 20 } = {}) {
   try {
     const params = new URLSearchParams({ category, scope, limit: String(limit) });
     const res = await fetch(`${API}?${params}`);
-    if (!res.ok) return [];
-    return await res.json();
+    if (!res.ok) return { ok: false, scores: [], error: `High-score server error (HTTP ${res.status}).` };
+    return { ok: true, scores: await res.json() };
   } catch {
-    return [];
+    return { ok: false, scores: [], error: 'High-score server is unreachable.' };
   }
 }
 
 /**
- * Submit a finished game. Returns { id, ranks: { value, franchises, popularity } }
- * (all-time ranks) on success, or null on failure (offline, rejected as
- * implausible, rate-limited, etc).
+ * Submit a finished game.
+ * @returns {{ ok: true, id: number, ranks: object } | { ok: false, status: number|null, error: string }}
  */
 export async function submitScore(entry) {
   try {
@@ -25,9 +26,43 @@ export async function submitScore(entry) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entry),
     });
-    if (!res.ok) return null;
-    return await res.json();
+    let body = null;
+    try { body = await res.json(); } catch { /* non-JSON error page */ }
+
+    if (!res.ok) {
+      return {
+        ok: false,
+        status: res.status,
+        error: body?.error
+          ?? (res.status === 502 || res.status === 503
+            ? 'High-score server is unreachable.'
+            : `Could not save score (HTTP ${res.status}).`),
+      };
+    }
+    return { ok: true, id: body.id, ranks: body.ranks };
+  } catch {
+    return {
+      ok: false,
+      status: null,
+      error: 'High-score server is unreachable. Is the scores API running?',
+    };
+  }
+}
+
+/** Stash a win payload so a refresh after a failed submit can still retry. */
+export function savePendingScore(entry) {
+  try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(entry)); } catch { /* private mode */ }
+}
+
+export function loadPendingScore() {
+  try {
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
+}
+
+export function clearPendingScore() {
+  try { sessionStorage.removeItem(PENDING_KEY); } catch { /* ignore */ }
 }

@@ -277,3 +277,58 @@
   border-bottom-color: #ffffff;
   border-right-color: #ffffff;
 }
+.win-btn:disabled {
+  color: #808080;
+  cursor: default;
+}
+
+.win-submit {
+  margin: 16px 0 8px;
+  text-align: left;
+}
+.win-submit-hint {
+  font-size: 0.82rem;
+  color: #444444;
+  margin: 0 0 10px;
+}
+.win-submit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.win-submit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.75rem;
+  color: #444444;
+}
+.win-submit-label input {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-bottom: 2px solid #ffffff;
+  border-right: 2px solid #ffffff;
+  background: #ffffff;
+  color: #000000;
+}
+.win-submit-error {
+  color: #8b0000;
+  font-size: 0.82rem;
+  margin: 0 0 8px;
+  font-weight: bold;
+}
+.win-submit-ok {
+  color: #006400;
+  font-size: 0.88rem;
+  font-weight: bold;
+  margin: 0 0 8px;
+  text-align: center;
+}
+.win-submit-btn {
+  margin-top: 0;
+  width: 100%;
+}
